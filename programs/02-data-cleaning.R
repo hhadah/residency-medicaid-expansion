@@ -102,9 +102,7 @@ program_long_data <- long_data |>
     matched = sum(matched, na.rm = TRUE),
     quota = sum(quota, na.rm = TRUE),
     unmatched = sum(unmatched, na.rm = TRUE),
-    matched_per_100k = sum(matched_per_100k, na.rm = TRUE),
-    quota_per_100k = sum(quota_per_100k, na.rm = TRUE),
-    unmatched_per_100k = sum(unmatched_per_100k, na.rm = TRUE),
+    total_population_10 = first(total_population_10),
     city = first(city),
     expansion_state = first(expansion_state),
     year_expanded = first(year_expanded),
@@ -124,6 +122,14 @@ program_long_data <- long_data |>
     treated_post = treated_state * post_expansion,
     program_id = paste(state, institution_code, sep = "_")
   )
+# create per 100k variables
+program_long_data <- program_long_data |> 
+  mutate(
+    matched_per_100k = (matched / total_population_10) * 100000,
+    quota_per_100k = (quota / total_population_10) * 100000,
+    unmatched_per_100k = (unmatched / total_population_10) * 100000
+  )
 
+datasummary_skim(long_data)
 # Save cleaned program-level data
 write_dta(program_long_data, file.path(datasets, "cleaned_program_residency_medicaid.dta"))
