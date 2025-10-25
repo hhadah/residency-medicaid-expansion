@@ -27,6 +27,7 @@ merged_data <- residency_data |>
 merged_data |> 
   glimpse()
 
+
 # reshape data to long format
 long_data <- merged_data |>
   pivot_longer(
@@ -54,6 +55,43 @@ long_data <- merged_data |>
 long_data |> 
   glimpse()
 
+# census data
+install.packages("tidycensus")
+install.packages("wru")
+library(tidycensus)
+library(wru)
+
+total_population_10 <- get_decennial(
+  geography = "state", 
+  variables = "P001001",
+  year = 2010
+)
+
+# convert state FIPS to state abbreviation
+total_population_10 <- total_population_10 |> 
+  mutate(
+    state = as_state_abbreviation(GEOID)
+  )
+
+long_data <- long_data |> 
+  left_join(
+    total_population_10 |> select(state, total_population_10 = value),
+    by = "state"
+  )
+long_data |>
+  glimpse()
+
+# calculate matches, quotas, and unmatches per 100k population
+long_data <- long_data |> 
+  mutate(
+    matched_per_100k = (matched / total_population_10) * 100000,
+    quota_per_100k = (quota / total_population_10) * 100000,
+    unmatched_per_100k = (unmatched / total_population_10) * 100000
+  )
+
+long_data |>
+  glimpse()
+datasummary_skim(long_data)
 # Save cleaned data
 write_dta(long_data, file.path(datasets, "cleaned_residency_medicaid.dta"))
 
@@ -64,6 +102,9 @@ program_long_data <- long_data |>
     matched = sum(matched, na.rm = TRUE),
     quota = sum(quota, na.rm = TRUE),
     unmatched = sum(unmatched, na.rm = TRUE),
+    matched_per_100k = sum(matched_per_100k, na.rm = TRUE),
+    quota_per_100k = sum(quota_per_100k, na.rm = TRUE),
+    unmatched_per_100k = sum(unmatched_per_100k, na.rm = TRUE),
     city = first(city),
     expansion_state = first(expansion_state),
     year_expanded = first(year_expanded),
@@ -86,6 +127,3 @@ program_long_data <- long_data |>
 
 # Save cleaned program-level data
 write_dta(program_long_data, file.path(datasets, "cleaned_program_residency_medicaid.dta"))
-
-summary(program_long_data$matched)
-table(program_long_data$matched)
