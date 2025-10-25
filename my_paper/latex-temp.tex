@@ -1,0 +1,113 @@
+\documentclass{wptemp}
+\usepackage{adjustbox}
+\usepackage{setspace}\doublespacing
+\usepackage{booktabs}
+\usepackage{siunitx}
+\newcolumntype{d}{S[input-symbols = ()]}
+\usepackage{lscape}
+\newcommand{\source}[1]{\caption*{Source: {#1}} }
+\newcommand{\ts}{\textsuperscript}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+
+% *****************************************************************
+% Estout LaTeX wrapper
+% *****************************************************************
+
+%%Original code developed by Jörg Weber: see
+%% https://www.jwe.cc/2012/03/stata-latex-tables-estout/
+%% and
+%% https://www.jwe.cc/blog/
+
+
+\let\estinput=\input % define a new input command so that we can still flatten the document
+
+\newcommand{\estwide}[3]{
+		\vspace{.75ex}{
+			%\textsymbols% Note the added command here
+			\begin{tabular*}
+			{\textwidth}{@{\hskip\tabcolsep\extracolsep\fill}l*{#2}{#3}}
+			\toprule
+			\estinput{#1}
+			\bottomrule
+			\addlinespace[.75ex]
+			\end{tabular*}
+			}
+		}	
+
+\newcommand{\estauto}[3]{
+		\vspace{.75ex}{
+			%\textsymbols% Note the added command here
+			\begin{tabular}{l*{#2}{#3}}
+			\toprule
+			\estinput{#1}
+			\bottomrule
+			\addlinespace[.75ex]
+			\end{tabular}
+			}
+		}
+
+% Allow line breaks with \ in specialcells
+\newcommand{\specialcell}[2][c]{%
+    \begin{tabular}[#1]{@{}c@{}}#2\end{tabular}
+}
+
+\newcommand{\sym}[1]{\rlap{#1}}% Thanks David Carlisle
+
+
+%%%%%%%%%%% End of wrapper %%%%%%%%%%%%%%%%%%%%%
+    
+%%%%%%%%%%% TiKz %%%%%%%%%%%%%%%%%%%%%
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows}
+
+\tikzstyle{startstop} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm,text centered, draw=black, fill=red!30]
+
+\tikzstyle{io} = [trapezium, trapezium left angle=70, trapezium right angle=110, minimum width=3cm, minimum height=1cm, text centered, text width =5cm, draw=black, fill=blue!30]
+
+\tikzstyle{process} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, text width =5cm, draw=black, fill=orange!30]
+
+\tikzstyle{decision} = [diamond, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=green!30]
+
+\tikzstyle{arrow} = [thick,->,>=stealth]
+
+\begin{document}
+
+\linespread{1}{\title{{\fontfamily{ptm}\selectfont{\Large{\MakeUppercase{}}}}
+% \thanks{}
+}}
+	\author{{\fontfamily{pbk}\selectfont\large{\textsc{Hussain Hadah}}\thanks{Department of Economics, University of Houston, Science Building 3581 Cullen Boulevard Suite 230, Houston, TX 77204-5019, United States (e-mail: \email{hhadah@uh.edu}).}}}
+	\date{\fontfamily{pbk}\selectfont\normalsize{\textsc{\today}}}
+	\maketitle
+
+% \begin{abstract} 
+ 
+
+% % \keywords{Keyword1; Keyword2; Keyword3.}
+% % \JEL{}
+% \end{abstract}
+
+\thispagestyle{empty}
+\clearpage
+\pagenumbering{arabic}
+
+% \pagebreak
+% \nocite{*}
+% \bibliography{IdentificationPaper}
+% \pagebreak
+
+\begin{appendices}
+\section{Figures}\label{appendix:figs}
+
+
+
+
+\section{Tables}\label{appendix:tabs}
+
+
+% section data (end)
+
+% section section_name (end)
+
+\end{appendices}
+\end{document}
