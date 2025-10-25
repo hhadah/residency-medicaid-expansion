@@ -2,7 +2,7 @@
 # packages and set working
 # directories
 
-# date: May 18th, 2022
+# date: June 28th, 2022
 
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load(tictoc, parallel, pbapply, future, 
@@ -19,14 +19,14 @@ pacman::p_load(tictoc, parallel, pbapply, future,
                showtextdb, showtext, thematic, 
                sampleSelection, textme, paletteer, 
                wesanderson, patchwork, RStata, car,
-               #textme, lodown,
-               BiocManager, Polychrome, effects,
-               maps, sf, multcomp, cdlTools,
-               finalfit, ggtext, glue, scales, 
-               gganimate, ggrepel, MetBrewer, fs,
-               marginaleffects, gghighlight, ggview,
-               camcorder, rnaturalearth, rnaturalearthdata,
-               latex2exp)
+               #textme, lodown, 
+               BiocManager, maps, sf, Polychrome, cdlTools, tools,
+               ggtext, glue, scales, gganimate, ggrepel, MetBrewer, didimputation,
+               tidyverse, AER, lubridate, dplyr, readr, MASS, rticles, did,
+               bacondecomp, TwoWayFEWeights, fixest, glue, 
+               DIDmultiplegt, panelView, did2s,
+               tigris, fips, stringr, etwfe)
+
 options("RStata.StataPath" = "/Applications/Stata/StataSE.app/Contents/MacOS/stata-se")
 options("RStata.StataVersion" = 17)
             
@@ -41,42 +41,79 @@ font_add_google("Fira Code", "firasans")
 
 showtext_auto()
 
-showtext_opts(dpi = 300)
-camcorder::gg_record(
-  dir = figures_wd,
-  device = "png",
-  width = 10,
-  height = 10 + 9 / 16, #16:9 ratio
-  units = 'cm',
-  dpi = 300
-)
 theme_customs <- function() {
-  theme_minimal(base_family = "IBM Plex Sans Condensed") +
+  theme_minimal(base_family = "serif") +
     theme(panel.grid.minor = element_blank(),
+          panel.grid.major = element_blank(),
           plot.background = element_rect(fill = "white", color = NA),
-          plot.title = element_text(face = "bold"),
+          plot.title = element_text(face = "bold", size = 32),
+          plot.subtitle = element_text(size = 26),
           axis.title = element_text(face = "bold"),
           strip.text = element_text(face = "bold"),
-          strip.background = element_rect(fill = "grey80", color = NA),
-          legend.title = element_text(face = "bold", size = rel(1)),
-          legend.text = element_text(size = rel(1)))
+          strip.background = element_rect(
+          color="black", fill="white", linewidth=1.5
+          ),
+          legend.title = element_text(size = 28),
+          axis.text.y  = element_text(size = 28),
+          axis.text.x  = element_text(size = 28),
+          axis.title.x = element_text(size = 30),
+          axis.title.y = element_text(size = 30),
+          panel.grid.major.x = element_blank(),
+          panel.grid.minor.x = element_blank(),
+          axis.line = element_line(colour = "black"),
+          legend.text = element_text(size = 30))
 }
-
 theme_customs_map <- function() {
   theme_minimal(base_family = "IBM Plex Sans Condensed") +
-    theme(panel.grid.major = element_blank(), 
-          panel.grid.minor = element_blank(),
-          panel.background = element_blank(), 
-          axis.line = element_blank(),
-          plot.background = element_rect(fill = "white", color = NA),
-          plot.title = element_text(face = "bold"),
-          axis.title = element_blank(),
-          axis.text = element_blank(),
-          strip.text = element_blank(),
-          strip.background = element_blank(),
-          legend.title = element_text(face = "bold", size = rel(1.5)),
-          legend.text = element_text(size = rel(1.2)))
+    theme(
+      panel.grid.major = element_blank(), 
+      panel.grid.minor = element_blank(),
+      panel.background = element_blank(), 
+      axis.line = element_blank(),
+      plot.background = element_rect(fill = "white", color = NA),
+      plot.title = element_text(face = "bold", size = 40),
+      plot.subtitle = element_text(size = 30),
+      axis.title = element_blank(),
+      axis.text = element_blank(),
+      strip.text = element_blank(),
+      strip.background = element_blank(),
+      legend.title = element_text(face = "bold", size = 30),  # Increased font size for the legend title
+      legend.text = element_text(size = rel(2))
+    )
 }
+# Theme of the plots
+#theme_set(theme_clean() + theme(plot.background = element_blank()))
+library(ggthemes)
+
+theme_set(theme_clean() + 
+            theme(#panel.background = element_rect(fill = "transparent"), # bg of the panel
+              plot.background = element_rect(fill = "transparent", color = NA), # bg of the plot
+              #panel.grid.major = element_blank(), # get rid of major grid
+              panel.grid.minor = element_blank(), # get rid of minor grid
+              legend.background = element_rect(fill = "transparent"), # get rid of legend bg
+              legend.box.background = element_rect(fill = "transparent"), # get rid of legend panel bg
+              #axis.line = element_line(size = 1, colour = "black"),
+              #legend.title = element_blank(),
+              legend.title=element_text(size=9),
+              legend.text=element_text(size=8),
+              legend.key.size = unit(.5, "cm")
+            ))
+
+
+p.style <- theme(
+  panel.background = element_rect(fill = "transparent"), # bg of the panel
+  plot.background = element_rect(fill = "transparent", color = NA), # bg of the plot
+  #panel.grid.major = element_blank(), # get rid of major grid
+  panel.grid.minor = element_blank(), # get rid of minor grid
+  legend.background = element_rect(fill = "transparent"), # get rid of legend bg
+  legend.box.background = element_rect(fill = "transparent"), # get rid of legend panel bg
+  axis.line = element_line(linewidth = 1, colour = "black"),
+  #legend.title = element_blank(),
+  legend.title=element_text(size=9),
+  legend.text=element_text(size=8),
+  legend.key.size = unit(.5, "cm"))
+
+
 # Make labels use IBM Plex Sans by default
 update_geom_defaults("label", 
                      list(family = "IBM Plex Sans Condensed"))
