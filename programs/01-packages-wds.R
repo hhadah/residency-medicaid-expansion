@@ -25,6 +25,7 @@ pacman::p_load(tictoc, parallel, pbapply, future,
                tidyverse, AER, lubridate, dplyr, readr, MASS, rticles, did,
                bacondecomp, TwoWayFEWeights, fixest, glue, 
                DIDmultiplegt, panelView, did2s,
+               tidygeocoder, zipcodeR,
                tigris, fips, stringr, etwfe)
 
 options("RStata.StataPath" = "/Applications/Stata/StataSE.app/Contents/MacOS/stata-se")

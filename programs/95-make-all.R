@@ -21,9 +21,3 @@ thesis_plots <- paste0(git_mdir,"/my_paper/figures")
 
 # main scripts
 source(file.path(programs,"01-packages-wds.r")) # set up package
-
-### summary stats
-
-# Send Message
-
-textme(message = "👹 Back to work! You're not paid to run around and drink ☕ all day!")

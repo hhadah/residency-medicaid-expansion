@@ -13,7 +13,60 @@ residency_data <- read_dta(file.path(raw, "2010_2019_residency_programs.dta"))
 
 residency_data |> 
   glimpse()
-  
+
+site_lookup <- program_long_data  |> 
+  select(
+    institution_code,
+    state,
+    city,
+    hospital_name   # <-- CHANGE THIS to your actual hospital/facility column name
+  )  |> 
+  distinct() %>%
+  mutate(
+    geocode_query = paste(hospital_name, city, state, sep = ", ")
+  )
+
+site_geo <- site_lookup  |> 
+  geocode(
+    address = geocode_query,
+    method  = "osm",        # uses OpenStreetMap Nominatim
+    lat     = latitude,
+    long    = longitude,
+    full_results = TRUE
+  )
+
+site_rev <- site_geo  |> 
+  reverse_geocode(
+    lat = latitude,
+    long = longitude,
+    method = "osm",
+    address = "rev_address",
+    full_results = TRUE
+  )  |> 
+  mutate(zip_osm = rev_address.postcode) %>%
+  select(institution_code, zip_osm)
+
+program_long_geo <- program_long_data %>%
+  left_join(
+    site_rev %>% select(institution_code, latitude, longitude, zip_osm),
+    by = "institution_code"
+  )
+program_long_geo %>%
+  summarise(
+    total_sites = n_distinct(institution_code),
+    missing_latlon = sum(is.na(latitude)),
+    missing_zip = sum(is.na(zip_osm))
+  )
+
+library(zipcodeR)
+program_long_geo <- program_long_geo %>%
+  rowwise() %>%
+  mutate(zip_fallback = if_else(is.na(zip_osm),
+                                reverse_zipcode(latitude, longitude)$zipcode[1],
+                                zip_osm)) %>%
+  ungroup()
+
+
 # open medicaid expansion data
 medicaid_data <- read_dta(file.path(raw, "expansion_status.dta"))
 
