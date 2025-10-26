@@ -11,61 +11,115 @@
 # open residency data
 residency_data <- read_dta(file.path(raw, "2010_2019_residency_programs.dta"))
 
-residency_data |> 
+residency_data %>%
   glimpse()
 
-site_lookup <- program_long_data  |> 
+#-----------------------------------------
+# 1. Build hospital/site lookup (unique per institution_code)
+#-----------------------------------------
+site_lookup <- residency_data %>%
   select(
     institution_code,
     state,
     city,
-    hospital_name   # <-- CHANGE THIS to your actual hospital/facility column name
-  )  |> 
+    institution_name
+  ) %>%
   distinct() %>%
   mutate(
-    geocode_query = paste(hospital_name, city, state, sep = ", ")
+    geocode_query = paste(institution_name, city, state, sep = ", ")
   )
 
-site_geo <- site_lookup  |> 
+#-----------------------------------------
+# 2. Geocode using Mapbox (forward geocoding)
+#    - You already have a Mapbox token. We'll set it in the env,
+#      which tidygeocoder will automatically read.
+#-----------------------------------------
+Sys.setenv(MAPBOX_API_KEY = "pk.eyJ1IjoiaGhhZGFoIiwiYSI6ImNtaDd1N2NkYzBueGcya29kOWpzMTRqY3oifQ.zpRnaAfLGm06Kz8rs6RuFA")
+
+site_geo_mapbox <- site_lookup %>%
   geocode(
     address = geocode_query,
-    method  = "osm",        # uses OpenStreetMap Nominatim
+    method  = "mapbox",
     lat     = latitude,
     long    = longitude,
     full_results = TRUE
   )
 
-site_rev <- site_geo  |> 
+# Quick check of geocoding success
+site_geo_mapbox %>%
+  summarise(
+    total_sites      = n(),
+    geocoded_sites   = sum(!is.na(latitude) & !is.na(longitude)),
+    pct_geocoded     = mean(!is.na(latitude) & !is.na(longitude)) * 100
+  )
+
+#-----------------------------------------
+# 3. Reverse geocode each successful coordinate
+#    to pull ZIP/postal code info
+#-----------------------------------------
+site_zip_raw <- site_geo_mapbox %>%
+  filter(!is.na(latitude) & !is.na(longitude)) %>%
   reverse_geocode(
     lat = latitude,
     long = longitude,
-    method = "osm",
+    method = "mapbox",
     address = "rev_address",
     full_results = TRUE
-  )  |> 
-  mutate(zip_osm = rev_address.postcode) %>%
-  select(institution_code, zip_osm)
-
-program_long_geo <- program_long_data %>%
-  left_join(
-    site_rev %>% select(institution_code, latitude, longitude, zip_osm),
-    by = "institution_code"
-  )
-program_long_geo %>%
-  summarise(
-    total_sites = n_distinct(institution_code),
-    missing_latlon = sum(is.na(latitude)),
-    missing_zip = sum(is.na(zip_osm))
   )
 
-library(zipcodeR)
-program_long_geo <- program_long_geo %>%
-  rowwise() %>%
-  mutate(zip_fallback = if_else(is.na(zip_osm),
-                                reverse_zipcode(latitude, longitude)$zipcode[1],
-                                zip_osm)) %>%
+#-----------------------------------------
+# 4. Clean & collapse geocoding output
+#    - Extract a ZIP code
+#    - Keep only lat / lon / zip per institution_code
+#    - Drop obviously bad coordinates
+#    - Deduplicate (1 row per institution_code)
+#-----------------------------------------
+
+geo_lookup <- site_zip_raw %>%
+  mutate(
+    # Mapbox sometimes returns a column literally named "properties.override:postcode"
+    postcode_raw      = .data[["properties.override:postcode"]],
+    # Fallback: try to regex a 5-digit ZIP from the freeform reverse address string
+    postcode_from_rev = str_extract(rev_address, "\\b\\d{5}\\b"),
+    # Choose best available ZIP
+    zip_code          = coalesce(postcode_raw, postcode_from_rev)
+  ) %>%
+  select(
+    institution_code,
+    latitude,
+    longitude,
+    zip_code
+  ) %>%
+  # Keep only plausible CONUS-ish points (this kicks out Spain, ocean, etc.)
+  filter(
+    longitude > -130, longitude < -60,
+    latitude  >  24,  latitude  <  50
+  ) %>%
+  group_by(institution_code) %>%
+  slice(1) %>%        # if multiple matches for same institution_code, keep first
   ungroup()
 
+# Optional sanity check: how many institutions now have clean coords
+geo_lookup %>%
+  summarise(
+    n_institutions          = n(),
+    pct_with_zip            = mean(!is.na(zip_code)) * 100,
+    pct_with_coords         = mean(!is.na(latitude) & !is.na(longitude)) * 100
+  )
+
+#-----------------------------------------
+# 5. Merge geocodes (lat/lon/zip) back to the residency_data
+#    RESULT: one row per specialty/program/year in residency_data,
+#    with hospital coordinates added.
+#-----------------------------------------
+residency_geo <- residency_data %>%
+  left_join(
+    geo_lookup,
+    by = "institution_code"
+  )
+
+residency_geo %>%
+  glimpse()
 
 # open medicaid expansion data
 medicaid_data <- read_dta(file.path(raw, "expansion_status.dta"))
@@ -74,7 +128,7 @@ medicaid_data |>
   glimpse()
 
 # Merge residency data with medicaid expansion data
-merged_data <- residency_data |> 
+merged_data <- residency_geo |> 
   left_join(medicaid_data, by = c("state"))
 
 merged_data |> 
@@ -102,15 +156,14 @@ long_data <- merged_data |>
     medicaid_expansion = case_when(
       !is.na(year_expanded) & year >= year_expanded ~ 1,
       TRUE ~ 0
-    )
+    ),
+    zip_code = zip_code
   )
 
 long_data |> 
   glimpse()
 
 # census data
-install.packages("tidycensus")
-install.packages("wru")
 library(tidycensus)
 library(wru)
 
@@ -159,7 +212,8 @@ program_long_data <- long_data |>
     city = first(city),
     expansion_state = first(expansion_state),
     year_expanded = first(year_expanded),
-    medicaid_expansion = first(medicaid_expansion)
+    medicaid_expansion = first(medicaid_expansion),
+    zip_code = as.numeric(first(zip_code))
   ) |> 
   ungroup() |> 
   mutate(
