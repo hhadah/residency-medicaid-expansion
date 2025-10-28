@@ -32,8 +32,16 @@ dir.create(figures_wd,   recursive = TRUE, showWarnings = FALSE)
 dir.create(thesis_plots, recursive = TRUE, showWarnings = FALSE)
 
 ## ----------------------------------------------------
-## 1. Generate the plot with panelview()
+## 1. Generate the plot with panelview(), saving to a known file
 ## ----------------------------------------------------
+## ----------------------------------------------------
+## 1. Generate the plot with panelview(), saving to a known file
+## ----------------------------------------------------
+
+
+# Save panelview plot to a known file using png() device
+panelview_file <- file.path(figures_wd, "01-staggarred_sample_raw.png")
+png(filename = panelview_file, width = 1800, height = 1000, res = 100)
 panelview(
   matched ~ medicaid_expansion,
   data = long_data,
@@ -53,64 +61,30 @@ panelview(
   gridOff = FALSE,
   main = ""
 )
+dev.off()
 
-## ----------------------------------------------------
-## 2. Grab the most recently created PNG in figures_wd
-## ----------------------------------------------------
-pngs   <- list.files(figures_wd, pattern = "\\.png$", full.names = TRUE)
-info   <- file.info(pngs)
-latest <- rownames(info)[which.max(info$mtime)]
-cat("Latest panelview file was: ", latest, "\n")
-
-## ----------------------------------------------------
-## 3. Re-save it at width=10, height=6, res=300
-##    into BOTH output dirs with a stable name
-## ----------------------------------------------------
-
-final_name <- "01-staggarred_sample.png"
-final_fig_path    <- file.path(figures_wd,   final_name)
-final_thesis_path <- file.path(thesis_plots, final_name)
-
-# read the auto-generated PNG as a raster
-img <- png::readPNG(latest)
-
-# function to redraw that raster into a new device
-# function to redraw that raster into a new device
-resave_png <- function(target_path) {
-  png(
-    filename = target_path,
-    width = 18,    # wider
-    height = 10,   # longer / taller
-    units = "in",
-    res = 300
-  )
-  
-  # set up an empty plot that fills the device
-  par(mar = c(0,0,0,0))
-  plot(
-    0, 0,
-    type = "n",
-    xlab = "",
-    ylab = "",
-    axes = FALSE,
-    xlim = c(0,1),
-    ylim = c(0,1),
-    xaxs = "i",
-    yaxs = "i"
-  )
-  
-  rasterImage(img, 0, 0, 1, 1)
-  dev.off()
-}
-
-# write standardized copies
-resave_png(final_fig_path)
-resave_png(final_thesis_path)
-
-cat("Saved final figure(s) to:\n",
-    final_fig_path, "\n",
-    final_thesis_path, "\n")
-
+panelview_file <- file.path(thesis_plots, "01-staggarred_sample_raw.png")
+png(filename = panelview_file, width = 1800, height = 1000, res = 100)
+panelview(
+  matched ~ medicaid_expansion,
+  data = long_data,
+  index = c("institution_code","year"),
+  by.timing = TRUE,
+  pre.post = TRUE,
+  display.all = TRUE,
+  xlab = "Year",
+  ylab = "Number of Programs",
+  background = "white",
+  collapse.history = TRUE,
+  cex.main = 12,
+  cex.axis = 12,
+  cex.lab = 12,
+  cex.legend = 10,
+  axis.lab.gap = c(1,0),
+  gridOff = FALSE,
+  main = ""
+)
+dev.off()
 
 #-----------------------------------
 # Plot the evolution of average 
