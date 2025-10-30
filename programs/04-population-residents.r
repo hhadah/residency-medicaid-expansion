@@ -84,80 +84,46 @@ acs_yearly <- acs_physicians %>%
   )
 
 #---------------------------
-# 4. Combine CPS + ACS + pop for overlap years
+# 4. Combine CPS + ACS for overlap years (raw values)
 #---------------------------
 
 combined <- acs_yearly %>%
-  # attach CPS series (inner join keeps overlapping years only)
-  inner_join(cps_yearly, by = "YEAR") %>%
-  # keep only what's needed for plotting
-  select(
-    YEAR,
-    acs_total_pop,
-    acs_physicians_per_100k,
-    cps_physicians_per_100k
-  )
+  inner_join(cps_yearly, by = "YEAR")
 
 #---------------------------
-# 5. Compute percent change relative to baseline year
-#    - For population (ACS): percent change in total pop
-#    - For physicians: percent change in physicians per 100k
-#---------------------------
-
-baseline_year <- min(combined$YEAR)
-
-combined <- combined %>%
-  mutate(
-    pop_pctchg = (
-      acs_total_pop /
-      acs_total_pop[YEAR == baseline_year] - 1
-    ) * 100,
-
-    acs_phys_pctchg = (
-      acs_physicians_per_100k /
-      acs_physicians_per_100k[YEAR == baseline_year] - 1
-    ) * 100,
-
-    cps_phys_pctchg = (
-      cps_physicians_per_100k /
-      cps_physicians_per_100k[YEAR == baseline_year] - 1
-    ) * 100
-  )
-
-#---------------------------
-# 6. Reshape to long format for ggplot
+# 5. Reshape to long format for ggplot (raw values)
 #---------------------------
 
 plot_data <- combined %>%
-  select(YEAR, pop_pctchg, acs_phys_pctchg, cps_phys_pctchg) %>%
+  select(YEAR, acs_total_pop, acs_physicians, cps_physicians) %>%
   pivot_longer(
-    cols = c(pop_pctchg, acs_phys_pctchg, cps_phys_pctchg),
+    cols = c(acs_total_pop, acs_physicians, cps_physicians),
     names_to = "series",
-    values_to = "pct_change"
+    values_to = "count"
   ) %>%
   mutate(
     series = dplyr::recode(
       series,
-      pop_pctchg       = "Total population (ACS)",
-      acs_phys_pctchg  = "Physicians per 100k (ACS)",
-      cps_phys_pctchg  = "Physicians per 100k (CPS)"
+      acs_total_pop   = "Total population (ACS)",
+      acs_physicians  = "Physicians (ACS)",
+      cps_physicians  = "Physicians (CPS)"
     )
   )
 
 #---------------------------
-# 7. Plot
+# 6. Plot raw values
 #---------------------------
 
-ggplot(plot_data, aes(x = YEAR, y = pct_change, color = series)) +
+ggplot(plot_data, aes(x = YEAR, y = count, color = series)) +
   geom_line(size = 1.1) +
   geom_point(size = 2) +
   labs(
-    title = "Growth in Physicians per Capita vs Population Growth",
-    subtitle = paste0("Percent change since ", baseline_year),
+    title = "Number of Physicians and Total Population (Raw Values)",
     x = "Year",
-    y = "Percent change (%)",
+    y = "Count",
     color = ""
   ) +
+  scale_y_continuous(labels = scales::comma) +
   theme_minimal(base_size = 13) +
   theme(
     legend.position = "bottom",
