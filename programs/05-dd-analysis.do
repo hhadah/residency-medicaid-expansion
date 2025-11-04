@@ -25,36 +25,6 @@ cap mkdir "${latex_figdir}"
 * -------------------------------------------------------------------------
 use "${datadir}/cleaned_program_residency_medicaid.dta", clear
 
-drop if missing(year)
-
-* Recreate treatment flags when the cleaned file hasn’t been refreshed
-capture confirm variable treated_state
-if _rc != 0 {
-    gen byte treated_state = (year_expanded < .)
-}
-
-capture confirm variable post_expansion
-if _rc != 0 {
-    gen byte post_expansion = ///
-        (treated_state == 1 & year_expanded < . & year >= year_expanded)
-}
-
-capture confirm variable treated_post
-if _rc != 0 {
-    gen byte treated_post = treated_state * post_expansion
-}
-
-capture confirm variable program_id
-if _rc != 0 {
-    gen str20 program_id = string(state) + "_" + string(institution_code, "%10.0f")
-}
-
-capture confirm variable year_expanded
-if _rc != 0 {
-    di as error "Variable year_expanded not found. Re-run 02-data-cleaning.R."
-    exit 459
-}
-
 * -------------------------------------------------------------------------
 * Panel identifiers
 * -------------------------------------------------------------------------

@@ -163,37 +163,6 @@ long_data <- merged_data |>
 long_data |> 
   glimpse()
 
-# Create specialty grouping
-long_data <- long_data |>
-  mutate(
-    specialty_group = case_when(
-      str_detect(program_name_standardized, "^Family Medicine$|^Internal Medicine$|^Pediatrics$") ~ 1L,
-      str_detect(program_name_standardized, "Surgery-General|Orthopae|Thoracic Surgery|Vascular Surgery|Urology|Plastic Surgery \\(Integrated\\)|Neurological Surgery") ~ 2L,
-      str_detect(program_name_standardized, "^Emergency Medicine$|^Anesthesiology$") ~ 3L,
-      str_detect(program_name_standardized, "Radiology|Diagnostic Radiology|Interventional Radiology|Pathology|Nuclear Medicine") ~ 4L,
-      str_detect(program_name_standardized, "^Psychiatry$|^Neurology$|Child Neurology") ~ 5L,
-      str_detect(program_name_standardized, "Obstetrics and Gynecology") ~ 6L,
-      str_detect(program_name_standardized, "Dermatology|Otolaryngology|Medical Genetics|Preventive Medicine") ~ 7L,
-      program_name_standardized == "Transitional Year" ~ 8L,
-      TRUE ~ NA_integer_
-    ),
-    specialty_group_name = case_when(
-      specialty_group == 1L ~ "Primary Care",
-      specialty_group == 2L ~ "Surgery",
-      specialty_group == 3L ~ "Emergency/Critical Care",
-      specialty_group == 4L ~ "Radiology/Pathology",
-      specialty_group == 5L ~ "Psychiatry/Neurology",
-      specialty_group == 6L ~ "Obstetrics and Gynecology",
-      specialty_group == 7L ~ "Other Specialists",
-      specialty_group == 8L ~ "Transitional Year",
-      TRUE ~ NA_character_
-    )
-  ) |>
-  filter(!is.na(specialty_group))  # Drop unclassified specialties
-
-long_data |> 
-  glimpse()
-
 # census data
 library(tidycensus)
 library(wru)
@@ -234,7 +203,7 @@ write_dta(long_data, file.path(datasets, "cleaned_residency_medicaid.dta"))
 
 # data by program
 program_long_data <- long_data |> 
-  group_by(state, institution_code, year, program_name_standardized) |>
+  group_by(state, institution_code, year) |>
   summarize(
     matched = sum(matched, na.rm = TRUE),
     quota = sum(quota, na.rm = TRUE),
@@ -244,9 +213,7 @@ program_long_data <- long_data |>
     expansion_state = first(expansion_state),
     year_expanded = first(year_expanded),
     medicaid_expansion = first(medicaid_expansion),
-    zip_code = as.numeric(first(zip_code)),
-    specialty_group = first(specialty_group),
-    specialty_group_name = first(specialty_group_name)
+    zip_code = as.numeric(first(zip_code))
   ) |> 
   ungroup() |> 
   mutate(

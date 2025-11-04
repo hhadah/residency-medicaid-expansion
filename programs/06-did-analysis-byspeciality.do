@@ -4,6 +4,7 @@
 * Event-study plotting follows prior scheme (pre/post shading + bands)
 * =============================================================================
 
+cls
 clear all
 set more off
 
@@ -12,9 +13,13 @@ set more off
 * -------------------------------------------------------------------------
 global topdir "/Users/hhadah/Documents/GiT/residency-medicaid-expansion"
 global datadir "${topdir}/data/datasets"
+global raw "${topdir}/data/raw"
 global figdir "${topdir}/output/figures"
 global tabdir "${topdir}/output/tables"
 global latex_figdir "${topdir}/my_paper/figures"
+
+* Open log file
+log using "${topdir}/output/06-did-analysis-byspeciality.log", replace
 
 cap mkdir "${figdir}"
 cap mkdir "${tabdir}"
@@ -25,58 +30,110 @@ cap mkdir "${latex_figdir}"
 * -------------------------------------------------------------------------
 use "${datadir}/cleaned_residency_medicaid.dta", clear
 
-drop if missing(year)
-
 * -------------------------------------------------------------------------
-* Create specialty grouping
+* Create specialty grouping based on manual mapping from specialty_mapping.pdf
 * -------------------------------------------------------------------------
-gen byte specialty_group = .
-gen str30 specialty_group_name = ""
+gen str30 specialty_category = ""
 
-* Classify specialties in order - use "else if" logic by checking if still missing
-* Primary Care
-replace specialty_group = 1 if missing(specialty_group) & regexm(program_name_standardized, "^Family Medicine$|^Internal Medicine$|^Pediatrics$")
-replace specialty_group_name = "Primary Care" if specialty_group == 1
+* Anesthesiology
+replace specialty_category = "Anesthesiology" if regexm(program_name_standardized, "^Anesthesiology")
 
-* Surgery
-replace specialty_group = 2 if missing(specialty_group) & regexm(program_name_standardized, ///
-    "Surgery-General|Orthopae|Thoracic Surgery|Vascular Surgery|Urology|Plastic Surgery \(Integrated\)|Neurological Surgery")
-replace specialty_group_name = "Surgery" if specialty_group == 2
+* Neurology
+replace specialty_category = "Neurology" if ///
+    regexm(program_name_standardized, "Child Neurology") | ///
+    regexm(program_name_standardized, "^Neurology") | ///
+    regexm(program_name_standardized, "Neurodevelopmental Disabilities") | ///
+    regexm(program_name_standardized, "Neurological Surgery")
 
-* Emergency/Critical Care
-replace specialty_group = 3 if missing(specialty_group) & regexm(program_name_standardized, "^Emergency Medicine$|^Anesthesiology$")
-replace specialty_group_name = "Emergency/Critical Care" if specialty_group == 3
+* Dermatology
+replace specialty_category = "Dermatology" if regexm(program_name_standardized, "^Dermatology")
 
-* Radiology/Pathology
-replace specialty_group = 4 if missing(specialty_group) & regexm(program_name_standardized, ///
-    "Radiology|Diagnostic Radiology|Interventional Radiology|Pathology|Nuclear Medicine")
-replace specialty_group_name = "Radiology/Pathology" if specialty_group == 4
+* Radiology
+replace specialty_category = "Radiology" if ///
+    regexm(program_name_standardized, "Diagnostic Radiology") | ///
+    regexm(program_name_standardized, "Radiology-Diagnostic") | ///
+    regexm(program_name_standardized, "Interventional Radiology") | ///
+    regexm(program_name_standardized, "Radiation Oncology") | ///
+    regexm(program_name_standardized, "Nuclear Medicine")
 
-* Psychiatry/Neurology
-replace specialty_group = 5 if missing(specialty_group) & regexm(program_name_standardized, "^Psychiatry$|^Neurology$|Child Neurology")
-replace specialty_group_name = "Psychiatry/Neurology" if specialty_group == 5
+* Emergency Medicine
+replace specialty_category = "Emergency Medicine" if ///
+    regexm(program_name_standardized, "^Emergency Medicine")
 
-* OB/GYN
-replace specialty_group = 6 if missing(specialty_group) & regexm(program_name_standardized, "Obstetrics and Gynecology")
-replace specialty_group_name = "Obstetrics and Gynecology" if specialty_group == 6
+* Family Medicine
+replace specialty_category = "Family Medicine" if ///
+    regexm(program_name_standardized, "^Family Medicine")
 
-* Other Specialists
-replace specialty_group = 7 if missing(specialty_group) & regexm(program_name_standardized, "Dermatology|Otolaryngology|Medical Genetics|Preventive Medicine")
-replace specialty_group_name = "Other Specialists" if specialty_group == 7
+* Internal Medicine
+replace specialty_category = "Internal Medicine" if ///
+    regexm(program_name_standardized, "^Internal Medicine")
+
+* Obstetrics and Gynecology
+replace specialty_category = "Obstetrics and Gynecology" if ///
+    regexm(program_name_standardized, "^Obstetrics and Gynecology")
+
+* Surgery (includes General, Orthopedic, Plastic, Thoracic, Vascular, Urology)
+replace specialty_category = "Surgery" if ///
+    regexm(program_name_standardized, "^Surgery") | ///
+    regexm(program_name_standardized, "Orthopaedic Surgery") | ///
+    regexm(program_name_standardized, "Orthopedic Surgery") | ///
+    regexm(program_name_standardized, "Plastic Surgery") | ///
+    regexm(program_name_standardized, "Thoracic Surgery") | ///
+    regexm(program_name_standardized, "Vascular Surgery") | ///
+    regexm(program_name_standardized, "^Urology")
+
+* ENT (Otolaryngology)
+replace specialty_category = "ENT" if regexm(program_name_standardized, "^Otolaryngology")
+
+* Pathology
+replace specialty_category = "Pathology" if regexm(program_name_standardized, "^Pathology")
+
+* Pediatrics
+replace specialty_category = "Pediatrics" if regexm(program_name_standardized, "^Pediatrics")
+
+* Physical Medicine & Rehabilitation (also includes Osteopathic Neuromusculoskeletal)
+replace specialty_category = "Physical Medicine & Rehabilitation" if ///
+    regexm(program_name_standardized, "Physical Medicine and Rehabilitation") | ///
+    regexm(program_name_standardized, "Osteopathic Neuromusculoskeletal")
+
+* Family Medicine (also includes Preventive Medicine)
+replace specialty_category = "Family Medicine" if ///
+    regexm(program_name_standardized, "^Family Medicine") | ///
+    regexm(program_name_standardized, "^Preventive Medicine")
+
+* Psychiatry
+replace specialty_category = "Psychiatry" if regexm(program_name_standardized, "^Psychiatry")
+
+* Internal Medicine (also includes Medical Genetics)
+replace specialty_category = "Internal Medicine" if ///
+    regexm(program_name_standardized, "^Internal Medicine") | ///
+    regexm(program_name_standardized, "^Medical Genetics")
 
 * Transitional Year
-replace specialty_group = 8 if missing(specialty_group) & program_name_standardized == "Transitional Year"
-replace specialty_group_name = "Transitional Year" if specialty_group == 8
+replace specialty_category = "Transitional Year" if regexm(program_name_standardized, "^Transitional Year")
 
-* Drop unclassified or rare combinations
-drop if missing(specialty_group)
+di "Specialty category distribution:"
+tab specialty_category
+
+* -------------------------------------------------------------------------
+* Build specialty_group from specialty_category for analysis
+* -------------------------------------------------------------------------
+capture drop specialty_group specialty_group_name
+encode specialty_category, gen(specialty_group)
+gen str30 specialty_group_name = specialty_category
+
+* Check for unclassified rows (empty specialty_category)
+quietly count if specialty_category == ""
+if r(N) > 0 {
+    di as error "ERROR: " r(N) " rows have empty specialty_category"
+    drop if specialty_category == ""
+}
 
 * -------------------------------------------------------------------------
 * Check specialty group distribution
 * -------------------------------------------------------------------------
 di "Specialty group distribution:"
 tab specialty_group specialty_group_name
-tab specialty_group_name
 * -------------------------------------------------------------------------
 * Recreate treatment flags
 * -------------------------------------------------------------------------
@@ -287,10 +344,10 @@ foreach spec of local spec_groups {
             xline(-0.5, lcolor(black) lpattern(solid) lwidth(thin)) ///
             yline(0, lcolor(black) lpattern(solid) lwidth(thin)) ///
             xlabel(-5(1)5, labsize(small)) ///
-            ylabel(#8, labsize(small) format(%9.2f)) ///
+            ylabel(#10, labsize(small) format(%9.3f)) ///
             xtitle("Years relative to Medicaid expansion", size(small)) ///
             ytitle("`ytitle_str'", size(small)) ///
-            title("`plot_title'", size(medium)) ///
+            title("`plot_title'", size(small)) ///
             text(`annot_y' `annot_x' "Post avg = `avg_text'" "p-value = `treat_text'", size(small)) ///
             legend(off) ///
             graphregion(color(white)) plotregion(color(white))
@@ -322,3 +379,5 @@ di "  - ${tabdir}/did_summary_residency_by_specialty.csv"
 di "Figures:"
 di "  - ${figdir}/11-did_*_event.png (and LaTeX copies)"
 di "=================================================================="
+
+log close
