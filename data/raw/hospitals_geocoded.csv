@@ -1,0 +1,843 @@
+institution_code,institution_name,city,state,latitude,longitude,zip_code
+1001,Kaiser Permanente-Woodland Hills,Woodland Hills,CA,34.168454,-118.603802,91364
+1004,U Texas MD Anderson Cancer Ctr,Houston,TX,29.760496,-95.363433,77002
+1005,Idaho State University,Pocatello,ID,42.866523,-112.443501,83201
+1007,U Alabama Med Ctr-Birmingham,Birmingham,AL,33.522217,-86.809079,35203
+1009,U Alabama Med Ctr-Montogomery,Montgomery,AL,34.179115,-85.51221,35960
+1011,U Arizona COM-Phoenix,Phoenix,AZ,33.44823,-112.075098,85003
+1012,St Josephs Hospital,Phoenix,AZ,33.44823,-112.075098,85003
+1014,Tucson Hospitals Med Ed,Tucson,AZ,32.221297,-110.973306,85701
+1015,U Arizona COM at Tucson,Tucson,AZ,32.221297,-110.973306,85701
+1018,U Arkansas COM-Little Rock,Little Rock,AR,34.74679,-92.275505,72201
+1020,Phoebe Putney Mem Hosp,Albany,GA,31.472143,-84.127936,31705
+1021,San Joaquin Gen Hosp,French Camp,CA,37.885759,-121.275446,95231
+1022,UC San Francisco-Fresno,Fresno,CA,36.736079,-119.787082,93721
+1023,Glendale Adventist Med Ctr,Glendale,CA,45.81686,-61.313819,91206
+1024,Loma Linda University,Loma Linda,CA,34.052029,-117.267728,92354
+1025,St Mary Med Ctr-Long Beach,Long Beach,CA,38.460716,-76.468575,20685
+1027,Long Beach Mem Med Ctr,Long Beach,CA,33.86008,-118.18494,90805
+1030,Cedars-Sinai Med Ctr,Los Angeles,CA,34.048051,-118.254187,90014
+1031,Childrens Hospital-LA,Los Angeles,CA,34.048051,-118.254187,90014
+1032,Mayo Clinic School of Grad Med Educ,Jacksonville,FL,30.326472,-81.65535,32202
+1033,U Southern California,Los Angeles,CA,34.062614,-118.36941,90048
+1040,White Mem Med Ctr-LA,Los Angeles,CA,34.048051,-118.254187,90014
+1041,Alameda CO Med Ctr,Oakland,CA,37.757244,-122.161964,94605
+1042,Kaiser Permanente-Oakland,Oakland,CA,37.81086,-122.29174,94607
+1043,UC Irvine Med Ctr,Orange,CA,33.78788,-117.852422,92866
+1044,Huntington Memorial Hosp,Pasadena,CA,36.73593,-119.75117,93702
+1046,UC Davis Med Ctr,Sacramento,CA,38.581021,-121.493933,95814
+1047,Arrowhead Reg Med Ctr,Colton,CA,34.147728,-117.28741,92405
+1048,Scripps Mercy Hosp-San Diego,San Diego,CA,32.713623,-117.16016,92101
+1049,UC San Diego Med Ctr,San Diego,CA,32.713623,-117.16016,92101
+1057,St Marys Medical Ctr-SF,San Francisco,CA,37.734543,-122.423935,94112
+1061,CA Pacific Med Center,San Francisco,CA,37.722675,-122.44491,94112
+1062,UC San Francisco,San Francisco,CA,37.779238,-122.419359,94103
+1063,Santa Clara Valley Med Ctr,San Jose,CA,37.257057,-121.931335,95124
+1064,Santa Barbara Cottage Hosp,Santa Barbara,CA,34.423349,-119.70343,93101
+1065,Sutter Med Ctr of Santa Rosa,Santa Rosa,CA,38.439666,-122.713437,95404
+1067,Harbor-UCLA Med Ctr,Torrance,CA,33.83717,-118.34134,90503
+1068,Ventura County Med Ctr,Ventura,CA,34.279537,-119.293106,93001
+1069,Ventura County Med Ctr,Ventura,CA,34.279537,-119.293106,93001
+1070,Childrens National Med Ctr,Washington,DC,38.90253,-77.039386,20006
+1073,Kaiser Permanente-Orange Co,Santa Ana,CA,33.748873,-117.869722,92701
+1074,Exempla St Joseph Hosp,Denver,CO,39.741681,-104.986109,80203
+1076,U Colorado SOM-Denver,Aurora,CO,39.740328,-104.830668,80045
+1077,Denver Health Med Ctr,Denver,CO,39.741681,-104.986109,80203
+1079,Bridgeport Hospital,Bridgeport,CT,41.20549,-73.17898,06610
+1080,St Vincents Med Ctr,Bridgeport,CT,41.191494,-73.20385,06606
+1081,Danbury Hospital,Danbury,CT,41.407053,-73.44359,06810
+1082,Greenwich Hospital,Greenwich,CT,41.026228,-73.625896,06830
+1083,Hartford Hospital,Hartford,CT,41.731777,-72.791168,06032
+1085,St Francis Hospital,Hartford,CT,41.763816,-72.675888,06103
+1087,Middlesex Hospital,Middletown,CT,41.560461,-72.649751,06457
+1089,Yale-New Haven Hosp,New Haven,CT,41.313087,-72.9218,06510
+1090,Hosp of St Raphael,New Haven,CT,41.306065,-72.925772,06510
+1091,Concord Hospital,Concord,NH,35.383213,-80.587668,28025
+1093,Norwalk Hospital,Norwalk,CT,41.105335,-73.39879,06855
+1094,U Connecticut School of Medicine,Farmington,CT,41.719942,-72.831739,06032
+1095,Stamford Hospital/Columbia,Stamford,CT,41.984528,-72.28983,06076
+1096,St Marys Hospital,Waterbury,CT,40.510883,-84.430556,45885
+1097,Waterbury Hospital,Waterbury,CT,41.516028,-72.987394,06712
+1098,NYMC-New York Eye And Ear Infirmary,New York,NY,40.712749,-74.005994,10007
+1099,Christiana Care,Newark,DE,39.665295,-75.65999,19702
+1100,Altru Health System,Grand Forks,ND,47.924469,-97.031592,58201
+1101,U Florida COM-Jacksonville,Jacksonville,FL,30.33128,-81.64249,32206
+1102,Florida Hosp-Orlando,Orlando,FL,28.54211,-81.379039,32801
+1103,Marianjoy Rehab Hosp,Wheaton,IL,41.864846,-88.106622,60187
+1104,Jackson Memorial Hosp,Miami,FL,25.762836,-80.311844,33144
+1105,Mt Sinai Med Ctr-Miami,Miami Beach,FL,25.784059,-80.131015,33139
+1107,Orlando Health,Orlando,FL,28.54211,-81.379039,32801
+1109,U South Florida Morsani COM,Tampa,FL,27.947974,-82.457098,33602
+1110,Miami Childrens Hosp,Miami,FL,25.783302,-80.22966,33125
+1112,Atlanta Med Ctr,Atlanta,GA,33.76362,-84.45537,30314
+1113,Emory Univ SOM,Atlanta,GA,33.750801,-84.389855,30303
+1118,Med Ctr of Columbus,Columbus,GA,32.47948,-84.9758,31901
+1119,Jackson Park Hosp,Chicago,IL,41.782913,-87.58651,60637
+1120,Med Ctr Central Georgia/Mercer U SOM,Macon,GA,32.838003,-83.62782,31201
+1121,MacNeal Hospital,Berwyn,IL,41.850568,-87.793337,60402
+1127,Cook County Health and Hosps Sys,Chicago,IL,41.881953,-87.632362,60602
+1131,Advocate Christ Med Ctr,Oak Lawn,IL,41.71159,-87.758126,60453
+1132,Westlake Hospital,Melrose Park,IL,41.893404,-87.856606,60160
+1135,Sutter Health,Sacramento,CA,38.468923,-121.430738,95823
+1137,Advocate IL Masonic Med Ctr,Chicago,IL,41.881953,-87.632362,60602
+1139,Baton Rouge Gen Med Ctr,Baton Rouge,LA,30.475288,-91.11605,70805
+1140,Methodist Hosp-Sacramento,Sacramento,CA,38.464241,-121.415597,95823
+1141,Mercy Hosp & Med Ctr,Chicago,IL,41.881953,-87.632362,60602
+1143,Fam Med SW Washington,Vancouver,WA,45.67876,-122.61438,98665
+1144,Mt Sinai Hosp Med Ctr,Chicago,IL,41.881953,-87.632362,60602
+1147,Rush University Med Ctr,Chicago,IL,41.881953,-87.632362,60602
+1150,U Illinois COM,Chicago,IL,41.881953,-87.632362,60602
+1159,Swedish Covenant Hosp,Chicago,IL,41.881953,-87.632362,60602
+1160,Univ of Chicago Med Ctr,Chicago,IL,41.881953,-87.632362,60602
+1167,Methodist Hospital-Houston,Houston,TX,29.871477,-95.536495,77040
+1168,Presence Saint Francis Hospital,Evanston,IL,42.046792,-87.681841,60201
+1170,Loyola Univ Med Ctr,Maywood,IL,41.888038,-87.839234,60153
+1172,VA Medical Ctr-Boise,Boise,ID,43.615045,-116.202327,83702
+1173,West Suburban Med Ctr,Oak Park,IL,41.888425,-87.787957,60302
+1175,U Illinois COMÐPeoria OSF,Peoria,IL,40.691812,-89.589548,61602
+1176,Advocate Lutheran Gen Hosp,Park Ridge,IL,42.009798,-87.830647,60068
+1177,Rapid City Reg Hosp,Rapid City,SD,44.788047,-85.277661,49676
+1178,Ft Wayne Med Ed Prog,Fort Wayne,IN,41.17822,-85.13722,46825
+1180,Harvard Med School / Mass Eye and Ear,Boston,MA,42.35888,-71.056804,02109
+1183,City of Hope,Duarte,CA,33.65193,-117.7324,92618
+1184,Griffin Memorial Hospital,Norman,OK,35.221527,-97.441888,73069
+1187,Indiana University SOM,Indianapolis,IN,39.768602,-86.16166,46204
+1189,St Vincent Hosp Ctr,Indianapolis,IN,39.912167,-86.183876,46240
+1192,Indiana Univ Health Ball Memorial Hosp,Muncie,IN,40.193697,-85.387658,47305
+1193,Memorial Hospital,South Bend,IN,41.676373,-86.251986,46601
+1194,St Josephs Reg Med Ctr,Mishawaka,IN,38.066227,-87.64701,47720
+1196,Cedar Rapids Med Ed Fdn,Cedar Rapids,IA,41.977647,-91.665826,52401
+1199,Broadlawns Med Ctr,Des Moines,IA,41.584997,-93.624273,50309
+1201,Central Iowa Health System,Des Moines,IA,41.584997,-93.624273,50309
+1203,U Iowa Hosps and Clinics,Iowa City,IA,41.659076,-91.533128,52240
+1208,U Kansas SOM-Kansas City,Kansas City,KS,39.113629,-94.626816,66101
+1213,St Elizabeth Med Ctr,Edgewood,KY,39.018345,-84.574697,41017
+1214,Memorial Medical Ctr,Las Cruces,NM,32.310449,-106.778821,88001
+1215,Utah Valley Reg Med Ctr,Provo,UT,40.233788,-111.658815,84601
+1216,Montana Family Medicine,Billings,MT,45.783531,-108.505384,59101
+1217,U Louisville SOM,Louisville,KY,38.21929,-85.76141,40292
+1218,North Mississippi Med Ctr,Tupelo,MS,34.257493,-88.703373,38804
+1221,LSU SOM-Baton Rouge,Baton Rouge,LA,30.475288,-91.11605,70805
+1223,Baylor Med Ctr-Garland,Garland,TX,32.912671,-96.636494,75040
+1224,LSU SOM-New Orleans,New Orleans,LA,30.005453,-90.06801,70122
+1225,University Hospital & Clinics,Lafayette,LA,30.216614,-92.018092,70501
+1226,Carle Foundation Hosp,Urbana,IL,40.112444000000004,-88.207412,61801
+1231,CMC-Northeast Med Ctr/Cabarrus,Concord,NC,36.446117,-79.066444,27574
+1232,LSUHSC Shreveport,Shreveport,LA,32.51285,-93.749695,71101
+1235,Valley Baptist Med Ctr,Harlingen,TX,26.190669,-97.696114,78550
+1236,Maine Med Ctr,Portland,ME,43.63499,-70.2461,04106
+1237,Johns Hopkins/Bayview,Baltimore,MD,39.28998,-76.549706,21224
+1240,MedStar Franklin Square Med Ctr,Baltimore,MD,39.28836,-76.64237,21223
+1241,Greater Baltimore Med Ctr,Baltimore,MD,39.289643,-76.612299,21202
+1242,Johns Hopkins Hosp,Baltimore,MD,39.023974,-76.668506,21054
+1244,U Maryland Med Ctr Midtown Campus,Baltimore,MD,39.289643,-76.612299,21202
+1245,U Maryland-Mercy Med Ctr,Baltimore,MD,39.289643,-76.612299,21202
+1247,St Agnes Hospital,Baltimore,MD,39.272713,-76.67481,21229
+1249,Sinai Hospital of Baltimore,Baltimore,MD,39.289643,-76.612299,21202
+1250,Harbor Hospital Ctr,Baltimore,MD,39.289643,-76.612299,21202
+1251,MedStar Union Memorial Hosp,Baltimore,MD,39.289643,-76.612299,21202
+1252,U Maryland Med Ctr,Baltimore,MD,39.289643,-76.612299,21202
+1256,B I Deaconess Med Ctr,Boston,MA,42.35888,-71.056804,02109
+1257,Boston Univ Med Ctr,Boston,MA,42.35888,-71.056804,02109
+1258,Steward Carney Hospital,Boston,MA,42.35888,-71.056804,02109
+1259,Childrens Hospital-Boston,Boston,MA,42.35888,-71.056804,02109
+1260,Harvard Spaulding Rehab Hosp,Charlestown,MA,42.371163,-71.062032,02129
+1261,Massachusetts Gen Hosp,Boston,MA,42.362522,-71.070694,02114
+1263,Tufts Medical Center,Boston,MA,40.738186,-73.97414,10010
+1265,Brigham & Womens Hosp,Boston,MA,42.368176,-71.17828,02472
+1266,St Elizabeths Med Ctr,Boston,MA,42.35888,-71.056804,02109
+1268,Cambridge Health Alliance,Cambridge,MA,42.365588,-71.104,02139
+1269,Mt Auburn Hospital,Cambridge,MA,42.37472,-71.15027,02138
+1270,Harvard Longwood Psych,Boston,MA,42.346237,-71.106804,02446
+1273,Rapides Reg Med Ctr,Alexandria,LA,31.313582,-92.450533,71301
+1277,Northern NM Family Med,Santa Fe,NM,35.817659,-105.908279,87506
+1278,LSUHSC Lake Charles,Lake Charles,LA,30.206366,-93.205342,70601
+1280,Newton-Wellesley Hosp,Newton,MA,42.3494,-71.22634,02465
+1281,Berkshire Med Ctr,Pittsfield,MA,42.448847,-73.253758,01201
+1283,Grtr Lawrence Fam Hlth Ctr,Lawrence,MA,42.707736,-71.161516,01840
+1284,North Shore Med Ctr/Salem Hosp,Salem,MA,39.596416,-75.436,08079
+1286,Baystate Med Ctr,Springfield,MA,42.121331,-72.601269,01107
+1287,UIC/Mt Sinai Hosp Med Ctr,Chicago,IL,41.881953,-87.632362,60602
+1290,St Vincent Hosp-Worcester,Worcester,MA,42.263405,-71.802193,01609
+1292,St Joseph Mercy-Ann Arbor,Ann Arbor,MI,42.281424,-83.748499,48104
+1293,U Michigan Hosps-Ann Arbor,Ann Arbor,MI,42.281424,-83.748499,48104
+1295,Detroit Med Ctr/WSU,Detroit,MI,42.355542,-83.054434,48201
+1297,Eastern NM Med Ctr,Roswell,NM,33.396453,-104.522763,88201
+1300,Henry Ford Hospital,Detroit,MI,42.364807,-83.08757,48208
+1303,Ascension Providence/MSUCHM,Southfield,MI,42.4734,-83.2219,48075
+1304,Christus Santa Rosa,San Antonio,TX,29.424534,-98.491484,78205
+1307,Hurley Medical Ctr,Flint,MI,43.012555,-83.687876,48502
+1308,Genesys Reg Med Ctr,Grand Blanc,MI,42.928198,-83.630861,48439
+1314,Western Michigan Univ Stryker SOM,Kalamazoo,MI,42.291649,-85.584752,49007
+1315,Sparrow Hospital,Lansing,MI,42.716007,-84.564552,48910
+1318,Doctors Hosp of Michigan/OPMC,Pontiac,MI,42.639077,-83.291321,48342
+1319,St Joseph Mercy-Oakland,Pontiac,MI,42.639077,-83.291321,48342
+1320,Central Michigan University COM,Saginaw,MI,43.420475,-83.948114,48601
+1323,Rush-Copley Mem Hosp,Aurora,IL,41.758194,-88.315002,60506
+1328,Mayo Clinic School of Grad Med Educ,Rochester,MN,44.021592,-92.463101,55904
+1329,Hennepin Co Med Ctr,Minneapolis,MN,44.976106,-93.266096,55487
+1330,Abbott Northwestern,Minneapolis,MN,44.976106,-93.266096,55487
+1333,Clinton Memorial Hosp,Wilmington,OH,39.465897,-83.751595,45169
+1334,U Minnesota Med School,Minneapolis,MN,44.976106,-93.266096,55487
+1335,HealthPartners Institute,St Paul,MN,44.948228,-93.091634,55101
+1339,Schwab Rehab Hosp,Chicago,IL,41.881953,-87.632362,60602
+1340,Scripps Clinic/Green Hospital,La Jolla,CA,32.84423,-117.270881,92037
+1342,Allina Fam Res Prog,St Paul,MN,44.948228,-93.091634,55101
+1343,Univ of Missouri-KC Programs,Kansas City,MO,39.034702,-94.53603,64130
+1346,Mercy Med Ctr-Des Moines,Des Moines,IA,41.584997,-93.624273,50309
+1349,Munson Medical Center,Traverse City,MI,44.762912,-85.621014,49684
+1350,Pomona Valley Hosp,Pomona,CA,34.057842,-117.750166,91767
+1351,Nationwide Childrens Hosp,Columbus,OH,39.945643,-83.114409,43228
+1353,Barnes-Jewish Hosp,St Louis,MO,38.63492,-90.264681,63110
+1361,Wayne State University SOM,Detroit,MI,42.331397,-83.046217,48226
+1362,Mercy Hospital St Louis,St Louis,MO,38.627464,-90.19835,63101
+1364.0999755859375,St Lukes Hospital-St Louis,Chesterfield,MO,38.653154,-90.506801,63026
+1364.199951171875,St Lukes Hospital-St Louis,St Louis,MO,38.58808,-90.308754,63109
+1365,St Louis Univ SOM,St Louis,MO,38.627464,-90.19835,63101
+1371,U Arizona COM at South Campus,Tucson,AZ,32.221297,-110.973306,85701
+1372,Creighton Univ Affil Hosps,Omaha,NE,41.256568,-95.940959,68102
+1374,Detroit Med Ctr Corporation,Detroit,MI,42.355542,-83.054434,48201
+1375,Scripps Mercy Hosp-Chula Vista,Chula Vista,CA,26.078304,-97.44013,78566
+1376,University of Nebraska Med Ctr,Omaha,NE,41.256568,-95.940959,68102
+1377,Dartmouth-Hitchcock Med Ctr,Lebanon,NH,43.642176,-72.252322,03766
+1378,AtlantiCare Reg Med Ctr,Atlantic City,NJ,39.364148,-74.423028,08401
+1380,CMSRU/Cooper University Hospital,Camden,NJ,39.924713,-75.04706,08002
+1382,St Lukes Hospital,Maumee,OH,41.561967,-83.653403,43537
+1383,Cleveland Clinic Florida,Weston,FL,26.099977,-80.399681,33327
+1384,U Miami/JFK Palm Beach GME Consortium,Atlantis,FL,26.594692,-80.097495,33462
+1386,Englewood Hospital,Englewood,NJ,39.86465,-84.285087,45322
+1387,Hackensack U Med Ctr,Hackensack,NJ,40.904782,-74.03349,07601
+1389,Sts Mary and Elizabeth Med Ctr,Chicago,IL,41.881953,-87.632362,60602
+1390,Jersey City Medical Ctr,Jersey City,NJ,40.72157,-74.047455,07302
+1392,Monmouth Medical Ctr,Long Branch,NJ,40.303689,-73.993386,07740
+1393,Mountainside Hosp,Montclair,NJ,40.815094,-74.2191,07042
+1394,Morristown Mem Hosp,Morristown,NJ,40.426391,-74.257514,07747
+1395,Jersey Shore Univ Med Ctr,Neptune,NJ,40.224174,-74.045388,07753
+1396,St Barnabas Med Ctr,Livingston,NJ,40.795884,-74.315387,07039
+1397,Newark Beth Israel Med Ctr,Newark,NJ,40.733183,-74.1735,07102
+1398,Rutgers-New Jersey Medical School,Newark,NJ,40.733183,-74.1735,07102
+1400,St Joseph Mercy-Livingston,Howell,MI,42.607156,-83.929591,48843
+1403,Naval Med Ctr-San Diego,San Diego,CA,32.713623,-117.16016,92101
+1404,East Jefferson Gen Hosp,Metairie,LA,29.989295,-90.150398,70001
+1405,St Joseph Hosp,Chicago,IL,41.881953,-87.632362,60602
+1406,St Josephs Univ Med Ctr,Paterson,NJ,40.916294,-74.173235,07505
+1408,Overlook Hospital,Summit,NJ,40.711952,-74.34894,07901
+1409,NYP Hosp-Columbia & Cornell,New York,NY,40.712749,-74.005994,10007
+1410,Naval Med Ctr-Portsmouth,Portsmouth,VA,36.835361,-76.297922,23704
+1414,Albany Med Ctr,Albany,NY,42.68393,-73.780624,12205
+1415,Leonard J Chabert Med Ctr,Houma,LA,29.597596,-90.720783,70360
+1417,Zucker SOMÐNorthwell Southside Hosp,Bay Shore,NY,40.72239,-73.246838,11706
+1418,St Mary Mercy Hospital,Livonia,MI,42.368709,-83.352462,48150
+1419,Brookdale Hosp Med Ctr,Brooklyn,NY,40.738186,-73.97414,10010
+1420,Brooklyn Hosp Ctr,Brooklyn,NY,40.6526,-73.949700000000007,11226
+1421,Our Lady of the Lake Reg Med Ctr,Baton Rouge,LA,30.447224,-91.186948,70801
+1422,Coney Island Hospital,Brooklyn,NY,40.575573,-73.98122,11224
+1425,Interfaith Med Ctr,Brooklyn,NY,40.738186,-73.97414,10010
+1426,SUNY HSC Brooklyn,Brooklyn,NY,40.653241,-73.94403,11203
+1427,Long Island Coll Hosp,Brooklyn,NY,40.6526,-73.949700000000007,11226
+1428,Maimonides Med Ctr,Brooklyn,NY,40.738186,-73.97414,10010
+1429,NYP Brooklyn Methodist Hosp,Brooklyn,NY,40.6526,-73.949700000000007,11226
+1430,Lutheran Medical Ctr,Brooklyn,NY,40.738186,-73.97414,10010
+1435,Wyckoff Heights Med Ctr,Brooklyn,NY,40.738186,-73.97414,10010
+1442,Bassett Medical Center,Cooperstown,NY,42.701023,-74.926814,13326
+1443,NYMC-Westchester/Metropolitan,New York,NY,40.839207,-73.858766,10462
+1444,Valley Consortium,Modesto,CA,37.640516,-121.000321,95354
+1445,Flushing Hospital Med Ctr,Flushing,NY,40.765358,-73.81732,11354
+1446,North Shore-LIJ-Glen Cove Hosp,Glen Cove,NY,40.863017,-73.630885,11542
+1448,Nassau Univ Med Ctr,East Meadow,NY,40.714167,-73.559518,11554
+1449,Jamaica Hosp Med Ctr,Jamaica,NY,40.70547,-73.79489,11432
+1451,Hoboken Univ Med Ctr,Hoboken,NJ,40.753937,-74.02772,07030
+1452,Wilson Mem Reg/UHS,Johnson City,NY,42.110638,-75.934693,13905
+1453,NYMC-Phelps Memorial Hosp Ctr,Sleepy Hollow,NY,41.084228,-73.860633000000007,10591
+1454,Kaiser Permanente-San Diego,San Diego,CA,32.583744,-117.09487,92154
+1455,NYU Winthrop Hospital,Mineola,NY,40.749185,-73.641093,11501
+1459,Einstein/Montefiore New Rochelle,New Rochelle,NY,40.911537,-73.78264,10801
+1466,Memorial Sloan-Kettering,New York,NY,40.712749,-74.005994,10007
+1470,Einstein/Beth Israel Med Ctr,New York,NY,40.738186,-73.97414,10010
+1471,BronxCare Health System,Bronx,NY,40.847,-73.8972,10457
+1473,NYMC-Metropolitan Hosp Ctr,New York,NY,40.712749,-74.005994,10007
+1476,Kingsbrook Jewish Med,Brooklyn,NY,40.6526,-73.949700000000007,11226
+1478,Harlem Hospital Ctr,New York,NY,40.810925,-73.94701,10027
+1479,North General Hosp,New York,NY,40.712749,-74.005994,10007
+1481,Larkin Community Hospital,South Miami,FL,25.769674,-80.33647,33172
+1483,Zucker SOM-Northwell Lenox Hill Hosp,New York,NY,40.767815,-73.96201,10021
+1484,Lincoln Med Ctr,Bronx,NY,40.738186,-73.97414,10010
+1485,Eisenhower Med Ctr,Rancho Mirage,CA,33.757671,-116.435487,92260
+1486,NYMC Montefiore Med Ctr-North Div,Bronx,NY,40.847,-73.8972,10457
+1488,Yuma Regional Med Ctr,Yuma,AZ,32.698505,-114.59895,85365
+1489,Icahn SOM-Queens Hosp,Jamaica,NY,40.70547,-73.79489,11432
+1490,Icahn SOM at Mount Sinai,New York,NY,40.712749,-74.005994,10007
+1491,Icahn SOM Elmhurst Hosp Ctr,Elmhurst,NY,40.74238,-73.88188,11373
+1492,NYP Hosp-Weill Cornell Med Ctr,New York,NY,40.738186,-73.97414,10010
+1494,Childrens Mercy Hospital,Kansas City,MO,39.098485,-94.578631,64106
+1495,NYP Hosp-Columbia Univ Med Ctr,New York,NY,40.712749,-74.005994,10007
+1502,Conroe Reg Med Ctr,Conroe,TX,30.284834,-95.466041,77304
+1509,Rochester Gen Hosp,Rochester,NY,43.159408,-77.663133,14611
+1510,Unity Health System,Rochester,NY,43.155717,-77.612534,14608
+1511,U Rochester/Strong Memorial,Rochester,NY,43.121506,-77.61892,14620
+1513,Ellis Hospital,Schenectady,NY,42.813498,-73.939265,12305
+1514,Richmond Univ Med Ctr,Staten Island,NY,40.58337,-74.149643,10314
+1515,Zucker SOM-Northwell Staten Island Univ,Staten Island,NY,40.58337,-74.149643,10314
+1516,SUNY Upstate Med University,Syracuse,NY,43.02709,-76.12202,13210
+1518,St Josephs-Syracuse,Syracuse,NY,43.047022,-76.147486,13202
+1521,Texas Dept of State Health Services,Austin,TX,30.268072,-97.742806,78701
+1522,UC Riverside SOM,Riverside,CA,33.982513,-117.374283,92501
+1523,Oakwood Heritage Hospital,Taylor,MI,42.241476,-83.269507,48180
+1524,University of Montana,Missoula,MT,46.872108,-113.99405,59802
+1525,NYMC-St Josephs Med Ctr,Yonkers,NY,40.93932,-73.88831,10701
+1527,Carolinas Med Ctr,Charlotte,NC,35.227207,-80.84309,28202
+1529,Duke Univ Med Ctr,Durham,NC,35.995039,-78.900646,27701
+1530,ProMedica Monroe Regional Hospital,Monroe,MI,41.914335,-83.396747,48161
+1531,Shasta Community Health Ctr,Redding,CA,40.587679,-122.392282,96001
+1534,New Hanover Reg Med Ctr,Wilmington,NC,34.200318,-77.931231,28401
+1537,Wake Forest Baptist Med Ctr,Winston-Salem,NC,36.098406,-80.244912,27101
+1538,West Kendall Baptist Hospital,Miami,FL,25.773357,-80.1919,33131
+1539.0999755859375,U North Dakota SOM,Fargo,ND,46.876936,-96.787686,58102
+1539.199951171875,U North Dakota SOM,Grand Forks,ND,47.924469,-97.031592,58201
+1541,Summa Health/NEOMED,Akron,OH,40.991907,-81.53319,44319
+1542,Akron Gen Med Ctr/NEOMED,Akron,OH,41.08399,-81.56715,44320
+1544,Aultman Hospital/NEOMED,Canton,OH,40.928493,-81.41924,44720
+1547,Christ Hospital,Cincinnati,OH,39.332209,-84.54466,45014
+1548,U Cincinnati Med Ctr,Cincinnati,OH,39.102438,-84.513301,45202
+1550,Good Samaritan Hosp-Cinn,Cincinnati,OH,39.102438,-84.513301,45202
+1551,Jewish Hospital,Cincinnati,OH,39.102438,-84.513301,45202
+1552,Case Western/Univ Hosps Cleveland Med Ctr,Cleveland,OH,41.501377,-81.690317,44114
+1553,Case Western/MetroHealth Med Ctr,Cleveland,OH,41.501377,-81.690317,44114
+1560,St Vincent Charity Med Ctr,Cleveland,OH,41.501377,-81.690317,44114
+1564,Grant Medical Center,Columbus,OH,39.962232,-83.000642,43215
+1565,Mount Carmel Health System,Columbus,OH,39.106106,-84.30538,45244
+1566,Ohio State University Med Ctr,Columbus,OH,39.962232,-83.000642,43215
+1567,Riverside Methodist,Columbus,OH,40.029532,-83.02364,43202
+1571,Huron Hospital CCHS,East Cleveland,OH,41.530748,-81.581642,44112
+1572,Kaweah Delta Health Care District,Visalia,CA,49.085167,-123.056625,93291
+1574,MultiCare Good Samaritan Hosp,Puyallup,WA,38.575829,-76.855232,20601
+1575,Sierra Vista Family Med,Fresno,CA,37.151333,-120.286285,93610
+1576,Kettering Med Ctr,Kettering,OH,39.689582,-84.168644,45429
+1578,Flower Hospital,Sylvania,OH,40.042296,-80.755533,43906
+1579,University of Toledo,Toledo,OH,41.616135,-83.58464,43614
+1580,Mercy St Vincent Med Ctr,Toledo,OH,41.65534,-83.535709,43604
+1582,UAMS Regional Centers,Little Rock,AR,34.746468,-92.273114,72201
+1583,Toledo Hospital,Toledo,OH,41.67352,-83.59444,43606
+1584,St Elizabeth/NEOMED,Youngstown,OH,41.09948,-80.649759,44503
+1585,Western Reserve Health Ed/NEOMED,Youngstown,OH,41.09948,-80.649759,44503
+1586,FAU-Schmidt COM,Boca Raton,FL,26.35051,-80.086462,33432
+1587,UCF COM/GME Consortium,Orlando,FL,28.435539,-81.314894,32827
+1588,U Oklahoma COM-OK City,Oklahoma City,OK,35.46883,-97.517981,73102
+1589,All Childrens Hospital,St Petersburg,FL,27.772077,-82.638486,33701
+1590,Cahaba Medical Care,Centreville,AL,32.946545,-87.135517,35042
+1592,Christ Community Health Services,Memphis,TN,35.149844,-90.049566,38105
+1593,Kootenai Health,Coeur D'Alene,ID,47.696897,-116.793833,83814
+1594,Legacy Emanuel/Good Samaritan,Portland,OR,45.515197,-122.678367,97204
+1597,Providence Portland Med Ctr,Portland,OR,45.515197,-122.678367,97204
+1598,Prov St Vincent Hospital,Portland,OR,45.515197,-122.678367,97204
+1599,Oregon Health & Science Univ,Portland,OR,45.515197,-122.678367,97204
+1600,Abington Mem Hosp,Abington,PA,33.854295,-83.997443,30078
+1601,Lehigh Valley Hosp,Allentown,PA,40.602245,-75.471776,18101
+1602,Sacred Heart Hospital,Allentown,PA,40.59165,-75.54957,18104
+1603,UPMC Altoona Hospital,Altoona,PA,40.48728,-78.41454,16602
+1606,Bryn Mawr Hospital,Bryn Mawr,PA,40.02232,-75.3206,19010
+1608,Geisinger Health System,Danville,PA,40.961705,-76.619431,17821
+1610,Easton Hospital,Easton,PA,41.12732,-79.54108,16255
+1611.0999755859375,UPMC Hamot Med Ctr,Pittsburgh,PA,40.439375,-79.996754,15219
+1611.199951171875,UPMC Hamot Med Ctr,Erie,PA,42.129029,-80.084963,16501
+1612,St Vincent Hlth Ctr,Erie,PA,42.129029,-80.084963,16501
+1615,Pinnacle Health Hosps,Harrisburg,PA,40.259614,-76.881871,17101
+1616,Conemaugh Memorial Med Ctr,Johnstown,PA,40.245758,-78.92007,15905
+1617,Penn State Hershey Med Ctr,Hershey,PA,40.284939,-76.65201,17033
+1618,Lancaster Gen Hosp,Lancaster,PA,40.038006,-76.34384,17603
+1619,Montgomery Hospital,Lebanon,PA,40.429006,-76.59286,17028
+1620.0999755859375,UPMC McKeesport,McKeesport,PA,40.276097,-79.878878,15037
+1620.199951171875,UPMC McKeesport,Pittsburgh,PA,40.439375,-79.996754,15219
+1621,Montgomery Hospital,Norristown,PA,40.133437,-75.356537,19403
+1622,Hidalgo Medical Services,Silver City,NM,32.77379,-108.275927,88061
+1628,Hosp of the Univ of,Philadelphia,PA,38.309723,-104.59857,81001
+1629,Halifax Med Ctr,Daytona Beach,FL,29.199912,-81.058877,32114
+1630,Thomas Jefferson Univ,Philadelphia,PA,39.952756,-75.166853,19103
+1631,Albert Einstein Med Ctr,Philadelphia,PA,39.952756,-75.166853,19103
+1632,Lankenau Hospital,Wynnewood,PA,40.001248,-75.276226,19096
+1633,Billings Clinic,Billings,MT,45.834644,-108.45959,59105
+1634,Pine Rest Christian Mental Hlth Svcs,Grand Rapids,MI,42.967397,-85.644622,49503
+1636,Mercy Catholic Med,Darby,PA,39.917756,-75.255593,19023
+1637,Kaiser Permanente-Napa/Solano,Vallejo,CA,38.078243,-122.237305,94590
+1638,Temple Univ/Fox Chase Cancer Ctr,Philadelphia,PA,39.952756,-75.166853,19103
+1639,Pennsylvania Hospital,Philadelphia,PA,39.924877,-75.172935,19145
+1642,Medical City Fort Worth,Fort Worth,TX,32.898854,-97.311213,76177
+1646,Temple Univ Hosp,Philadelphia,PA,39.952756,-75.166853,19103
+1648,Allegheny Gen Hosp,Pittsburgh,PA,40.37814,-80.064866,15243
+1649,UPMC Mercy Hospital,Pittsburgh,PA,40.462407,-80.008539,15214
+1652,UPMC Medical Education,Pittsburgh,PA,40.439375,-79.996754,15219
+1653,St Christophers Hosp,Philadelphia,PA,39.952756,-75.166853,19103
+1654,Jefferson Med Coll/duPont Childrens,Philadelphia,PA,39.952756,-75.166853,19103
+1656,UPMC St Margaret,Pittsburgh,PA,40.50162,-79.931946,15215
+1657,UPMC Presbyterian Shadyside,Pittsburgh,PA,40.450535,-79.941846,15232
+1659,Western Pennsylvania Hosp,Pittsburgh,PA,40.44373,-79.87636,15221
+1661,Reading Hospital Med Ctr,Reading,PA,40.329308,-75.90529,19602
+1662,Oak Hill Hospital,Brooksville,FL,28.555638,-82.387865,34601
+1663,Family Health Ctrs at NYU Langone,Brooklyn,NY,40.6526,-73.949700000000007,11226
+1664,Guthrie/Robert Packer Hosp,Sayre,PA,41.98055,-76.51534,18840
+1669,Washington Hospital,Washington,PA,46.59803,-120.482925,98901
+1673,Williamsport Hosp,Williamsport,PA,40.26081,-87.295,47993
+1676,Brown Med Sch/Memorial Hosp,Pawtucket,RI,41.877169,-71.384302,02860
+1677,Rhode Island Hosp/Brown U,Providence,RI,41.823098,-71.41099,02903
+1678,Roger Williams Med Ctr,Providence,RI,41.823098,-71.41099,02903
+1680,Medical University of,Charleston,SC,32.976287,-80.066406,29406
+1681,Palmetto Health Richland,Columbia,SC,34.088205,-81.160277,29212
+1683,Greenville Health Sys/Univ of So Carolina,Greenville,SC,34.849611,-82.399498,29601
+1685,Spartanburg Reg Healthcare,Spartanburg,SC,34.862085,-82.381377,29607
+1689,U Tennessee COM-Chattanooga,Chattanooga,TN,35.045767,-85.308281,37402
+1690,Marian Regional Med Ctr,Santa Maria,CA,34.953073,-120.435967,93454
+1692,Forrest General Hospital,Hattiesburg,MS,31.09128,-89.213696,39401
+1694,Baptist Mem Hosp,Memphis,TN,35.090369,-89.809649,38138
+1697,Kendall Regional Med Ctr,Miami,FL,25.704334,-80.2895,33143
+1699,UT St Thomas Hospitals,Nashville,TN,36.164518,-86.781073,37219
+1700.0999755859375,North Shore-LIJ Health Sys,Great Neck,NY,40.787006,-73.73692,11021
+1700.199951171875,Zucker SOM-Northwell NS/LIJ,Manhasset,NY,40.796783,-73.699414,11030
+1701,Prov Milwaukie Hospital,Milwaukie,OR,45.430202,-122.63465,97222
+1702,Vanderbilt Univ Med Ctr,Nashville,TN,36.164518,-86.781073,37219
+1703,Driscoll Childrens Hosp,Corpus Christi,TX,27.779082,-97.416415,78405
+1705,Christus Spohn Mem Hosp,Corpus Christi,TX,27.632185,-97.233446,78418
+1706,Baylor Univ Med Ctr-Dallas,Dallas,TX,33.587994,-99.26028,76380
+1707,Methodist Health System Dallas,Dallas,TX,32.778664,-96.857506,75212
+1708,Clinica Sierra Vista,Bakersfield,CA,35.379014,-118.958518,93306
+1710,Texas Tech U Affil-El Paso,El Paso,TX,31.801939,-106.542276,88063
+1711,John Peter Smith Hosp,Fort Worth,TX,32.753521,-97.331527,76102
+1713,Texas A&M-Bryan/College Station,Bryan,TX,30.610066,-96.343407,77843
+1714,U Texas Med Branch-Galveston,Galveston,TX,29.305554,-94.793248,77550
+1715,Samaritan Health ServicesÐCorvallis,Corvallis,OR,44.60932,-123.245679,97330
+1716,Baylor Coll Med-Houston,Houston,TX,29.760496,-95.363433,77002
+1717,William Beaumont Army Med Ctr,El Paso,TX,31.759959,-106.485407,79901
+1719,Presbyterian Hosp-Dallas,Dallas,TX,32.93808,-96.822338,75254
+1721,Kadlec Regional Med Ctr,Richland,WA,46.274817,-119.275233,99352
+1722,U Texas HSC-San Antonio,San Antonio,TX,29.424534,-98.491484,78205
+1725,Baylor-Scott & White,Temple,TX,31.097795,-97.341396,76501
+1729,Intermountain Med Ctr,Murray,UT,40.659381,-111.888395,84107
+1730,Utah HealthCare Institute,Salt Lake City,UT,40.73742,-111.93659,84104
+1731,Community Health Care,Tacoma,WA,47.19899,-122.37052,98443
+1732,U Utah Affil Hospitals,Salt Lake City,UT,40.725438,-111.882016,84115
+1733,VCU-Fairfax Family Med Res,Fairfax,VA,38.846266,-77.306605,22030
+1734,Univ of Vermont Medical Center,Burlington,VT,44.475884,-73.214003,05401
+1735,McLennan County Fam Med,Waco,TX,31.521344,-97.168947,76710
+1736,McKay-Dee Hospital Ctr,Ogden,UT,40.250828,-112.39931,84080
+1737,University of Virginia,Charlottesville,VA,38.030395,-78.477477,22902
+1739,Riverside Reg Med Ctr,Newport News,VA,37.057377,-76.498604,23606
+1741,Henry Ford Allegiance Health,Jackson,MI,42.246577,-84.40712,49201
+1742,VCU-Shenandoah Valley,Front Royal,VA,38.918103,-78.193545,22630
+1743,Virginia Commonwealth U Hlth Sys,Richmond,VA,37.440273,-77.357574,23231
+1744,AU-UGA Medical Partnership,Athens,GA,33.957715,-83.37524,30601
+1748,Carilion Clinic-Virginia Tech Carilion SOM,Roanoke,VA,37.271828,-79.940557,24011
+1752,Aventura Hospital,Aventura,FL,25.97052,-80.14466,33180
+1755,Swedish Med Ctr,Seattle,WA,42.355542,-83.054434,48201
+1756,Virginia Mason Med Ctr,Seattle,WA,47.603243,-122.330286,98104
+1758,Providence Sacred Heart Med Ctr,Spokane,WA,47.659017,-117.42503,99201
+1761,Grand Strand Reg Med Ctr,Myrtle Beach,SC,33.694516,-78.889321,29577
+1767,Ocala Health System,Ocala,FL,29.187086,-82.13696,34470
+1770,Wheeling Hospital,Wheeling,WV,40.06609,-80.717476,26003
+1771,Orange Park Med Ctr,Orange Park,FL,30.165787,-81.706566,32073
+1772,Brandon Regional Hospital,Brandon,FL,27.937802,-82.293905,33511
+1774,Gundersen Lutheran Med Fdn,La Crosse,WI,43.794331,-91.249314,54601
+1777,Florida Dept of Health Palm Beach Cnty,West Palm Beach,FL,26.696207,-80.054155,33401
+1779,U Wisconsin Hospital and Clinics,Madison,WI,43.075245,-89.478386,53705
+1780,Marshfield/St Josephs,Marshfield,WI,43.815197,-88.16621,53079
+1784,Med Coll Wisconsin Affil Hosps,Milwaukee,WI,43.038772,-87.906548,53202
+1785,Memorial Hermann Hosp,Sugar Land,TX,29.619787,-95.635198,77478
+1787,Aurora Health Care/ASMC,Milwaukee,WI,44.042755,-88.98386,54923
+1788,Wheaton Franciscan Healthcare-St Joseph,Milwaukee,WI,43.038772,-87.906548,53202
+1789,Aurora St Lukes Medical Ctr-Wi,Milwaukee,WI,43.013588,-87.967779,53214
+1792,North Florida Regional Med Ctr,Gainesville,FL,29.651949,-82.32501,32601
+1793,U Texas at Austin Dell Medical School,Austin,TX,30.268072,-97.742806,78701
+1796,Gwinnett Med Ctr,Lawrenceville,GA,33.964757,-84.015168,30046
+1797,DeTar Healthcare System,Victoria,TX,28.799402,-97.006766,77901
+1800,MedStar Washington Hosp,Washington,DC,38.942126,-77.013301,20011
+1801,MedStar Georgetown Univ Hosp,Washington,DC,38.905178,-77.06281,20007
+1802,George Washington Univ,Washington,DC,38.90253,-77.039386,20006
+1803,Providence Hospital,Washington,DC,41.819931,-71.556588,02919
+1804,St Elizabeths Hospital/DBH,Washington,DC,38.84328,-76.99969,20032
+1805,Piedmont Athens Regional,Athens,GA,33.957715,-83.37524,30601
+1808,Cincinnati Childrens Hosp MC,Cincinnati,OH,39.102438,-84.513301,45202
+1811,Group Health Cooperative,Seattle,WA,47.603243,-122.330286,98104
+1812,Metrowest-Framingham,Framingham,MA,42.298054,-71.449700000000007,01701
+1813,UVM Health Network CVPH,Plattsburgh,NY,44.69775,-73.45221,12901
+1814,WellStar Kennestone Reg Med Ctr,Marietta,GA,32.47948,-84.9758,31901
+1820,Stanford Univ Progs,Stanford,CA,37.424669,-122.170275,94305
+1821,U Miami MSOM/Holy Cross,Miami,FL,25.773357,-80.1919,33131
+1822,New York-Presbyterian/Queens,Flushing,NY,40.757901,-73.784351,11358
+1824,U Florida COM-Shands Hosp,Gainesville,FL,29.651949,-82.32501,32601
+1825,U Texas Rio Grande Valley,Harlingen,TX,26.379936,-98.820472,78582
+1826,Florida State University COM,Tallahassee,FL,30.438059,-84.280624,32399
+1827,Providence Health,Portland,OR,45.515197,-122.678367,97204
+1830,Integris Health,Oklahoma City,OK,35.46883,-97.517981,73102
+1837,West Virginia University SOM,Morgantown,WV,38.846073,-77.87876,20115
+1838,Hunterdon Medical Ctr,Flemington,NJ,40.5314,-74.84091,08822
+1839,U Tennessee Grad SOM-Knoxville,Knoxville,TN,35.961762,-83.916251,37902
+1842,Northwestern McGaw/Lurie Peds,Chicago,IL,41.881953,-87.632362,60602
+1843,Childrens Hosp of Michigan,Detroit,MI,42.414671,-83.25304,48219
+1844,U Tennessee COM-Memphis,Memphis,TN,35.149844,-90.049566,38105
+1846,Weiss Memorial Hospital,Chicago,IL,41.881953,-87.632362,60602
+1848,U Kentucky Med Ctr,Lexington,KY,38.245285,-85.74758,40202
+1849,Drexel Univ COM/Hahnemann Univ Hosp,Philadelphia,PA,39.952756,-75.166853,19103
+1850,Riverside University Health Sys,Moreno Valley,CA,33.97574,-117.33982,92507
+1852,U South Alabama Hospitals,Mobile,AL,30.362856,-88.11474,36523
+1853,North Colorado Med Ctr,Greeley,CO,40.422649,-104.707781,80631
+1860,Zucker SOMÐNorthwell Zucker Hillside,Glen Oaks,NY,40.701204,-74.229567,07205
+1861,Zucker SOMÐNorthwell Cohen Childrens,New Hyde Park,NY,40.732713,-73.684374,11040
+1863,Childrens Hosp-Philadelphia,Philadelphia,PA,39.92658,-75.16735,19148
+1864,Citrus Health Network,Hialeah,FL,25.857762,-80.278692,33013
+1866.0999755859375,McLaren Reg Med Ctr,Flint,MI,43.012555,-83.687876,48502
+1866.199951171875,McLaren Health Care Corp,Grand Blanc,MI,42.928198,-83.630861,48439
+1867,Redmond Regional Med Ctr,Rome,GA,34.254659,-85.171673,30161
+1869,St Louis Childrens Hosp,St Louis,MO,38.58808,-90.308754,63109
+1870,HonorHealth-Scottsdale Thompson Peak,Scottsdale,AZ,33.496821,-111.92618,85251
+1871,U Arkansas-Fayetteville Comm Progs,Fayetteville,AR,35.892574,-94.04173,72701
+1873,Raritan Bay Med Ctr,Perth Amboy,NJ,40.519634,-74.274101,08861
+1875,New York Downtown Hosp,New York,NY,40.72145,-73.9974,10012
+1877,Riverside Community Hospital,Riverside,CA,33.982513,-117.374283,92501
+1884,Sunrise Health GME Consortium,Henderson,NV,36.029913,-115.081002,89074
+1891,Novant Health,Cornelius,NC,35.477284,-80.855248,28031
+1892,Broward Health Med Ctr,Fort Lauderdale,FL,26.119142,-80.140425,33301
+1893,Johns Hopkins/Sinai,Baltimore,MD,39.289643,-76.612299,21202
+1895,Childrens Hospital-NEOMED,Akron,OH,41.080881,-81.517567,44308
+1897,St Johns Riverside Hospital,Yonkers,NY,40.933559,-73.898141,10701
+1898,Maricopa Med Ctr,Phoenix,AZ,33.44823,-112.075098,85003
+1899,Blake Medical Center,Bradenton,FL,27.495436,-82.573461,34205
+1900,U North Carolina Hospitals,Chapel Hill,NC,35.913146,-79.055784,27516
+1902,Charleston Area Med Ctr/WV Univ,Charleston,WV,38.351704,-81.634029,25301
+1903,Brookwood Baptist Health,Birmingham,AL,33.522217,-86.809079,35203
+1904,St Elizabeth Health Ctr-Boardman,Boardman,OH,41.024434,-80.671441,44512
+1905,U Maryland Prince Georges Hosp Ctr,Cheverly,MD,38.928056,-76.915939,20785
+1907,Valley Childrens Healthcare,Madera,CA,36.961738,-120.064487,93637
+1910,Botsford Hospital,Farmington Hills,MI,42.445162,-83.324125,48336
+1911,Bayfront Med Ctr,St Petersburg,FL,27.772077,-82.638486,33701
+1912,Sea Mar Community Health Ctrs,Seattle,WA,47.603243,-122.330286,98104
+1914,Carolinas HealthCare Sys Blue Ridge,Morganton,NC,35.672704,-81.576544,28655
+1915,Ascension St John Hosp,Detroit,MI,42.331397,-83.046217,48226
+1917,John Muir Health,Walnut Creek,CA,37.89999,-122.061102,94596
+1918,U Washington Affil Hosps,Seattle,WA,47.66137,-122.33619,98103
+1920,Authority Health GME,Detroit,MI,42.331397,-83.046217,48226
+1921,Kern Medical Center,Bakersfield,CA,35.379433,-118.98023,93305
+1922,St Anthony Hospital North,Westminster,CO,39.836338,-105.037413,80030
+1923,Magnolia Regional Health Ctr,Corinth,MS,34.934346,-88.520674,38834
+1924,Henry Ford Macomb Hospital,Clinton Township,MI,44.82702,-84.006134,48619
+1929,HonorHealth,Scottsdale,AZ,33.496821,-111.92618,85251
+1930,Ascension Macomb-Oakland Hosp,Warren,MI,42.492536,-83.006578,48093
+1932,Nazareth Hospital,Philadelphia,PA,40.010565,-75.531407,19355
+1934,Somerset Medical Ctr,Somerville,NJ,40.568168,-74.61173,08876
+1936,Kent Hospital,Warwick,RI,41.733491,-71.439274,02888
+1937,Resurrection Med Ctr,Chicago,IL,41.881953,-87.632362,60602
+1938,Zucker SOMÐNorthwell Plainview Hosp,Plainview,NY,40.77643,-73.46845,11803
+1939,Childrens Hospital-Oakland,Oakland,CA,37.81086,-122.29174,94607
+1940,Burke Rehabilitation Hosp,White Plains,NY,41.031401,-73.766228,10601
+1942,Anne Arundel Med Ctr,Annapolis,MD,38.979484,-76.492109,21401
+1943,Moses H Cone Mem Hosp,Greensboro,NC,36.072545,-79.791545,27401
+1944,Mary Free Bed Hospital,Grand Rapids,MI,42.966386,-85.670181,49503
+1945,Spectrum Health/Michigan State Univ,Grand Rapids,MI,42.966386,-85.670181,49503
+1946,Oakwood Hospital,Dearborn,MI,42.288819,-83.204395,48101
+1947,McLaren Oakland,Pontiac,MI,42.639077,-83.291321,48342
+1950,Franciscan Health Olympia Fields,Olympia Fields,IL,41.51343,-87.676468,60461
+1951,Lakeland Health,Saint Joseph,MI,39.767393,-94.853027,64501
+1954,Memorial Health System,Marietta,OH,39.956104,-80.782845,43947
+1956,UCLA Med Ctr,Los Angeles,CA,34.06874,-118.444948,90095
+1957,University Hosps-Jackson,Jackson,MS,32.299689,-90.184056,39201
+1958,NCH Healthcare System,Naples,FL,26.141905,-81.79484,34102
+1959,Kaiser Permanente-SF,San Francisco,CA,37.764506,-122.423747,94110
+1961,MidMichigan Med Center,Midland,MI,42.355542,-83.054434,48201
+1962,U New Mexico SOM,Albuquerque,NM,34.972959,-106.308296,87059
+1963,Long Island Jewish Med Ctr,New Hyde Park,NY,40.75232,-73.70214,11040
+1964,Barberton Hosp/NEOMED,Barberton,OH,41.45785,-81.732864,44102
+1966,Oshsner Clinic Foundation,New Orleans,LA,29.975962,-90.078202,70119
+1968,Cleveland Clinic Fdn,Cleveland,OH,41.476454,-81.68927,44113
+1970,Suburban Community Hospital,East Norriton,PA,40.150638,-75.336731,19403
+1971,Memorial Health-Univ Med Ctr,Savannah,GA,32.080527,-81.092575,31401
+1972,Coliseum Med Ctrs,Macon,GA,32.842734,-83.617569,31217
+1974,Citrus Valley Health Partners,West Covina,CA,34.068859,-117.938237,91790
+1977,Griffin Hospital,Derby,CT,41.31987,-73.090186,06418
+1978.0999755859375,Beaumont Health System,Royal Oak,MI,42.487278,-83.144194,48067
+1978.199951171875,Beaumont Health,Southfield,MI,42.482889,-83.27023,48033
+1979,Tidelands Health,Myrtle Beach,SC,33.77027,-78.949242,29579
+1981,Largo Medical Center,Largo,FL,27.915379,-82.796616,33770
+1984,Firelands Regional Med Ctr,Sandusky,OH,41.454919,-82.710989,44870
+1985,Medical College of Georgia,Augusta,GA,33.475142,-81.965412,30901
+1987,KCU-GME Consortium,Kansas City,MO,39.074238,-94.5666,64109
+1988,Childrens Mercy Hosp-UMKC,Kansas City,MO,39.061035,-94.7521,66106
+1991,White River Health System,Batesville,AR,33.88392,-91.07151,71674
+1992,Floyd Med Ctr,Rome,GA,34.254659,-85.171673,30161
+1994,University Hosps-Columbia,Columbia,MO,38.95155,-92.328625,65201
+1995,Mercy Health Grand Rapids,Grand Rapids,MI,42.966386,-85.670181,49503
+1997,HealthONE,Denver,CO,39.741681,-104.986109,80203
+1999,St Marys Health Ctr,St Louis,MO,38.627464,-90.19835,63101
+2002,Abrazo Health Network,Phoenix,AZ,33.44823,-112.075098,85003
+2003,Capital Health Regional Med Ctr,Trenton,NJ,40.220578,-74.759711,08608
+2004,Institute for Family Health,New York,NY,40.712749,-74.005994,10007
+2006,Natl Insts of Health,Bethesda,MD,39.02699,-77.137612,20817
+2007,Good Samaritan Hosp Med Ctr,West Islip,NY,40.70804,-73.306365,11795
+2009,Canton Med Ed Fdn/NEOMED,Canton,OH,40.798812,-81.376542,44702
+2011,Wright State Univ Boonshoft SOM,Dayton,OH,39.758781,-84.19637,45402
+2013,Presby Intercommunity Hosp,Whittier,CA,35.387418,-83.204387,28779
+2014,Marquette Gen Hosp,Marquette,MI,46.528284,-87.394217,49855
+2015,Mercy Med Ctr-North Iowa,Mason City,IA,43.15271,-93.202727,50401
+2016,SIU Decatur,Decatur,IL,48.500434,-122.813602,98221
+2017,U Nevada Reno SOM,Reno,NV,39.51394,-119.85382,89523
+2018,Community Mem Health Sys,Ventura,CA,34.280823,-119.294674,93001
+2021,Penrose Hospital,Colorado Springs,CO,38.783218,-104.853209,80906
+2024,Samaritan Med Ctr,Watertown,NY,40.738186,-73.97414,10010
+2026,Quincy Fam Prac Ctr,Quincy,IL,39.931917,-91.406771,62301
+2028,U Nevada Las Vegas SOM,Las Vegas,NV,36.18496,-115.14708,89106
+2029,Adventist Health Hanford,Hanford,CA,36.327791,-119.646928,93230
+2031,LECOM Health,Erie,PA,42.129029,-80.084963,16501
+2032,McLeod Reg Med Ctr,Florence,SC,34.197234,-79.76818,29501
+2033,Self Regional Healthcare,Greenwood,SC,34.18823,-82.161734,29646
+2034,Univ of Wyoming-Cheyenne,Cheyenne,WY,41.135453,-104.819883,82001
+2037,Kaiser Permanente-Fontana,Fontana,CA,34.09196,-117.48886,92335
+2042,Palm Beach Consortium for GME,West Palm Beach,FL,26.696207,-80.054155,33401
+2043,Henry Ford Wyandotte Hospital,Wyandotte,MI,42.202114,-83.149789,48192
+2044,Medical Ctr Beaver,Beaver Falls,PA,40.754964,-80.319457,15010
+2046,U Illinois COM-Urbana,Urbana,IL,40.112444000000004,-88.207412,61801
+2047,UAMS-AHEC-El Dorado,El Dorado,AR,38.723694,-121.0545,95762
+2048,UAMS-AHEC-Jonesboro,Jonesboro,AR,35.828529,-90.694756,72401
+2050,Parkview Med Ctr,Pueblo,CO,38.270638,-104.610092,81003
+2055,Kaiser Permanente-Los Angeles,Pasadena,CA,34.145914,-118.130844,91106
+2056,Trident Medical Center,Charleston,SC,32.789284,-79.938628,29403
+2059,Harrison Med Ctr,Bremerton,WA,47.565005,-122.62696,98337
+2060,San Jacinto Meth Hosp,Baytown,TX,30.622238,-95.720894,77340
+2062,Forest Hills Hosp-NSLIJ Hlth Sys,Forest Hills,NY,40.08587,-80.696894,26003
+2065,Colorado Health Foundation,Denver,CO,39.598503,-105.03173,80123
+2066,East Tennessee St Univ,Johnson City,TN,36.19495,-82.353431,37692
+2070,Icahn SOM St Lukes-Roosevelt,New York,NY,40.220493,-74.47353,08555
+2071,Contra Costa Reg Med Ctr,Martinez,CA,37.926613,-122.05474,94597
+2075,Univ of MO-KC/Western,Kansas City,MO,39.098485,-94.578631,64106
+2077,Spectrum Health/Michigan State Univ,Grand Rapids,MI,42.966386,-85.670181,49503
+2079,E A Conway Med Ctr,Monroe,LA,32.511235,-92.102516,71201
+2085,Memorial Healthcare System,Pembroke Pines,FL,25.992329,-80.267975,33025
+2086,Inspira Med Ctr Woodbury,Woodbury,NJ,39.83818,-75.153155,08096
+2087,St Anthony Hospital,Oklahoma City,OK,35.478214,-97.51765,73102
+2091,St Lukes Warren Hospital,Phillipsburg,NJ,40.691531,-75.194472,08865
+2092,California Hosp Med Ctr,Los Angeles,CA,34.062614,-118.36941,90048
+2099,Morehouse Sch of Med,Atlanta,GA,33.577604,-84.396504,30274
+2100,Dublin Methodist Hosp,Dublin,OH,40.101723,-83.110371,43017
+2102,Mercy Health Muskegon,Muskegon,MI,43.234552,-86.248143,49440
+2103,Aria Jefferson Health,Philadelphia,PA,39.952756,-75.166853,19103
+2104,Unity Health,Searcy,AR,35.250811,-91.738991,72143
+2105,Mountain State OPTI,Lewisburg,WV,37.801717,-80.445396,24901
+2106,Garden City Hospital,Garden City,MI,44.0221,-94.230835,56034
+2107,Northside Hospital,St Petersburg,FL,27.772077,-82.638486,33701
+2108,Ocean Med Ctr,Brick,NJ,40.070772,-74.129666,08724
+2109,Manatee Memorial Hosp,Bradenton,FL,27.4962,-82.539635,34208
+2110,Corpus Christi Med Ctr,Corpus Christi,TX,27.838746,-97.573694,78410
+2112,Norton Community Hosp,Norton,VA,36.931751,-82.635189,24273
+2113,Arnot Ogden Med Ctr,Elmira,NY,42.09152,-76.80259,14901
+2114,Charles R Drew University,Los Angeles,CA,34.048051,-118.254187,90014
+2115,Kaiser Permanente-Santa Rosa,Santa Rosa,CA,38.36953,-122.723305,95407
+2116,CHRISTUS Health,Irving,TX,32.82938,-96.944127,75061
+2117,Advocate Health Care,Downers Grove,IL,41.792922,-88.010224,60515
+2119,Kaiser Permanente-San Jose,San Jose,CA,37.291645,-121.99201,95008
+2120,Rowan University SOM,Stratford,NJ,39.830577,-75.018798,08084
+2121,Palmetto General Hosp,Hialeah,FL,25.857762,-80.278692,33013
+2122,Doctors HospitalÐOhioHealth,Columbus,OH,39.981847,-82.821929,43213
+2123,MSUCOM Statewide Campus Sys,East Lansing,MI,42.736026,-84.48379,48823
+2124,Hemet Valley Med Ctr,Hemet,CA,33.747565,-116.967344,92543
+2125,NYCOMEC,Old Westbury,NY,40.788744,-73.599744,11568
+2127,Adena Health System,Chillicothe,OH,39.333186,-82.982103,45601
+2128,Campbell University,Lillington,NC,35.398764,-78.816256,27546
+2129,LewisGale Med Ctr,Salem,VA,37.293378,-80.054668,24153
+2130,Houston Healthcare,Warner Robins,GA,32.649813,-83.695258,31093
+2131,Desert Regional Med Ctr,Palm Springs,CA,33.8231,-116.545565,92262
+2132,Southeast Alabama Med Ctr,Dothan,AL,31.225183,-85.393578,36303
+2133,College Med Ctr,Long Beach,CA,33.769297,-118.193674,90802
+2134,Appalachian OPTIC,Pikeville,KY,37.479471,-82.517511,41501
+2135,Kaiser Permanente-Santa Clara,Santa Clara,CA,37.341851,-121.9812,95051
+2136,HMH-Palisades Med Ctr,North Bergen,NJ,40.801519,-74.006796,07047
+2137,Regional Med Ctr Bayonet Point,Hudson,FL,28.327303,-82.68316,34668
+2138,St Agnes Med Ctr,Fresno,CA,36.736079,-119.787082,93721
+2139,St Mary Med Ctr-Langhorne,Langhorne,PA,40.176151,-74.92027,19047
+2140,Eastern Idaho Regional Med Ctr,Idaho Falls,ID,43.493987,-112.041237,83402
+2142,Medical City Weatherford,Weatherford,TX,32.898854,-97.311213,76177
+2143,South Baldwin Reg Med Ctr,Foley,AL,45.780064,-93.980545,56329
+2144,East Central Mississippi Health,Meridian,MS,32.365036,-88.700421,39301
+2145,Sovah HealthÐDanville,Danville,VA,36.586339,-79.392555,24541
+2146,Oakwood Southshore Hospital,Trenton,MI,42.140857,-83.177975,48183
+2147,South Georgia Med Ed & Res Consortium,Moultrie,GA,31.179932,-83.788857,31768
+2149,Still OPTI-Peak Vista FMRP,Colorado Springs,CO,38.83242,-104.821879,80903
+2150,Chino Valley Med Ctr,Chino,CA,34.013319,-117.689204,91710
+2151,Casa Colina Hosp,Pomona,CA,34.057842,-117.750166,91767
+2152,Still OPTI-Northeast Reg Med Ctr,Kirksville,MO,40.194729,-92.582119,63501
+2154,Creighton Univ Affil Hosps,Phoenix,AZ,33.44823,-112.075098,85003
+2155,Northwestern McGraw/NMH/VA,Chicago,IL,42.056225,-87.67717,60201
+2156,Midwestern University OPTI,Phoenix,AZ,33.44823,-112.075098,85003
+2157,Westchester Medical Center,Valhalla,NY,40.738186,-73.97414,10010
+2158,Philadelphia Coll of Osteo Med,Philadelphia,PA,39.952756,-75.166853,19103
+2159,Skagit Regional Health,Mount Vernon,WA,33.83572,-83.644066,30655
+2160,St. Joseph Hospital of Eureka,Eureka,CA,40.791423,-124.167888,95501
+2161,St. Josephs Medical Center,Stockton,CA,37.952864,-121.288399,95202
+2162,Oklahoma State U Ctr for Health Sci,Tulsa,OK,36.15286,-95.989398,74103
+2163,Mercyhealth GME Consortium,Rockford,IL,39.76669,-89.62362,62703
+2164,Clarion Hospital,Clarion,PA,41.192111,-79.396765,16214
+2165,Gateway Behavioral Hlth Comm Svc,Savannah,GA,32.080527,-81.092575,31401
+2166,Northeast Georgia Med Ctr,Gainesville,GA,34.300253,-83.82432,30501
+2167,Trios Health,Kennewick,WA,46.207643,-119.119963,99336
+2168,Yakima Valley Farm Workers Clinic,Toppenish,WA,46.37385,-120.311226,98948
+2169,TIGMER,San Antonio,TX,29.55678,-98.715386,78023
+2170,Metro Health/U Michigan Health,Wyoming,MI,42.913514,-85.70526,49509
+2171,OMECO,Tulsa,OK,36.15286,-95.989398,74103
+2172,Rocky Mountain OPTI,Parker,CO,35.80525,-94.767715,74960
+2173,UPMC Pinnacle Lititz,Lititz,PA,40.138195,-76.303175,17543
+2174,Merit Health Wesley,Hattiesburg,MS,31.327048,-89.290376,39401
+2175,Nemours Childrens Hosp,Orlando,FL,28.54211,-81.379039,32801
+2176,St Lukes Hosp-Anderson,Easton,PA,41.12732,-79.54108,16255
+2177,Riverside Medical Ctr,Kankakee,IL,41.120033,-87.861114,60901
+2178,Johnston Memorial Hosp,Abingdon,VA,36.70978,-81.977336,24210
+2179,Western Reserve Hospital,Cuyahoga Falls,OH,41.137829,-81.484047,44221
+2180,Adventist Health Ukiah Valley,Ukiah,CA,39.150028,-123.207655,95482
+2181,Wellspan Health,York,PA,39.991423,-76.751272,17404
+2182,MountainView Reg Med Ctr,Las Cruces,NM,32.310449,-106.778821,88001
+2183,Health Quest,Lagrangeville,NY,41.650261,-73.764389,12540
+2184,UnityPoint Broadlawns,Des Moines,IA,41.600627,-93.545742,50317
+2186,Eastern CT Health Network,Manchester,CT,41.77639,-72.52144,06040
+2187,Zucker SOMÐNorthwell Mather Hosp,Port Jefferson,NY,40.946712,-73.069361,11777
+2188,Las Palmas del Sol Healthcare,El Paso,TX,31.738707,-106.3099,79936
+2189,University Hosps Osteo Consortium,Westlake,OH,41.456994,-81.917233,44145
+2191,Marshall Community Health,Huntington,WV,38.419422,-82.443494,25701
+2192,VCOM/LGHM GME Consortium,Blacksburg,VA,37.230661,-80.415355,24060
+2193,Howard Univ Hosp,Washington,DC,38.90253,-77.039386,20006
+2194,Community Health of South Florida,Miami,FL,25.773357,-80.1919,33131
+2195,Citrus Memorial Hospital,Inverness,FL,26.014812,-80.31054,33024
+2196,St Petersburg General Hosp,St. Petersburg,FL,27.772078,-82.63849,33701
+2197,Montclair Hosp Med Ctr,Montclair,CA,40.815094,-74.2191,07042
+2198,Baptist Health,North Little Rock,AR,34.744869,-92.373132,72205
+2199,East Liverpool City Hosp,East Liverpool,OH,40.6367,-80.55038,43920
+2200,Zucker SOM Northwell Peconic Bay,Riverhead,NY,40.916927,-72.662524,11901
+2201,Valley Health System,Las Vegas,NV,36.274326,-115.07249,89115
+2203,St Ritas Medical Center,Lima,OH,40.742688,-84.106799,45801
+2205,Niagara Falls Mem Med Ctr,Niagara Falls,NY,43.108525,-78.985958,14304
+2206,Albert Einstein Healthcare Network,Philadelphia,PA,39.952756,-75.166853,19103
+2207,Cayuga Med Ctr,Ithaca,NY,42.439687,-76.496695,14850
+2208,Fairfield Med Ctr,Lancaster,OH,39.713743,-82.601929,43130
+2209,Puyallup Tribal Health Authority,Tacoma,WA,47.241656,-122.42001,98421
+2210,St. Joseph's Hospital,Tacoma,WA,47.255127,-122.442003,98402
+2211,HCA Gulf Coast Ed Consortium,Houston,TX,29.760496,-95.363433,77002
+2213,UHS So California Med Ed Consortium,Temecula,CA,33.493397,-117.1488,92590
+2247,Northwestern McGaw/NMH/VA,Chicago,IL,42.056225,-87.67717,60201
+2267,U IL-Methodist Med Ctr,Peoria,IL,40.691812,-89.589548,61602
+2268,U Illinois COM-Rockford,Rockford,IL,42.271782,-89.095819,61101
+2327,Central Maine Med Ctr,Lewiston,ME,44.097602,-70.216911,04240
+2436,Michigan St Univ CHM-East Lansing,Lansing,MI,42.96907,-85.63972,49503
+2446,Meadville Med Ctr,Meadville,PA,41.638702,-80.152468,16335
+2520,Eastern Maine Med Ctr,Bangor,ME,44.801616,-68.771305,04401
+2530,Bon Secours Health System,Midlothian,VA,37.464178,-77.660777,23114
+2599,Creedmoor Psych Ctr,Queens Village,NY,44.379147,-64.365204,11700
+2640,SW Oklahoma Family Med,Lawton,OK,34.604061,-98.396834,73501
+2689,Bethesda Hospital,Cincinnati,OH,39.102438,-84.513301,45202
+2727,U Oklahoma COM-Tulsa,Tulsa,OK,35.46883,-97.517981,73102
+2793,Brown U/Womens & Infants Hosp of,Providence,RI,41.816616,-71.41018,02903
+2805,Univ of South Dakota SSOM,Sioux Falls,SD,43.545999,-96.726776,57104
+2835,U Texas Southwestern Med Sch-Dallas,Dallas,TX,32.82138,-96.836494,75235
+2912,Baptist Health Madisonville,Madisonville,KY,37.328172,-87.498856,42431
+2918,Rutgers-R W Johnson Medical School,New Brunswick,NJ,40.494764,-74.446706,08901
+2919,Stony Brook Teach Hosps,Stony Brook,NY,40.925521,-73.141305,11790
+2920,UIC/Metro Group Hospitals,Chicago,IL,41.881953,-87.632362,60602
+2922,SIU SOM & Affil Hosps,Springfield,IL,39.799463,-89.64937,62701
+2923,U Texas Med Sch-Houston,Houston,TX,29.760496,-95.363433,77002
+2926,Tallahassee Mem Healthcare,Tallahassee,FL,30.513315,-84.239126,32309
+2947,U Alabama SOM-Huntsville,Huntsville,AL,34.704243,-86.61872,35805
+2948,SIU Carbondale,Carbondale,IL,37.725247,-89.216746,62901
+2950,Olive View-UCLA Med Ctr,Sylmar,CA,34.307602,-118.449706,91342
+2952,Phoenix Childrens Hospital,Phoenix,AZ,33.530983,-112.065025,85014
+2955,U Alabama SOM-Tuscaloosa,Tuscaloosa,AL,33.16663,-87.49734,35405
+2956,Maine-Dartmouth Family Med,Augusta,ME,44.314786,-69.774393,04330
+2963,St Francis Hosp Ctr,Indianapolis,IN,39.768602,-86.16166,46204
+2965,Excela Health Latrobe Hosp,Latrobe,PA,40.315228,-79.395065,15650
+2966,Chestnut Hill Hosp,Philadelphia,PA,40.077038,-75.20818,19118
+2967,Scottsdale Healthcare-Osborn,Scottsdale,AZ,33.671803,-111.9216,85255
+2969,Quad Cities Genesis,Davenport,IA,41.541485,-90.556107,52803
+2971,Natividad Med Ctr,Salinas,CA,36.702374,-121.63205,93906
+2973,Texas Tech U Affil-Lubbock,Lubbock,TX,33.592335,-101.887886,79415
+2978,NYU School Of Medicine,New York,NY,40.642069,-73.908015,11236
+2979,Center for Family Medicine,Sioux Falls,SD,43.545999,-96.726776,57104
+2980,Eastern VA Med School,Norfolk,VA,36.848182,-76.292937,23510
+2984,Research Med Ctr,Kansas City,MO,39.074238,-94.5666,64109
+2985,United Hospital Ctr,Bridgeport,WV,39.286652,-80.256066,26330
+2992,Wyoming Valley Health-P,Kingston,PA,41.261771,-75.897225,18704
+2993,Texas Tech U Affil-Amarillo,Amarillo,TX,35.207498,-101.835785,79101
+2998,NYMC-Westchester Med Ctr,Valhalla,NY,40.738186,-73.97414,10010
+3001,U Wisconsin SOM and Public Health,Madison,WI,43.075245,-89.478386,53705
+3002,UAMS-AHEC-Fayetteville,Fayetteville,AR,35.037019,-78.853325,28312
+3003,UAMS-AHEC-Ft Smith,Fort Smith,AR,35.332397,-94.400665,72901
+3005,St Mary-Corwin Med Ctr,Pueblo,CO,38.270638,-104.610092,81003
+3006,Hinsdale Hospital,Hinsdale,IL,41.801616,-87.927172,60521
+3007,Union Hospital,Terre Haute,IN,39.487198,-87.413956,47804
+3017,Anderson Area Med Ctr,Anderson,SC,34.504014,-82.650367,29621
+3021,Lincoln Med Ed Partnership,Lincoln,NE,39.669655,-75.24112,08062
+3022,Siouxland Med Ed Fdn,Sioux City,IA,42.496356,-96.404949,51101
+3023,Mountain AHEC,Asheville,NC,35.595523,-82.551925,28801
+3027,Community Health Network,Indianapolis,IN,39.768602,-86.16166,46204
+3029,Deaconess Hospital,Evansville,IN,37.972965,-87.570699,47708
+3030,UCLA Semel Inst for Neurosciene,Los Angeles,CA,34.048051,-118.254187,90014
+3033.10009765625,Atlantic Health Sys,Morristown,NJ,40.796932,-74.482049,07960
+3033.199951171875,Atlantic Health Sys,Summit,NJ,40.718001,-74.358702,07901
+3035,La Crosse-Mayo,La Crosse,WI,43.842716,-91.248215,54603
+3036,Dignity Health Northridge Hosp Med Ctr,Northridge,CA,34.23551,-118.536094,91325
+3037,La Grange Mem Hosp,La Grange,IL,41.804944,-87.875451,60525
+3039,Family Medicine Res of Idaho,Boise,ID,43.615045,-116.202327,83702
+3043,JFK Med Ctr,Edison,NJ,40.51267,-74.389149,08817
+3045,Chippenham Med Ctr,Richmond,VA,37.614258,-77.498152,23228
+3046,Southern Reg AHEC Fam Res,Fayetteville,NC,35.052508,-78.878105,28301
+3049,NEOMED Affl Hosps,Akron,OH,39.081962,-84.589853,45204
+3050,U Massachusetts Med School,Worcester,MA,42.26089,-71.81844,01609
+3053,RFUMS/Chicago Medical School,North Chicago,IL,41.731907,-87.55131,60617
+3054,U Kansas SOM-Wichita,Wichita,KS,37.693459,-97.338212,67202
+3056,Wright Center for GME,Scranton,PA,41.956543,-80.44742,16443
+3057,Vidant Med Ctr/East Carolina Univ,Greenville,NC,35.611534,-77.375184,27834
+3059,Central WA Family Med,Yakima,WA,46.59803,-120.482925,98901
+3060,St Vincents East,Birmingham,AL,33.508005,-86.788713,35205
+3061,Selma Fam Med Res,Selma,AL,32.407789,-87.019914,36701
+3062,UAMS-AHEC-Pine Bluff,Pine Bluff,AR,34.216339,-92.013543,71601
+3063,Ft Collins Fam Med,Fort Collins,CO,40.587093,-105.07712,80524
+3064,St Elizabeth Med Ctr,Utica,NY,43.101445,-75.231169,13502
+3065,Lynchburg Fam Med Res,Lynchburg,VA,37.414018,-79.141555,24504
+3066,Marshall University SOM,Huntington,WV,38.407523,-82.369507,25705
+3067,So Nassau Comm Hosp,Oceanside,NY,40.64286,-73.640034,11572
+3069,St Marys Hospital,Grand Junction,CO,43.43593,-80.51411,81501
+3070,UAMS-AHEC-Texarkana,Texarkana,AR,33.439631,-93.977637,71854
+3072,McAllen Med Ctr,Mcallen,TX,26.198004,-98.277452,78501
+3073,Tulane Univ SOM,New Orleans,LA,29.964857,-90.086136,70119
+3079,Northeast Iowa Med Ed Fdn,Waterloo,IA,42.498338,-92.333973,50703
+3080,Mercy Med Ctr-Merced,Merced,CA,37.303979,-120.48371,95340
+3081,Mercy Med Ctr-Redding,Redding,CA,40.587679,-122.392282,96001
+3082,Montgomery Fam Med Res,Montgomery,AL,32.381405,-86.382675,36108
+3084,Virtua Family Med,Voorhess,NJ,39.851234,-74.961313,08043
+3086,Tacoma Family Med,Tacoma,WA,47.19899,-122.37052,98443
+3087,Forbes Family Medicine,Monroeville,PA,40.389324,-79.753272,15146
+3088,Wichita Falls Family,Wichita Falls,TX,33.900175,-98.501835,76301
+3089,Univ of Wyoming-Casper,Casper,WY,42.850082,-106.325188,82601
+3099,University at Buffalo SOM,Buffalo,NY,42.886791,-78.878646,14202
+3110,Michigan St Univ-Flint Med Ed,Flint,MI,42.96907,-85.63972,49503
+3112,Lemuel Shattuck Hosp,Boston,MA,42.335782,-71.105201,02115
+3113,St Barnabas Hosp,Bronx,NY,40.770811,-74.352613,07039
+3116,Woodhull Med Ctr,Brooklyn,NY,40.738186,-73.97414,10010
+3118,Good Samaritan Hosp,Baltimore,MD,39.289643,-76.612299,21202
+3120,Harvard South Shore,Brockton,MA,45.768722,-63.319585,02301
+3124,Texas Tech U Affil-Permian Basin,Odessa,TX,31.847454,-102.368996,79761
+3125,St Vincents Med Ctr,Jacksonville,FL,30.326472,-81.65535,32202
+3128,Hosp For Special Surg,New York,NY,40.712749,-74.005994,10007
+3131,UIC/Illinois Masonic FMR,Chicago,IL,41.674274,-87.624948,60628
+3132,Valley Med Ctr,Renton,WA,47.479682,-122.205452,98057
+3153,Einstein/Montefiore Med Ctr,Bronx,NY,40.738186,-73.97414,10010
+3155,Creighton-Nebraska Hlth Fnd,Omaha,NE,41.2456,-95.9333,68108
+3167,Cox Medical Centers,Springfield,MO,37.208835,-93.292489,65806
+3170,Brown Univ Psych Res,Providence,RI,41.823098,-71.41099,02903
+3172,Jacobi Med Ctr/Einstein,Bronx,NY,40.738186,-73.97414,10010
+3173,Childrens Hosp-Orange Co,Orange,CA,33.78788,-117.852422,92866
+3184,Johns Hopkins Bloomberg SPH,Baltimore,MD,39.27262,-76.6141,21230
+3185,Crozer-Chester Med Ctr,Upland,PA,39.857538,-75.382128,19015
+3187,Clinton Memorial Hosp,Cleveland,OH,41.48627,-81.82269,44107
+3191,MedStar National Rehab Hosp,Washington,DC,38.884362,-77.039271,20024
+3192,In His Image Family Med,Tulsa,OK,36.15286,-95.989398,74103
+3194,Seton Hall Univ Sch of Health & Med Sci,South Orange,NJ,40.745734,-74.258,07079
+3197,Clarkson Family Med Res,Omaha,NE,41.256568,-95.940959,68102
+3198,Providence St Peter Hospital,Olympia,WA,47.044908,-122.90169,98501
+3199,INOVA Fairfax Hospital,Falls Church,VA,38.883325,-77.081572,22211
+3200,Mayo Clinic School of Grad Med Educ,Scottsdale,AZ,33.496821,-111.92618,85251
+3211,St Peters University Hosp,New Brunswick,NJ,40.494764,-74.446706,08901
+3620,Kaiser Permanente-Riverside,Riverside,CA,33.990507,-117.35124,92507
+3625,UC San Francisco-East Bay,Oakland,CA,37.779238,-122.419359,94103
+3626,U Texas HSC-Tyler,Tyler,TX,32.35164,-95.300644,75702
+3722,Mercy Health System,Janesville,WI,42.681911,-89.021354,53545
+3795,O'Connor Hospital,San Jose,CA,37.336157,-121.890608,95113

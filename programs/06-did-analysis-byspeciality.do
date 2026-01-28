@@ -31,102 +31,29 @@ cap mkdir "${latex_figdir}"
 use "${datadir}/cleaned_residency_medicaid.dta", clear
 
 * -------------------------------------------------------------------------
-* Create specialty grouping based on manual mapping from specialty_mapping.pdf
+* Use gen_specialty_alt for specialty grouping
 * -------------------------------------------------------------------------
-gen str30 specialty_category = ""
+capture confirm variable gen_specialty_alt
+if _rc != 0 {
+    di as error "Variable gen_specialty_alt not found. Check data."
+    exit 459
+}
 
-* Anesthesiology
-replace specialty_category = "Anesthesiology" if regexm(program_name_standardized, "^Anesthesiology")
-
-* Neurology
-replace specialty_category = "Neurology" if ///
-    regexm(program_name_standardized, "Child Neurology") | ///
-    regexm(program_name_standardized, "^Neurology") | ///
-    regexm(program_name_standardized, "Neurodevelopmental Disabilities") | ///
-    regexm(program_name_standardized, "Neurological Surgery")
-
-* Dermatology
-replace specialty_category = "Dermatology" if regexm(program_name_standardized, "^Dermatology")
-
-* Radiology
-replace specialty_category = "Radiology" if ///
-    regexm(program_name_standardized, "Diagnostic Radiology") | ///
-    regexm(program_name_standardized, "Radiology-Diagnostic") | ///
-    regexm(program_name_standardized, "Interventional Radiology") | ///
-    regexm(program_name_standardized, "Radiation Oncology") | ///
-    regexm(program_name_standardized, "Nuclear Medicine")
-
-* Emergency Medicine
-replace specialty_category = "Emergency Medicine" if ///
-    regexm(program_name_standardized, "^Emergency Medicine")
-
-* Family Medicine
-replace specialty_category = "Family Medicine" if ///
-    regexm(program_name_standardized, "^Family Medicine")
-
-* Internal Medicine
-replace specialty_category = "Internal Medicine" if ///
-    regexm(program_name_standardized, "^Internal Medicine")
-
-* Obstetrics and Gynecology
-replace specialty_category = "Obstetrics and Gynecology" if ///
-    regexm(program_name_standardized, "^Obstetrics and Gynecology")
-
-* Surgery (includes General, Orthopedic, Plastic, Thoracic, Vascular, Urology)
-replace specialty_category = "Surgery" if ///
-    regexm(program_name_standardized, "^Surgery") | ///
-    regexm(program_name_standardized, "Orthopaedic Surgery") | ///
-    regexm(program_name_standardized, "Orthopedic Surgery") | ///
-    regexm(program_name_standardized, "Plastic Surgery") | ///
-    regexm(program_name_standardized, "Thoracic Surgery") | ///
-    regexm(program_name_standardized, "Vascular Surgery") | ///
-    regexm(program_name_standardized, "^Urology")
-
-* ENT (Otolaryngology)
-replace specialty_category = "ENT" if regexm(program_name_standardized, "^Otolaryngology")
-
-* Pathology
-replace specialty_category = "Pathology" if regexm(program_name_standardized, "^Pathology")
-
-* Pediatrics
-replace specialty_category = "Pediatrics" if regexm(program_name_standardized, "^Pediatrics")
-
-* Physical Medicine & Rehabilitation (also includes Osteopathic Neuromusculoskeletal)
-replace specialty_category = "Physical Medicine & Rehabilitation" if ///
-    regexm(program_name_standardized, "Physical Medicine and Rehabilitation") | ///
-    regexm(program_name_standardized, "Osteopathic Neuromusculoskeletal")
-
-* Family Medicine (also includes Preventive Medicine)
-replace specialty_category = "Family Medicine" if ///
-    regexm(program_name_standardized, "^Family Medicine") | ///
-    regexm(program_name_standardized, "^Preventive Medicine")
-
-* Psychiatry
-replace specialty_category = "Psychiatry" if regexm(program_name_standardized, "^Psychiatry")
-
-* Internal Medicine (also includes Medical Genetics)
-replace specialty_category = "Internal Medicine" if ///
-    regexm(program_name_standardized, "^Internal Medicine") | ///
-    regexm(program_name_standardized, "^Medical Genetics")
-
-* Transitional Year
-replace specialty_category = "Transitional Year" if regexm(program_name_standardized, "^Transitional Year")
-
-di "Specialty category distribution:"
-tab specialty_category
+di "Specialty distribution (gen_specialty_alt):"
+tab gen_specialty_alt
 
 * -------------------------------------------------------------------------
-* Build specialty_group from specialty_category for analysis
+* Build specialty_group from gen_specialty_alt for analysis
 * -------------------------------------------------------------------------
 capture drop specialty_group specialty_group_name
-encode specialty_category, gen(specialty_group)
-gen str30 specialty_group_name = specialty_category
+encode gen_specialty_alt, gen(specialty_group)
+gen str30 specialty_group_name = gen_specialty_alt
 
-* Check for unclassified rows (empty specialty_category)
-quietly count if specialty_category == ""
+* Check for unclassified rows (empty or missing gen_specialty_alt)
+quietly count if missing(gen_specialty_alt) | gen_specialty_alt == ""
 if r(N) > 0 {
-    di as error "ERROR: " r(N) " rows have empty specialty_category"
-    drop if specialty_category == ""
+    di as error "WARNING: " r(N) " rows have missing gen_specialty_alt - dropping"
+    drop if missing(gen_specialty_alt) | gen_specialty_alt == ""
 }
 
 * -------------------------------------------------------------------------
@@ -261,6 +188,17 @@ foreach spec of local spec_groups {
         capture noisily test tau0 tau1 tau2 tau3 tau4 tau5
         if (_rc == 0) local treat_p = r(p)
         
+        * Calculate baseline mean (pre-treatment observations for this specialty in treated states)
+        quietly summarize `outcome' if specialty_group == `spec' & treated_state == 1 & year < year_expanded [aw=total_population_10]
+        local baseline_mean = r(mean)
+        if missing(`baseline_mean') | `baseline_mean' == 0 {
+            local baseline_mean = 1
+        }
+        local pct_effect = (`avg_treat' / `baseline_mean') * 100
+        if `pct_effect' < -100 {
+            local pct_effect = -100
+        }
+        
         local n_programs = .
         local n_states = .
         capture levelsof program_numeric_id if specialty_group == `spec' & !missing(`outcome'), local(active_programs)
@@ -304,6 +242,8 @@ foreach spec of local spec_groups {
         gen byte post_period = (period >= 0)
         local avg_text = cond(`avg_treat' < ., string(`avg_treat', "%9.2f"), "NA")
         local treat_text = cond(`treat_p' < ., string(`treat_p', "%9.2f"), "NA")
+        local baseline_text = string(`baseline_mean', "%9.2f")
+        local pct_text = string(`pct_effect', "%9.1f")
         local post_line ""
         if (`avg_treat' < .) {
             local post_line "(scatteri `avg_treat' 0 `avg_treat' 5, recast(line) lpattern(dash) lcolor(red) lwidth(medium))"
@@ -316,21 +256,14 @@ foreach spec of local spec_groups {
         local prefix : display %02.0f `plotnum'
         local ytitle_str "Treatment Effect (difference-in-differences)"
         local plot_title "Event Study: `spec_name' - `label'"
-        local annot_x 3
+        * Calculate annotation position dynamically
         quietly summarize ci_upper
-        local y_max = r(max)
-        if (missing(`y_max')) local y_max = 0
-        quietly summarize ci_lower
-        local y_min = r(min)
-        if (missing(`y_min')) local y_min = 0
-        local y_span = `y_max' - `y_min'
-        if (`y_span' <= 0) local y_span = max(1, abs(`y_max'))
-        local annot_y = `y_min' + 0.85*`y_span'
+        local y_annot = r(max)
+        local x_annot = -4
         * Adjust for per 100k outcomes
         if (strpos("`short'", "_100k") > 0) {
             local ytitle_str "Treatment Effect (per 100,000 population)"
-            local annot_x 4
-            local annot_y = `y_min' + 0.75*`y_span'
+            local x_annot = -4
         }
         twoway ///
             (rarea ci_upper ci_lower period if pre_period, fcolor(dkgreen%45) lcolor(dkgreen%45) lwidth(none)) ///
@@ -348,7 +281,7 @@ foreach spec of local spec_groups {
             xtitle("Years relative to Medicaid expansion", size(small)) ///
             ytitle("`ytitle_str'", size(small)) ///
             title("`plot_title'", size(small)) ///
-            text(`annot_y' `annot_x' "Post avg = `avg_text'" "p-value = `treat_text'", size(small)) ///
+            text(`y_annot' `x_annot' `"Baseline Mean: `baseline_text'"' `"Post avg = `avg_text' (`pct_text'%)"' `"p-value = `treat_text'"', size(small)) ///
             legend(off) ///
             graphregion(color(white)) plotregion(color(white))
         

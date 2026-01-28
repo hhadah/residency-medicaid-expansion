@@ -66,7 +66,7 @@ postfile `did_results' str12 outcome double coef se tstat pvalue avg_treat ///
     pretrend_p treat_p n_programs n_states using "`did_results_file'", replace
 
 
-local plotnum = 4
+local plotnum = 5
 foreach outcome of global outcomes {
     capture confirm variable `outcome'
     if _rc != 0 {
@@ -121,6 +121,16 @@ foreach outcome of global outcomes {
     if (_rc == 0) {
         local treat_p = r(p)
     }
+    * Calculate baseline mean (pre-treatment observations in treated states)
+    quietly summarize `outcome' if treated_state == 1 & year < year_expanded [aw=total_population_10]
+    local baseline_mean = r(mean)
+    if missing(`baseline_mean') | `baseline_mean' == 0 {
+        local baseline_mean = 1
+    }
+    local pct_effect = (`avg_treat' / `baseline_mean') * 100
+    if `pct_effect' < -100 {
+        local pct_effect = -100
+    }
     local n_programs = .
     local n_states = .
     capture levelsof program_numeric_id if !missing(`outcome'), local(active_programs)
@@ -163,6 +173,8 @@ foreach outcome of global outcomes {
     gen byte post_period = (period >= 0)
     local avg_text = cond(`avg_treat' < ., string(`avg_treat', "%9.2f"), "NA")
     local treat_text = cond(`treat_p' < ., string(`treat_p', "%9.2f"), "NA")
+    local baseline_text = string(`baseline_mean', "%9.2f")
+    local pct_text = string(`pct_effect', "%9.1f")
     local post_line ""
     if (`avg_treat' < .) {
         local post_line "(scatteri `avg_treat' 0 `avg_treat' 5, recast(line) lpattern(dash) lcolor(red) lwidth(medium))"
@@ -175,21 +187,14 @@ foreach outcome of global outcomes {
     local prefix : display %02.0f `plotnum'
     local ytitle_str "Treatment Effect (difference-in-differences)"
     local plot_title "Event Study: `label'"
-    local annot_x 3
+    * Calculate annotation position dynamically
     quietly summarize ci_upper
-    local y_max = r(max)
-    if (missing(`y_max')) local y_max = 0
-    quietly summarize ci_lower
-    local y_min = r(min)
-    if (missing(`y_min')) local y_min = 0
-    local y_span = `y_max' - `y_min'
-    if (`y_span' <= 0) local y_span = max(1, abs(`y_max'))
-    local annot_y = `y_min' + 0.85*`y_span'
+    local y_annot = r(max)
+    local x_annot = -4
     * Adjust for per 100k outcomes
     if (strpos("`short'", "_100k") > 0) {
         local ytitle_str "Treatment Effect (per 100,000 population)"
-        local annot_x 4
-        local annot_y = `y_min' + 0.75*`y_span'
+        local x_annot = -4
     }
     twoway ///
         (rarea ci_upper ci_lower period if pre_period, fcolor(dkgreen%45) lcolor(dkgreen%45) lwidth(none)) ///
@@ -207,7 +212,7 @@ foreach outcome of global outcomes {
         xtitle("Years relative to Medicaid expansion", size(small)) ///
         ytitle("`ytitle_str'", size(small)) ///
         title("`plot_title'", size(medium)) ///
-        text(`annot_y' `annot_x' "Post avg = `avg_text'" "p-value = `treat_text'", size(small)) ///
+        text(`y_annot' `x_annot' `"Baseline Mean: `baseline_text'"' `"Post avg = `avg_text' (`pct_text'%)"' `"p-value = `treat_text'"', size(small)) ///
         legend(off) ///
         graphregion(color(white)) plotregion(color(white))
     graph export "${figdir}/`prefix'-did_`short'_event.png", as(png) replace width(1200) height(800)

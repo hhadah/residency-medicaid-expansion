@@ -5,38 +5,50 @@
 # Authors: Hussain Hadah
 #
 # date: October 26th, 2025
-# last updated: October 26th, 2025
+# last updated: January 27th, 2025
 #-----------------------------------------
 
 # open residency data
 residency_data <- read_dta(file.path(raw, "2010_2019_residency_programs.dta"))
 
-residency_data %>%
+residency_data |>
   glimpse()
 
 #-----------------------------------------
 # 1. Build hospital/site lookup (unique per institution_code)
 #-----------------------------------------
-site_lookup <- residency_data %>%
+hospitals_lookup <- residency_data |>
   select(
     institution_code,
-    state,
+    institution_name,
     city,
-    institution_name
-  ) %>%
-  distinct() %>%
+    state
+  ) |>
+  distinct()
+
+site_lookup <- hospitals_lookup |>
   mutate(
-    geocode_query = paste(institution_name, city, state, sep = ", ")
+    # --- IMPROVEMENT 1: Programmatic Name Cleaning ---
+    # Standardize names to help geocoder avoid bad matches (like MD Anderson in Crockett, TX).
+    institution_name_clean = institution_name |>
+      str_replace("^U ", "University of ") |>       # Fixes "U Texas" -> "University of Texas"
+      str_replace_all(c(
+        "\\bCtr\\b" = "Center",                     # Fixes "Med Ctr"
+        "\\bHosp\\b" = "Hospital",                  # Fixes "Gen Hosp"
+        "\\bMed\\b" = "Medical",                    # Fixes "Med Ctr"
+        "\\bSyst?\\b" = "System"
+      )),
+    
+    # Use the cleaned name for the query
+    geocode_query = paste(institution_name_clean, city, state, sep = ", ")
   )
 
 #-----------------------------------------
 # 2. Geocode using Mapbox (forward geocoding)
-#    - You already have a Mapbox token. We'll set it in the env,
-#      which tidygeocoder will automatically read.
 #-----------------------------------------
 Sys.setenv(MAPBOX_API_KEY = "pk.eyJ1IjoiaGhhZGFoIiwiYSI6ImNtaDd1N2NkYzBueGcya29kOWpzMTRqY3oifQ.zpRnaAfLGm06Kz8rs6RuFA")
 
-site_geo_mapbox <- site_lookup %>%
+site_geo_mapbox <- site_lookup |>
   geocode(
     address = geocode_query,
     method  = "mapbox",
@@ -46,7 +58,7 @@ site_geo_mapbox <- site_lookup %>%
   )
 
 # Quick check of geocoding success
-site_geo_mapbox %>%
+site_geo_mapbox |>
   summarise(
     total_sites      = n(),
     geocoded_sites   = sum(!is.na(latitude) & !is.na(longitude)),
@@ -55,70 +67,99 @@ site_geo_mapbox %>%
 
 #-----------------------------------------
 # 3. Reverse geocode each successful coordinate
-#    to pull ZIP/postal code info
 #-----------------------------------------
-site_zip_raw <- site_geo_mapbox %>%
-  filter(!is.na(latitude) & !is.na(longitude)) %>%
+site_zip_raw <- site_geo_mapbox |>
+  filter(!is.na(latitude) & !is.na(longitude)) |>
   reverse_geocode(
     lat = latitude,
     long = longitude,
     method = "mapbox",
     address = "rev_address",
-    full_results = TRUE
+    full_results = FALSE
   )
+
+site_zip_raw |>
+  glimpse()
 
 #-----------------------------------------
 # 4. Clean & collapse geocoding output
-#    - Extract a ZIP code
-#    - Keep only lat / lon / zip per institution_code
-#    - Drop obviously bad coordinates
-#    - Deduplicate (1 row per institution_code)
 #-----------------------------------------
 
-geo_lookup <- site_zip_raw %>%
+geo_lookup <- site_zip_raw |>
   mutate(
-    # Mapbox sometimes returns a column literally named "properties.override:postcode"
-    postcode_raw      = .data[["properties.override:postcode"]],
-    # Fallback: try to regex a 5-digit ZIP from the freeform reverse address string
-    postcode_from_rev = str_extract(rev_address, "\\b\\d{5}\\b"),
-    # Choose best available ZIP
-    zip_code          = coalesce(postcode_raw, postcode_from_rev)
-  ) %>%
+    # --- IMPROVEMENT 2: Robust Zip Extraction (Fix for 'No zip codes added') ---
+    # Strategy: Extract ALL 5-digit sequences from the address string.
+    # Logic: In an address like "21855 Oxnard St, Woodland Hills, California 91367",
+    #        the street number (21855) comes first, and the Zip (91367) comes last.
+    #        So we simply take the LAST 5-digit number found.
+    
+    # 1. Find all 5-digit matches
+    zip_matches = str_extract_all(rev_address, "\\b\\d{5}\\b"),
+    
+    # 2. Take the last match from the list (or NA if none found)
+    zip_code = map_chr(zip_matches, function(x) {
+      if (length(x) > 0) tail(x, 1) else NA_character_
+    })
+  ) |>
   select(
     institution_code,
     latitude,
     longitude,
     zip_code
-  ) %>%
-  # Keep only plausible CONUS-ish points (this kicks out Spain, ocean, etc.)
+  ) |>
+  # Keep only plausible CONUS-ish points
   filter(
     longitude > -130, longitude < -60,
     latitude  >  24,  latitude  <  50
-  ) %>%
-  group_by(institution_code) %>%
-  slice(1) %>%        # if multiple matches for same institution_code, keep first
+  ) |>
+  group_by(institution_code) |>
+  slice(1) |>        # if multiple matches for same institution_code, keep first
   ungroup()
 
-# Optional sanity check: how many institutions now have clean coords
-geo_lookup %>%
+# Optional sanity check
+geo_lookup |>
   summarise(
     n_institutions          = n(),
     pct_with_zip            = mean(!is.na(zip_code)) * 100,
     pct_with_coords         = mean(!is.na(latitude) & !is.na(longitude)) * 100
   )
 
+# merge with hospital lookup to see city/state
+hospitals_zip <- geo_lookup |>
+  left_join(
+    hospitals_lookup,
+    by = "institution_code"
+  ) |>
+  select(institution_code, institution_name, city, state, latitude, longitude, zip_code)
+
+hospitals_zip |>
+  glimpse()  
+
+# Manually enter zip codes for any missing ones (if known)
+hospitals_zip <- hospitals_zip |>
+  mutate(
+    zip_code = case_when(
+      institution_code == 1023 ~ "91206",  # Glendale Adventist Med Ctr
+      institution_code == 1572 ~ "93291",  # Kaweah Delta Health Care District
+      institution_code == 3069 ~ "81501",  # St Marys Hospital
+      institution_code == 3120 ~ "02301",  # Harvard South Shore
+      TRUE ~ zip_code
+    )
+  )
+write_csv(hospitals_zip, file.path(raw, "hospitals_geocoded.csv"))
+
 #-----------------------------------------
 # 5. Merge geocodes (lat/lon/zip) back to the residency_data
 #    RESULT: one row per specialty/program/year in residency_data,
 #    with hospital coordinates added.
 #-----------------------------------------
-residency_geo <- residency_data %>%
+residency_geo <- residency_data |>
   left_join(
     geo_lookup,
     by = "institution_code"
   )
 
-residency_geo %>%
+residency_geo |>
   glimpse()
 
 # open medicaid expansion data
@@ -198,8 +239,101 @@ long_data <- long_data |>
 long_data |>
   glimpse()
 datasummary_skim(long_data)
+
+#-----------------------------------------
+# Merge residency data with rural-urban
+# classification data
+#-----------------------------------------
+ruca_2020_data <-  read_csv(file.path(raw, "ruca-2020.csv"))
+
+ruca_2010_data <- read_csv(file.path(raw, "ruca-2010.csv"))
+
+names(ruca_2010_data)
+names(ruca_2020_data)
+
+# rename columns in ruca 2010
+ruca_2010_data <- ruca_2010_data |> 
+  rename(
+    zip_code = ZIP_CODE,
+    ruca_1 = RUCA1,
+    ruca_2 = RUCA2
+  )
+
+# rename columns in ruca 2020
+ruca_2020_data <- ruca_2020_data |> 
+  rename(
+    zip_code = ZIPCode,
+    ruca_1 = PrimaryRUCA,
+    ruca_2 = SecondaryRUCA
+  )
+
+# select relevant columns
+# and append data
+# add year column
+ruca_2010_data <- ruca_2010_data |> 
+  select(zip_code, ruca_1, ruca_2) |> 
+  mutate(year = 2010)
+
+ruca_2020_data <- ruca_2020_data |> 
+  select(zip_code, ruca_1, ruca_2) |> 
+  mutate(year = 2020)
+
+ruca_data <- bind_rows(ruca_2010_data, ruca_2020_data)
+ruca_data |> 
+  glimpse()
+
+ruca_merged <- ruca_data |>
+  pivot_wider(
+    names_from = year,
+    values_from = c(ruca_1, ruca_2),
+    names_glue = "{.value}_{year}" # Creates names like ruca1_2010, ruca1_2020
+  ) |> 
+  arrange(zip_code)
+# merge with long_data
+long_data <- long_data |> 
+  left_join(
+    ruca_merged,
+    by = "zip_code"
+  )
+
+#-----------------------------------------
+# Merge with specialty classification
+# simplified crosswalk. Merge crosswalk
+# using `specialty_code` variable
+#-----------------------------------------
+specialty_crosswalk <- read_dta(file.path(raw, "program_simplified.dta")) |> 
+  select(
+    specialty_code,
+    gen_specialty_alt
+  )
+specialty_crosswalk |> 
+  glimpse()
+
+# merge with long_data
+long_data <- long_data |> 
+  left_join(
+    specialty_crosswalk,
+    by = "specialty_code"
+  )
+
+long_data |> 
+  glimpse()
+
+#-----------------------------------------
+# Count NA values in ruca_1_2010 and 
+# gen_specialty_alt
+#-----------------------------------------
+na_ruca_2010 <- sum(is.na(long_data$ruca_1_2010))
+na_specialty <- sum(is.na(long_data$gen_specialty_alt))
+
+#-----------------------------------------
 # Save cleaned data
+#-----------------------------------------
 write_dta(long_data, file.path(datasets, "cleaned_residency_medicaid.dta"))
+
+#-----------------------------------------
+# Create aggregated data by program
+#-----------------------------------------
 
 # data by program
 program_long_data <- long_data |> 
@@ -213,6 +347,8 @@ program_long_data <- long_data |>
     expansion_state = first(expansion_state),
     year_expanded = first(year_expanded),
     medicaid_expansion = first(medicaid_expansion),
+    gen_specialty_alt = first(gen_specialty_alt),
+    rural_urban_2010 = first(ruca_1_2010),
     zip_code = as.numeric(first(zip_code))
   ) |> 
   ungroup() |> 

@@ -244,8 +244,8 @@ per100k_plot <- ggplot(plot_data_per100k, aes(x = YEAR, y = pct_of_start, color 
   theme_customs() +
   theme(legend.position = "none", plot.margin = unit(c(1, 15, 1, 1), "lines"))  # Increased right margin to 15
 
-ggsave(path = figures_wd, filename = "10-doctors-vs-pop.png", plot = per100k_plot, width = 10, height = 6, units = "in", dpi = 300)
-ggsave(path = thesis_plots, filename = "10-doctors-vs-pop.png", plot = per100k_plot, width = 10, height = 6, units = "in", dpi = 300)
+ggsave(path = figures_wd, filename = "04-doctors-vs-pop.png", plot = per100k_plot, width = 10, height = 6, units = "in", dpi = 300)
+ggsave(path = thesis_plots, filename = "04-doctors-vs-pop.png", plot = per100k_plot, width = 10, height = 6, units = "in", dpi = 300)
 
 #---------------------------
 # 9. Plot actual physicians per 100k over time
