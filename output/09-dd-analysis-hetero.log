@@ -1,9 +1,10 @@
-----------------------------------------------------------
+--------------------------------------------------
       name:  <unnamed>
-       log:  /Users/hhadah/Documents/GiT/residency-medicai
-> d-expansion/output/09-dd-analysis-hetero.log
+       log:  /Users/hhadah/Documents/GiT/residency
+> -medicaid-expansion/output/09-dd-analysis-hetero
+> .log
   log type:  text
- opened on:  27 Jan 2026, 19:44:05
+ opened on:  27 Jan 2026, 20:43:01
 
 . 
 . cap mkdir "${figdir}"
@@ -13,39 +14,43 @@
 . cap mkdir "${latex_figdir}"
 
 . 
-. * ------------------------------------------------------
-> -------------------
-. * Load cleaned data (produced by 02-data-cleaning.R)
-. * ------------------------------------------------------
-> -------------------
-. use "${datadir}/cleaned_program_residency_medicaid.dta",
->  clear
+. * ----------------------------------------------
+> ---------------------------
+. * Load cleaned data (produced by 02-data-cleanin
+> g.R)
+. * ----------------------------------------------
+> ---------------------------
+. use "${datadir}/cleaned_program_residency_medica
+> id.dta", clear
 
 . 
-. *=======================================================
-> ========================
+. *===============================================
+> ================================
 . * Data Setup
-. *=======================================================
-> ========================
+. *===============================================
+> ================================
 . 
 . * Panel identifiers
-. egen program_numeric_id = group(state institution_code)
+. egen program_numeric_id = group(state institutio
+> n_code)
 
 . encode state, gen(state_id)
 
 . 
 . xtset program_numeric_id year
 
-Panel variable: program_numeric_id (strongly balanced)
+Panel variable: program_numeric_id (strongly balan
+> ced)
  Time variable: year, 2010 to 2019
          Delta: 1 unit
 
 . 
-. * Create urban/rural group based on rural_urban_2010
-. * 0 = Urban (RUCA codes 1, 2, 3), 1 = Rural (RUCA codes 
-> > 3)
-. gen urban_rural = (rural_urban_2010 > 3) if !missing(rur
-> al_urban_2010)
+. * Create urban/rural group based on rural_urban_
+> 2010
+. * 0 = Urban (RUCA codes 1, 2, 3), 1 = Rural (RUC
+> A codes > 3)
+. gen urban_rural = (rural_urban_2010 > 3) if !mis
+> sing(rural_urban_2010)
 (220 missing values generated)
 
 . label define urban_rural_lab 0 "Urban" 1 "Rural"
@@ -62,9 +67,9 @@ Panel variable: program_numeric_id (strongly balanced)
 . describe rural_urban_2010 urban_rural
 
 Variable      Storage   Display    Value
-    name         type    format    label      Variable lab
-> el
-----------------------------------------------------------
+    name         type    format    label      Vari
+> able label
+--------------------------------------------------
 rural_urba~2010 double  %10.0g                
 urban_rural     float   %9.0g      urban_rural_lab
                                               
@@ -78,34 +83,35 @@ urban_rural |      Freq.     Percent        Cum.
 ------------+-----------------------------------
       Total |      8,370      100.00
 
-. di "Urban/Rural coding: 0 = Urban (RUCA 1-3), 1 = Rural 
-> (RUCA > 3)"
-Urban/Rural coding: 0 = Urban (RUCA 1-3), 1 = Rural (RUCA 
-> > 3)
+. di "Urban/Rural coding: 0 = Urban, 1 = Rural"
+Urban/Rural coding: 0 = Urban, 1 = Rural
 
 . 
-. * ------------------------------------------------------
-> -------------------
+. * ----------------------------------------------
+> ---------------------------
 . * Outcomes and labels
-. * ------------------------------------------------------
-> -------------------
-. global outcomes "quota matched unmatched matched_per_100
-> k quota_per_100k unmatched_per_100k"
+. * ----------------------------------------------
+> ---------------------------
+. global outcomes "quota matched unmatched matched
+> _per_100k quota_per_100k unmatched_per_100k"
 
-. global label_quota     "Residency Quota Positions"
+. global label_quota     "Residency Quota Position
+> s"
 
-. global label_matched   "Matched Residency Positions"
+. global label_matched   "Matched Residency Positi
+> ons"
 
-. global label_unmatched "Unmatched Residency Positions"
+. global label_unmatched "Unmatched Residency Posi
+> tions"
 
-. global label_quota_per_100k "Residency Quota Positions p
-> er 100k Population"
-
-. global label_matched_per_100k "Matched Residency Positio
-> ns per 100k Population"
-
-. global label_unmatched_per_100k "Unmatched Residency Pos
+. global label_quota_per_100k "Residency Quota Pos
 > itions per 100k Population"
+
+. global label_matched_per_100k "Matched Residency
+>  Positions per 100k Population"
+
+. global label_unmatched_per_100k "Unmatched Resid
+> ency Positions per 100k Population"
 
 . 
 . global short_quota     "quota"
@@ -118,34 +124,36 @@ Urban/Rural coding: 0 = Urban (RUCA 1-3), 1 = Rural (RUCA
 
 . global short_matched_per_100k "matched_per_100k"
 
-. global short_unmatched_per_100k "unmatched_per_100k"
+. global short_unmatched_per_100k "unmatched_per_1
+> 00k"
 
 . 
-. *=======================================================
-> ========================
+. *===============================================
+> ================================
 . * Heterogeneity Analysis - Urban vs Rural
-. *=======================================================
-> ========================
+. *===============================================
+> ================================
 . 
 . di ""
 
 
-. di "====================================================
-> ====================="
-==========================================================
-> ===============
+. di "============================================
+> ============================="
+==================================================
+> =======================
 
-. di "HETEROGENEITY ANALYSIS: By Urban/Rural Classificatio
-> n"
-HETEROGENEITY ANALYSIS: By Urban/Rural Classification
+. di "HETEROGENEITY ANALYSIS: By Urban/Rural Class
+> ification"
+HETEROGENEITY ANALYSIS: By Urban/Rural Classificat
+> ion
 
-. di "Urban (RUCA 1-3) vs Rural (RUCA > 3)"
-Urban (RUCA 1-3) vs Rural (RUCA > 3)
+. di "Urban vs Rural"
+Urban vs Rural
 
-. di "====================================================
-> ====================="
-==========================================================
-> ===============
+. di "============================================
+> ============================="
+==================================================
+> =======================
 
 . di ""
 
@@ -158,40 +166,42 @@ Urban (RUCA 1-3) vs Rural (RUCA > 3)
   2.     
 .     capture confirm variable `outcome'
   3.     if _rc != 0 {
-  4.         di as error "Outcome `outcome' not found. Ski
-> pping."
+  4.         di as error "Outcome `outcome' not fo
+> und. Skipping."
   5.         continue
   6.     }
   7.     
-.     quietly count if urban_rural == 0 & treated_state ==
->  1 & !missing(`outcome')
+.     quietly count if urban_rural == 0 & treated_
+> state == 1 & !missing(`outcome')
   8.     if (r(N) == 0) {
-  9.         di as error "Outcome `outcome': no treated ur
-> ban observations."
+  9.         di as error "Outcome `outcome': no tr
+> eated urban observations."
  10.         continue
  11.     }
  12.     
-.     quietly count if urban_rural == 1 & treated_state ==
->  1 & !missing(`outcome')
+.     quietly count if urban_rural == 1 & treated_
+> state == 1 & !missing(`outcome')
  13.     if (r(N) == 0) {
- 14.         di as error "Outcome `outcome': no treated ru
-> ral observations."
+ 14.         di as error "Outcome `outcome': no tr
+> eated rural observations."
  15.         continue
  16.     }
  17.     
 .     di ""
- 18.     di "=============================================
-> ============================"
- 19.     di "HETEROGENEITY ANALYSIS: ${label_`outcome'}"
+ 18.     di "=====================================
+> ===================================="
+ 19.     di "HETEROGENEITY ANALYSIS: ${label_`outc
+> ome'}"
  20.     di "Outcome variable: `outcome'"
- 21.     di "=============================================
-> ============================"
+ 21.     di "=====================================
+> ===================================="
  22.     di ""
  23.     
-.     * Run did_imputation with heterogeneous effects by u
-> rban/rural (0 = urban, 1 = rural)
-.     capture noisily did_imputation `outcome' program_num
-> eric_id year year_expanded [aw=total_population_10], ///
+.     * Run did_imputation with heterogeneous effe
+> cts by urban/rural (0 = urban, 1 = rural)
+.     capture noisily did_imputation `outcome' pro
+> gram_numeric_id year year_expanded [aw=total_pop
+> ulation_10], ///
 >         horizons(0/5) pretrend(5) ///
 >         cluster(state_id) ///
 >         hetby(urban_rural) ///
@@ -199,8 +209,8 @@ Urban (RUCA 1-3) vs Rural (RUCA > 3)
 >         minn(0) autosample
  24.     
 .     if (_rc != 0) {
- 25.         di as error "did_imputation failed for outcom
-> e `outcome'. Error code `_rc'."
+ 25.         di as error "did_imputation failed fo
+> r outcome `outcome'. Error code `_rc'."
  26.         continue
  27.     }
  28.     
@@ -212,121 +222,138 @@ Urban (RUCA 1-3) vs Rural (RUCA > 3)
  29.     local pretrend_p = r(p)
  30. 
 .     * Calculate average effects for both groups
-.     local avg_urban = (_b[tau0_0] + _b[tau1_0] + _b[tau2
-> _0] + _b[tau3_0] + _b[tau4_0] + _b[tau5_0])/6
- 31.     local avg_rural = (_b[tau0_1] + _b[tau1_1] + _b[t
-> au2_1] + _b[tau3_1] + _b[tau4_1] + _b[tau5_1])/6
- 32.     local avg_diff = `avg_rural' - `avg_urban'
+.     local avg_urban = (_b[tau0_0] + _b[tau1_0] +
+>  _b[tau2_0] + _b[tau3_0] + _b[tau4_0] + _b[tau5_
+> 0])/6
+ 31.     local avg_rural = (_b[tau0_1] + _b[tau1_1
+> ] + _b[tau2_1] + _b[tau3_1] + _b[tau4_1] + _b[ta
+> u5_1])/6
+ 32.     local avg_diff = `avg_rural' - `avg_urban
+> '
  33. 
-.     * Test difference in post averages and get p-value
-.     testnl ((_b[tau0_1] + _b[tau1_1] + _b[tau2_1] + _b[t
-> au3_1] + _b[tau4_1] + _b[tau5_1])/6) - ((_b[tau0_0] + _b
-> [tau1_0] + _b[tau2_0] + _b[tau3_0] + _b[tau4_0] + _b[tau
-> 5_0])/6) = 0
+.     * Test difference in post averages and get p
+> -value
+.     testnl ((_b[tau0_1] + _b[tau1_1] + _b[tau2_1
+> ] + _b[tau3_1] + _b[tau4_1] + _b[tau5_1])/6) - (
+> (_b[tau0_0] + _b[tau1_0] + _b[tau2_0] + _b[tau3_
+> 0] + _b[tau4_0] + _b[tau5_0])/6) = 0
  34.     local avg_diff_p = r(p)
  35. 
-.     * Joint test of heterogeneity across all periods
-.     test (tau0_0 = tau0_1) (tau1_0 = tau1_1) (tau2_0 = t
-> au2_1) (tau3_0 = tau3_1) (tau4_0 = tau4_1) (tau5_0 = tau
-> 5_1)
+.     * Joint test of heterogeneity across all per
+> iods
+.     test (tau0_0 = tau0_1) (tau1_0 = tau1_1) (ta
+> u2_0 = tau2_1) (tau3_0 = tau3_1) (tau4_0 = tau4_
+> 1) (tau5_0 = tau5_1)
  36.     local joint_het_p = r(p)
  37. 
-.     * Test individual group significance (joint test for
->  post-treatment effects)
-.     test tau0_0 tau1_0 tau2_0 tau3_0 tau4_0 tau5_0
+.     * Test individual group significance (joint 
+> test for post-treatment effects)
+.     test tau0_0 tau1_0 tau2_0 tau3_0 tau4_0 tau5
+> _0
  38.     local urban_p = r(p)
- 39.     test tau0_1 tau1_1 tau2_1 tau3_1 tau4_1 tau5_1
+ 39.     test tau0_1 tau1_1 tau2_1 tau3_1 tau4_1 t
+> au5_1
  40.     local rural_p = r(p)
  41. 
-.     * Calculate baseline means (pre-treatment observatio
-> ns in treated states)
-.     quietly summarize `outcome' if urban_rural == 0 & tr
-> eated_state == 1 & year < year_expanded [aw=total_popula
-> tion_10]
+.     * Calculate baseline means (pre-treatment ob
+> servations in estimation sample)
+.     quietly summarize `outcome' if urban_rural =
+> = 0 & year < year_expanded & e(sample) [aw=total
+> _population_10]
  42.     local baseline_urban = r(mean)
- 43.     if missing(`baseline_urban') | `baseline_urban' =
-> = 0 {
+ 43.     if missing(`baseline_urban') | `baseline_
+> urban' == 0 {
  44.         local baseline_urban = 1
  45.     }
  46.     
-.     quietly summarize `outcome' if urban_rural == 1 & tr
-> eated_state == 1 & year < year_expanded [aw=total_popula
-> tion_10]
+.     quietly summarize `outcome' if urban_rural =
+> = 1 & year < year_expanded & e(sample) [aw=total
+> _population_10]
  47.     local baseline_rural = r(mean)
- 48.     if missing(`baseline_rural') | `baseline_rural' =
-> = 0 {
+ 48.     if missing(`baseline_rural') | `baseline_
+> rural' == 0 {
  49.         local baseline_rural = 1
  50.     }
  51.     
-.     local pct_urban = (`avg_urban' / `baseline_urban') *
->  100
- 52.     local pct_rural = (`avg_rural' / `baseline_rural'
-> ) * 100
- 53.     if `pct_urban' < -100 local pct_urban = -100
- 54.     if `pct_rural' < -100 local pct_rural = -100
+.     local pct_urban = (`avg_urban' / `baseline_u
+> rban') * 100
+ 52.     local pct_rural = (`avg_rural' / `baselin
+> e_rural') * 100
+ 53.     if `pct_urban' < -100 local pct_urban = -
+> 100
+ 54.     if `pct_rural' < -100 local pct_rural = -
+> 100
  55. 
 .     * Store values in locals for annotation
-.     local text_urban = string(`avg_urban', "%9.2f")
- 56.     local text_rural = string(`avg_rural', "%9.2f")
- 57.     local text_urban_p = string(`urban_p', "%9.2f")
- 58.     local text_rural_p = string(`rural_p', "%9.2f")
- 59.     local text_het = string(`joint_het_p', "%9.2f")
- 60.     local text_avg_diff = string(`avg_diff', "%9.2f")
- 61.     local text_avg_diff_p = string(`avg_diff_p', "%9.
-> 2f")
- 62.     local text_baseline_urban = string(`baseline_urba
-> n', "%9.2f")
- 63.     local text_baseline_rural = string(`baseline_rura
-> l', "%9.2f")
- 64.     local text_pct_urban = string(`pct_urban', "%9.1f
-> ")
- 65.     local text_pct_rural = string(`pct_rural', "%9.1f
-> ")
+.     local text_urban = string(`avg_urban', "%9.2
+> f")
+ 56.     local text_rural = string(`avg_rural', "%
+> 9.2f")
+ 57.     local text_urban_p = string(`urban_p', "%
+> 9.2f")
+ 58.     local text_rural_p = string(`rural_p', "%
+> 9.2f")
+ 59.     local text_het = string(`joint_het_p', "%
+> 9.2f")
+ 60.     local text_avg_diff = string(`avg_diff', 
+> "%9.2f")
+ 61.     local text_avg_diff_p = string(`avg_diff_
+> p', "%9.2f")
+ 62.     local text_baseline_urban = string(`basel
+> ine_urban', "%9.2f")
+ 63.     local text_baseline_rural = string(`basel
+> ine_rural', "%9.2f")
+ 64.     local text_pct_urban = string(`pct_urban'
+> , "%9.1f")
+ 65.     local text_pct_rural = string(`pct_rural'
+> , "%9.1f")
  66.     
-.     di "Average urban effect: " %9.3f `avg_urban' " (p =
->  " %9.3f `urban_p' ")"
- 67.     di "Average rural effect: " %9.3f `avg_rural' " (
-> p = " %9.3f `rural_p' ")"
- 68.     di "Difference (rural - urban): " %9.3f `avg_diff
-> ' " (p = " %9.3f `avg_diff_p' ")"
- 69.     di "Joint heterogeneity test p-value: " %9.3f `jo
-> int_het_p'
- 70.     di "Pretrend joint p-value: " %9.3f `pretrend_p'
+.     di "Average urban effect: " %9.3f `avg_urban
+> ' " (p = " %9.3f `urban_p' ")"
+ 67.     di "Average rural effect: " %9.3f `avg_ru
+> ral' " (p = " %9.3f `rural_p' ")"
+ 68.     di "Difference (rural - urban): " %9.3f `
+> avg_diff' " (p = " %9.3f `avg_diff_p' ")"
+ 69.     di "Joint heterogeneity test p-value: " %
+> 9.3f `joint_het_p'
+ 70.     di "Pretrend joint p-value: " %9.3f `pret
+> rend_p'
  71. 
 .     * =====================
 .     * Plotting with annotation
 .     * =====================
-.     * Create matrices for both groups (0 = urban, 1 = ru
-> ral)
-.     matrix urban = J(11, 5, .)  // 5 pretrends + 6 treat
-> ment periods
+.     * Create matrices for both groups (0 = urban
+> , 1 = rural)
+.     matrix urban = J(11, 5, .)  // 5 pretrends +
+>  6 treatment periods
  72.     matrix rural = J(11, 5, .)
- 73.     matrix colnames urban = period coef se ci_upper c
-> i_lower
- 74.     matrix colnames rural = period coef se ci_upper c
-> i_lower
+ 73.     matrix colnames urban = period coef se ci
+> _upper ci_lower
+ 74.     matrix colnames rural = period coef se ci
+> _upper ci_lower
  75.     
 .     local row = 1
  76.     
-.     * Pretrend coefficients (same for both groups)
+.     * Pretrend coefficients (same for both group
+> s)
 .     forval h = 5(-1)1 {
  77.         * Urban counties
 .         matrix urban[`row',1] = -`h'
  78.         matrix urban[`row',2] = _b[pre`h']
  79.         matrix urban[`row',3] = _se[pre`h']
- 80.         matrix urban[`row',4] = _b[pre`h'] + 1.96*_se
-> [pre`h']
- 81.         matrix urban[`row',5] = _b[pre`h'] - 1.96*_se
-> [pre`h']
+ 80.         matrix urban[`row',4] = _b[pre`h'] + 
+> 1.96*_se[pre`h']
+ 81.         matrix urban[`row',5] = _b[pre`h'] - 
+> 1.96*_se[pre`h']
  82.         
 .         * Rural counties (same pretrends)
 .         matrix rural[`row',1] = -`h'
  83.         matrix rural[`row',2] = _b[pre`h']
  84.         matrix rural[`row',3] = _se[pre`h']  
- 85.         matrix rural[`row',4] = _b[pre`h'] + 1.96*_se
-> [pre`h']
- 86.         matrix rural[`row',5] = _b[pre`h'] - 1.96*_se
-> [pre`h']
+ 85.         matrix rural[`row',4] = _b[pre`h'] + 
+> 1.96*_se[pre`h']
+ 86.         matrix rural[`row',5] = _b[pre`h'] - 
+> 1.96*_se[pre`h']
  87.         
 .         local ++row
  88.     }
@@ -337,19 +364,19 @@ Urban (RUCA 1-3) vs Rural (RUCA > 3)
 .         matrix urban[`row',1] = `h'
  91.         matrix urban[`row',2] = _b[tau`h'_0]
  92.         matrix urban[`row',3] = _se[tau`h'_0]
- 93.         matrix urban[`row',4] = _b[tau`h'_0] + 1.96*_
-> se[tau`h'_0]
- 94.         matrix urban[`row',5] = _b[tau`h'_0] - 1.96*_
-> se[tau`h'_0]
+ 93.         matrix urban[`row',4] = _b[tau`h'_0] 
+> + 1.96*_se[tau`h'_0]
+ 94.         matrix urban[`row',5] = _b[tau`h'_0] 
+> - 1.96*_se[tau`h'_0]
  95.         
 .         * Rural (tau_1)
 .         matrix rural[`row',1] = `h'
  96.         matrix rural[`row',2] = _b[tau`h'_1]
  97.         matrix rural[`row',3] = _se[tau`h'_1]
- 98.         matrix rural[`row',4] = _b[tau`h'_1] + 1.96*_
-> se[tau`h'_1]
- 99.         matrix rural[`row',5] = _b[tau`h'_1] - 1.96*_
-> se[tau`h'_1]
+ 98.         matrix rural[`row',4] = _b[tau`h'_1] 
+> + 1.96*_se[tau`h'_1]
+ 99.         matrix rural[`row',5] = _b[tau`h'_1] 
+> - 1.96*_se[tau`h'_1]
 100.         
 .         local ++row
 101.     }
@@ -379,14 +406,15 @@ Urban (RUCA 1-3) vs Rural (RUCA > 3)
 118.     gen rur_pre = (rur_period < 0)  
 119.     gen rur_post = (rur_period >= 0)
 120. 
-.     * Calculate dynamic annotation coordinates using max
-> imum upper confidence intervals from both groups
+.     * Calculate dynamic annotation coordinates u
+> sing maximum upper confidence intervals from bot
+> h groups
 .     quietly summarize urb_ci_upper
 121.     local max1 = r(max)
 122.     quietly summarize rur_ci_upper
 123.     local max2 = r(max) 
 124.     local y_annot = max(`max1', `max2')
-125.     local x_annot = -4
+125.     local x_annot = -2
 126.     
 .     local short = "${short_`outcome'}"
 127.     local label = "${label_`outcome'}"
@@ -394,157 +422,186 @@ Urban (RUCA 1-3) vs Rural (RUCA > 3)
 129.         local label = "`outcome'"
 130.     }
 131.     local prefix : display %02.0f `plotnum'
-132.     local ytitle_str "Treatment Effect (difference-in
-> -differences)"
-133.     local plot_title "Heterogeneity: Urban vs Rural -
->  `label'"
+132.     local ytitle_str "Treatment Effect (diffe
+> rence-in-differences)"
+133.     local plot_title "Heterogeneity: Urban vs
+>  Rural - `label'"
 134.     
 .     * Adjust for per 100k outcomes
 .     if (strpos("`short'", "_100k") > 0) {
-135.         local ytitle_str "Treatment Effect (per 100,0
-> 00 population)"
-136.         local x_annot = -4
+135.         local ytitle_str "Treatment Effect (p
+> er 100,000 population)"
+136.         local x_annot = -2
 137.     }
 138.     
-.     * Create combined plot using twoway, with annotation
-.     twoway (rarea urb_ci_upper urb_ci_lower urb_period i
-> f urb_pre, fcolor("31 119 180%20") lcolor("31 119 180%20
-> ") lwidth(none)) ///
->            (rarea urb_ci_upper urb_ci_lower urb_period i
-> f urb_post, fcolor("31 119 180%20") lcolor("31 119 180%2
-> 0") lwidth(none)) ///
->            (rarea rur_ci_upper rur_ci_lower rur_period i
-> f rur_pre, fcolor("255 127 14%25") lcolor("255 127 14%25
-> ") lwidth(none)) ///
->            (rarea rur_ci_upper rur_ci_lower rur_period i
-> f rur_post, fcolor("255 127 14%25") lcolor("255 127 14%2
-> 5") lwidth(none)) ///
->            (line urb_coef urb_period if urb_pre, lcolor(
-> "31 119 180") lwidth(medium) lpattern(solid)) ///
->            (line urb_coef urb_period if urb_post, lcolor
-> ("31 119 180") lwidth(medium) lpattern(solid)) ///
->            (line rur_coef rur_period if rur_pre, lcolor(
-> "255 127 14") lwidth(medium) lpattern(dash)) ///
->            (line rur_coef rur_period if rur_post, lcolor
-> ("255 127 14") lwidth(medium) lpattern(dash)) ///
->            (scatter urb_coef urb_period if urb_pre, mcol
-> or("31 119 180") msize(medium) msymbol(circle)) ///
->            (scatter urb_coef urb_period if urb_post, mco
-> lor("31 119 180") msize(medium) msymbol(circle)) ///
->            (scatter rur_coef rur_period if rur_pre, mcol
-> or("255 127 14") msize(medium) msymbol(triangle)) ///
->            (scatter rur_coef rur_period if rur_post, mco
-> lor("255 127 14") msize(medium) msymbol(triangle)) ///
+.     * Create combined plot using twoway, with an
+> notation
+.     twoway (rarea urb_ci_upper urb_ci_lower urb_
+> period if urb_pre, fcolor("31 119 180%20") lcolo
+> r("31 119 180%20") lwidth(none)) ///
+>            (rarea urb_ci_upper urb_ci_lower urb_
+> period if urb_post, fcolor("31 119 180%20") lcol
+> or("31 119 180%20") lwidth(none)) ///
+>            (rarea rur_ci_upper rur_ci_lower rur_
+> period if rur_pre, fcolor("255 127 14%25") lcolo
+> r("255 127 14%25") lwidth(none)) ///
+>            (rarea rur_ci_upper rur_ci_lower rur_
+> period if rur_post, fcolor("255 127 14%25") lcol
+> or("255 127 14%25") lwidth(none)) ///
+>            (line urb_coef urb_period if urb_pre,
+>  lcolor("31 119 180") lwidth(medium) lpattern(so
+> lid)) ///
+>            (line urb_coef urb_period if urb_post
+> , lcolor("31 119 180") lwidth(medium) lpattern(s
+> olid)) ///
+>            (line rur_coef rur_period if rur_pre,
+>  lcolor("255 127 14") lwidth(medium) lpattern(da
+> sh)) ///
+>            (line rur_coef rur_period if rur_post
+> , lcolor("255 127 14") lwidth(medium) lpattern(d
+> ash)) ///
+>            (scatter urb_coef urb_period if urb_p
+> re, mcolor("31 119 180") msize(medium) msymbol(c
+> ircle)) ///
+>            (scatter urb_coef urb_period if urb_p
+> ost, mcolor("31 119 180") msize(medium) msymbol(
+> circle)) ///
+>            (scatter rur_coef rur_period if rur_p
+> re, mcolor("255 127 14") msize(medium) msymbol(t
+> riangle)) ///
+>            (scatter rur_coef rur_period if rur_p
+> ost, mcolor("255 127 14") msize(medium) msymbol(
+> triangle)) ///
 >            , ///
->            xline(-0.5, lcolor(black) lpattern(solid) lwi
-> dth(thin)) ///
->            yline(0, lcolor(black) lpattern(solid) lwidth
-> (thin)) ///
+>            xline(-0.5, lcolor(black) lpattern(so
+> lid) lwidth(thin)) ///
+>            yline(0, lcolor(black) lpattern(solid
+> ) lwidth(thin)) ///
 >            xlabel(-5(1)5, labsize(small)) ///
->            ylabel(#10, labsize(small) format(%9.2f)) ///
->            xtitle("Years relative to Medicaid expansion"
-> , size(small)) ///
->            ytitle("`ytitle_str'", size(small)) ///
->            title("`plot_title'", size(medium)) ///
->            legend(order(9 11) label(9 "Urban (RUCA 1-3)"
-> ) label(11 "Rural (RUCA > 3)") ///
->                position(6) rows(1) size(small)) ///
->            text(`y_annot' `x_annot' `"Urban Baseline: `t
-> ext_baseline_urban' | Effect: `text_urban' (`text_pct_ur
-> ban'%, p=`text_urban_p')"' `"Rural Baseline: `text_basel
-> ine_rural' | Effect: `text_rural' (`text_pct_rural'%, p=
-> `text_rural_p')"' `"Difference: `text_avg_diff' (p=`text
-> _avg_diff_p')"', size(small)) ///
->            graphregion(color(white)) plotregion(color(wh
-> ite)) ///
->            note("Vertical line at period 0 indicates Med
-> icaid expansion" ///
->                 "Blue (solid): Urban counties (RUCA 1-3)
-> , Orange (dashed): Rural counties (RUCA > 3)", size(vsma
-> ll))
+>            ylabel(#10, labsize(small) format(%9.
+> 2f)) ///
+>            xtitle("Years relative to Medicaid ex
+> pansion", size(small)) ///
+>            ytitle("`ytitle_str'", size(small)) /
+> //
+>            title("`plot_title'", size(medium)) /
+> //
+>            legend(order(9 11) label(9 "Urban") l
+> abel(11 "Rural") ///
+>                position(6) rows(1) size(small)) 
+> ///
+>            text(`y_annot' `x_annot' `"Urban Avg:
+>  `text_urban' (p=`text_urban_p')"' `"Rural Avg: 
+> `text_rural' (p=`text_rural_p')"' `"Difference: 
+> `text_avg_diff' (p=`text_avg_diff_p')"', size(sm
+> all)) ///
+>            graphregion(color(white)) plotregion(
+> color(white)) ///
+>            note("Vertical line at period 0 indic
+> ates Medicaid expansion" ///
+>                 "Blue (solid): Urban counties, O
+> range (dashed): Rural counties", size(vsmall))
 139.     
-.     graph export "${figdir}/`prefix'-hetero_urbanrural_`
-> short'_event.png", as(png) replace width(1200) height(80
-> 0)
-140.     graph export "${latex_figdir}/`prefix'-hetero_urb
-> anrural_`short'_event.png", as(png) replace width(1200) 
-> height(800)
+.     graph export "${figdir}/`prefix'-hetero_urba
+> nrural_`short'_event.png", as(png) replace width
+> (1200) height(800)
+140.     graph export "${latex_figdir}/`prefix'-he
+> tero_urbanrural_`short'_event.png", as(png) repl
+> ace width(1200) height(800)
 141.     
 .     restore
 142.     local ++plotnum
 143. }
 
-==========================================================
-> ===============
+==================================================
+> =======================
 HETEROGENEITY ANALYSIS: Residency Quota Positions
 Outcome variable: quota
-==========================================================
-> ===============
+==================================================
+> =======================
 
 
-                                                         N
-> umber of obs                                            
->              = 8,370
-----------------------------------------------------------
-> --------------------
-       quota | Coefficient  Std. err.      z    P>|z|     
-> [95% con                                                
->         f. interval]
--------------+--------------------------------------------
-> --------------------
-      tau0_0 |  -.7913205   .8056269    -0.98   0.326     
-> -2.37032                                                
->             .7876792
-      tau0_1 |  -3.380192   .5344174    -6.33   0.000    -
-> 4.427631                                                
->            -2.332753
-      tau1_0 |  -2.217817   .9758565    -2.27   0.023     
-> -4.13046                                                
->            -.3051733
-      tau1_1 |  -5.487557   .5509441    -9.96   0.000    -
-> 6.567388                                                
->            -4.407726
-      tau2_0 |  -3.409898   1.102024    -3.09   0.002    -
-> 5.569825                                                
->            -1.249971
-      tau2_1 |  -6.980168   .8152072    -8.56   0.000    -
-> 8.577944                                                
->            -5.382391
-      tau3_0 |  -4.906919   1.447731    -3.39   0.001    -
-> 7.744418                                                
->            -2.069419
-      tau3_1 |  -9.255915   1.360088    -6.81   0.000    -
-> 11.92164                                                
->            -6.590193
-      tau4_0 |  -5.925425   2.512236    -2.36   0.018    -
-> 10.84932                                                
->            -1.001533
-      tau4_1 |  -10.11979   2.627528    -3.85   0.000    -
-> 15.26965                                                
->            -4.969935
-      tau5_0 |  -7.397852   3.456417    -2.14   0.032     
-> -14.1723                                                
->            -.6233985
-      tau5_1 |  -11.49785   3.441315    -3.34   0.001     
-> -18.2427                                                
->            -4.752996
-        pre1 |  -3.120339   .8969811    -3.48   0.001     
-> -4.87839                                                
->            -1.362289
-        pre2 |  -2.807557   .7315846    -3.84   0.000    -
-> 4.241437                                                
->            -1.373678
-        pre3 |  -2.804005   .8339654    -3.36   0.001    -
-> 4.438547                                                
->            -1.169462
-        pre4 |  -2.384418   .9372132    -2.54   0.011    -
-> 4.221323                                                
->            -.5475143
-        pre5 |  -1.449866   .8115338    -1.79   0.074    -
-> 3.040443                                                
->             .1407113
-----------------------------------------------------------
-> --------------------
+                                                  
+>        Number of obs                            
+>                      = 8,370
+--------------------------------------------------
+> ----------------------------
+       quota | Coefficient  Std. err.      z    P>
+> |z|                                             
+>         [95% con                                
+>                 f. interval]
+-------------+------------------------------------
+> ----------------------------
+      tau0_0 |  -.7913205   .8056269    -0.98   0.
+> 326                                             
+>         -2.37032                                
+>                     .7876792
+      tau0_1 |  -3.380192   .5344174    -6.33   0.
+> 000                                             
+>        -4.427631                                
+>                    -2.332753
+      tau1_0 |  -2.217817   .9758565    -2.27   0.
+> 023                                             
+>         -4.13046                                
+>                    -.3051733
+      tau1_1 |  -5.487557   .5509441    -9.96   0.
+> 000                                             
+>        -6.567388                                
+>                    -4.407726
+      tau2_0 |  -3.409898   1.102024    -3.09   0.
+> 002                                             
+>        -5.569825                                
+>                    -1.249971
+      tau2_1 |  -6.980168   .8152072    -8.56   0.
+> 000                                             
+>        -8.577944                                
+>                    -5.382391
+      tau3_0 |  -4.906919   1.447731    -3.39   0.
+> 001                                             
+>        -7.744418                                
+>                    -2.069419
+      tau3_1 |  -9.255915   1.360088    -6.81   0.
+> 000                                             
+>        -11.92164                                
+>                    -6.590193
+      tau4_0 |  -5.925425   2.512236    -2.36   0.
+> 018                                             
+>        -10.84932                                
+>                    -1.001533
+      tau4_1 |  -10.11979   2.627528    -3.85   0.
+> 000                                             
+>        -15.26965                                
+>                    -4.969935
+      tau5_0 |  -7.397852   3.456417    -2.14   0.
+> 032                                             
+>         -14.1723                                
+>                    -.6233985
+      tau5_1 |  -11.49785   3.441315    -3.34   0.
+> 001                                             
+>         -18.2427                                
+>                    -4.752996
+        pre1 |  -3.120339   .8969811    -3.48   0.
+> 001                                             
+>         -4.87839                                
+>                    -1.362289
+        pre2 |  -2.807557   .7315846    -3.84   0.
+> 000                                             
+>        -4.241437                                
+>                    -1.373678
+        pre3 |  -2.804005   .8339654    -3.36   0.
+> 001                                             
+>        -4.438547                                
+>                    -1.169462
+        pre4 |  -2.384418   .9372132    -2.54   0.
+> 011                                             
+>        -4.221323                                
+>                    -.5475143
+        pre5 |  -1.449866   .8115338    -1.79   0.
+> 074                                             
+>        -3.040443                                
+>                     .1407113
+--------------------------------------------------
+> ----------------------------
 
  ( 1)  pre1 = 0
  ( 2)  pre2 = 0
@@ -555,10 +612,10 @@ Outcome variable: quota
            chi2(  5) =   57.59
          Prob > chi2 =    0.0000
 
-  (1)  ((_b[tau0_1] + _b[tau1_1] + _b[tau2_1] + _b[tau3_1]
->  + _b[tau4_1] + _b[tau5_1])/6) - ((_b[tau0_0] + _b[tau1_
-> 0] + _b[tau2_0] + _b[tau3_0] + _b[tau4_0] + _b[tau5_0])/
-> 6) = 0
+  (1)  ((_b[tau0_1] + _b[tau1_1] + _b[tau2_1] + _b
+> [tau3_1] + _b[tau4_1] + _b[tau5_1])/6) - ((_b[ta
+> u0_0] + _b[tau1_0] + _b[tau2_0] + _b[tau3_0] + _
+> b[tau4_0] + _b[tau5_0])/6) = 0
 
                chi2(1) =       49.38
            Prob > chi2 =        0.0000
@@ -594,92 +651,114 @@ Outcome variable: quota
          Prob > chi2 =    0.0000
 Average urban effect:    -4.108 (p =     0.000)
 Average rural effect:    -7.787 (p =     0.000)
-Difference (rural - urban):    -3.679 (p =     0.000)
+Difference (rural - urban):    -3.679 (p =     0.0
+> 00)
 Joint heterogeneity test p-value:     0.000
 Pretrend joint p-value:     0.000
 number of observations will be reset to 11
 Press any key to continue, or Break to abort
 Number of observations (_N) was 0, now 11.
 file
-    /Users/hhadah/Documents/GiT/residency-medicaid-expan
-    > sion/output/figures/221-hetero_urbanrural_quota_ev
-    > ent.png saved as PNG format
+    /Users/hhadah/Documents/GiT/residency-medica
+    > id-expansion/output/figures/221-hetero_urb
+    > anrural_quota_event.png saved as PNG
+    format
 file
-    /Users/hhadah/Documents/GiT/residency-medicaid-expan
-    > sion/my_paper/figures/221-hetero_urbanrural_quota_
-    > event.png saved as PNG format
+    /Users/hhadah/Documents/GiT/residency-medica
+    > id-expansion/my_paper/figures/221-hetero_u
+    > rbanrural_quota_event.png saved as PNG
+    format
 
-==========================================================
-> ===============
-HETEROGENEITY ANALYSIS: Matched Residency Positions
+==================================================
+> =======================
+HETEROGENEITY ANALYSIS: Matched Residency Position
+> s
 Outcome variable: matched
-==========================================================
-> ===============
+==================================================
+> =======================
 
 
-                                                         N
-> umber of obs                                            
->              = 8,370
-----------------------------------------------------------
-> --------------------
-     matched | Coefficient  Std. err.      z    P>|z|     
-> [95% con                                                
->         f. interval]
--------------+--------------------------------------------
-> --------------------
-      tau0_0 |  -.7948497   .8108746    -0.98   0.327    -
-> 2.384135                                                
->             .7944353
-      tau0_1 |  -3.568065   .5616705    -6.35   0.000    -
-> 4.668919                                                
->            -2.467211
-      tau1_0 |  -2.285073     .88326    -2.59   0.010     
-> -4.01623                                                
->             -.553915
-      tau1_1 |  -5.508374   .5715645    -9.64   0.000     
-> -6.62862                                                
->            -4.388128
-      tau2_0 |  -3.205996   1.046742    -3.06   0.002    -
-> 5.257572                                                
->             -1.15442
-      tau2_1 |    -6.8492   .8448051    -8.11   0.000    -
-> 8.504987                                                
->            -5.193412
-      tau3_0 |  -4.511404   1.338857    -3.37   0.001    -
-> 7.135515                                                
->            -1.887293
-      tau3_1 |  -9.219524   1.333198    -6.92   0.000    -
-> 11.83254                                                
->            -6.606504
-      tau4_0 |  -5.297506    2.11954    -2.50   0.012    -
-> 9.451727                                                
->            -1.143284
-      tau4_1 |  -9.823215   2.252686    -4.36   0.000     
-> -14.2384                                                
->            -5.408033
-      tau5_0 |  -5.894597   2.704801    -2.18   0.029    -
-> 11.19591                                                
->            -.5932844
-      tau5_1 |  -10.82191    2.74094    -3.95   0.000    -
-> 16.19405                                                
->            -5.449762
-        pre1 |  -2.527057   .8532104    -2.96   0.003    -
-> 4.199319                                                
->            -.8547958
-        pre2 |   -2.38703   .6827637    -3.50   0.000    -
-> 3.725222                                                
->            -1.048838
-        pre3 |  -2.395074   .8104898    -2.96   0.003    -
-> 3.983605                                                
->            -.8065435
-        pre4 |   -2.19353   .8861046    -2.48   0.013    -
-> 3.930263                                                
->            -.4567966
-        pre5 |  -1.089389   .7750468    -1.41   0.160    -
-> 2.608453                                                
->             .4296747
-----------------------------------------------------------
-> --------------------
+                                                  
+>        Number of obs                            
+>                      = 8,370
+--------------------------------------------------
+> ----------------------------
+     matched | Coefficient  Std. err.      z    P>
+> |z|                                             
+>         [95% con                                
+>                 f. interval]
+-------------+------------------------------------
+> ----------------------------
+      tau0_0 |  -.7948497   .8108746    -0.98   0.
+> 327                                             
+>        -2.384135                                
+>                     .7944352
+      tau0_1 |  -3.568065   .5616705    -6.35   0.
+> 000                                             
+>        -4.668919                                
+>                    -2.467211
+      tau1_0 |  -2.285073     .88326    -2.59   0.
+> 010                                             
+>         -4.01623                                
+>                     -.553915
+      tau1_1 |  -5.508374   .5715645    -9.64   0.
+> 000                                             
+>         -6.62862                                
+>                    -4.388128
+      tau2_0 |  -3.205996   1.046742    -3.06   0.
+> 002                                             
+>        -5.257572                                
+>                     -1.15442
+      tau2_1 |    -6.8492   .8448051    -8.11   0.
+> 000                                             
+>        -8.504987                                
+>                    -5.193412
+      tau3_0 |  -4.511404   1.338857    -3.37   0.
+> 001                                             
+>        -7.135515                                
+>                    -1.887293
+      tau3_1 |  -9.219524   1.333198    -6.92   0.
+> 000                                             
+>        -11.83254                                
+>                    -6.606504
+      tau4_0 |  -5.297506    2.11954    -2.50   0.
+> 012                                             
+>        -9.451727                                
+>                    -1.143284
+      tau4_1 |  -9.823215   2.252686    -4.36   0.
+> 000                                             
+>         -14.2384                                
+>                    -5.408033
+      tau5_0 |  -5.894597   2.704801    -2.18   0.
+> 029                                             
+>        -11.19591                                
+>                    -.5932844
+      tau5_1 |  -10.82191    2.74094    -3.95   0.
+> 000                                             
+>        -16.19405                                
+>                    -5.449762
+        pre1 |  -2.527057   .8532104    -2.96   0.
+> 003                                             
+>        -4.199319                                
+>                    -.8547958
+        pre2 |   -2.38703   .6827637    -3.50   0.
+> 000                                             
+>        -3.725222                                
+>                    -1.048838
+        pre3 |  -2.395074   .8104898    -2.96   0.
+> 003                                             
+>        -3.983605                                
+>                    -.8065435
+        pre4 |   -2.19353   .8861046    -2.48   0.
+> 013                                             
+>        -3.930263                                
+>                    -.4567966
+        pre5 |  -1.089389   .7750468    -1.41   0.
+> 160                                             
+>        -2.608453                                
+>                     .4296747
+--------------------------------------------------
+> ----------------------------
 
  ( 1)  pre1 = 0
  ( 2)  pre2 = 0
@@ -690,10 +769,10 @@ Outcome variable: matched
            chi2(  5) =   50.79
          Prob > chi2 =    0.0000
 
-  (1)  ((_b[tau0_1] + _b[tau1_1] + _b[tau2_1] + _b[tau3_1]
->  + _b[tau4_1] + _b[tau5_1])/6) - ((_b[tau0_0] + _b[tau1_
-> 0] + _b[tau2_0] + _b[tau3_0] + _b[tau4_0] + _b[tau5_0])/
-> 6) = 0
+  (1)  ((_b[tau0_1] + _b[tau1_1] + _b[tau2_1] + _b
+> [tau3_1] + _b[tau4_1] + _b[tau5_1])/6) - ((_b[ta
+> u0_0] + _b[tau1_0] + _b[tau2_0] + _b[tau3_0] + _
+> b[tau4_0] + _b[tau5_0])/6) = 0
 
                chi2(1) =       77.53
            Prob > chi2 =        0.0000
@@ -729,92 +808,114 @@ Outcome variable: matched
          Prob > chi2 =    0.0000
 Average urban effect:    -3.665 (p =     0.000)
 Average rural effect:    -7.632 (p =     0.000)
-Difference (rural - urban):    -3.967 (p =     0.000)
+Difference (rural - urban):    -3.967 (p =     0.0
+> 00)
 Joint heterogeneity test p-value:     0.000
 Pretrend joint p-value:     0.000
 number of observations will be reset to 11
 Press any key to continue, or Break to abort
 Number of observations (_N) was 0, now 11.
 file
-    /Users/hhadah/Documents/GiT/residency-medicaid-expan
-    > sion/output/figures/222-hetero_urbanrural_matched_
-    > event.png saved as PNG format
+    /Users/hhadah/Documents/GiT/residency-medica
+    > id-expansion/output/figures/222-hetero_urb
+    > anrural_matched_event.png saved as PNG
+    format
 file
-    /Users/hhadah/Documents/GiT/residency-medicaid-expan
-    > sion/my_paper/figures/222-hetero_urbanrural_matche
-    > d_event.png saved as PNG format
+    /Users/hhadah/Documents/GiT/residency-medica
+    > id-expansion/my_paper/figures/222-hetero_u
+    > rbanrural_matched_event.png saved as PNG
+    format
 
-==========================================================
-> ===============
-HETEROGENEITY ANALYSIS: Unmatched Residency Positions
+==================================================
+> =======================
+HETEROGENEITY ANALYSIS: Unmatched Residency Positi
+> ons
 Outcome variable: unmatched
-==========================================================
-> ===============
+==================================================
+> =======================
 
 
-                                                         N
-> umber of obs                                            
->              = 8,370
-----------------------------------------------------------
-> --------------------
-   unmatched | Coefficient  Std. err.      z    P>|z|     
-> [95% con                                                
->         f. interval]
--------------+--------------------------------------------
-> --------------------
-      tau0_0 |   .0035299   .1338209     0.03   0.979    -
-> .2587542                                                
->              .265814
-      tau0_1 |   .1878732   .1595061     1.18   0.239    -
-> .1247531                                                
->             .5004995
-      tau1_0 |   .0672554   .1585032     0.42   0.671    -
-> .2434052                                                
->             .3779161
-      tau1_1 |   .0208171   .0822534     0.25   0.800    -
-> .1403966                                                
->             .1820308
-      tau2_0 |  -.2039028   .1645928    -1.24   0.215    -
-> .5264988                                                
->             .1186933
-      tau2_1 |  -.1309678   .1104622    -1.19   0.236    -
-> .3474697                                                
->             .0855341
-      tau3_0 |  -.3955151   .2156001    -1.83   0.067    -
-> .8180836                                                
->             .0270533
-      tau3_1 |  -.0363916   .1569679    -0.23   0.817    -
-> .3440432                                                
->             .2712599
-      tau4_0 |  -.6279194    .405535    -1.55   0.122    -
-> 1.422753                                                
->             .1669147
-      tau4_1 |  -.2965791   .4292854    -0.69   0.490    -
-> 1.137963                                                
->             .5448048
-      tau5_0 |  -1.503254   .7843869    -1.92   0.055    -
-> 3.040624                                                
->             .0341164
-      tau5_1 |  -.6759437   .8295138    -0.81   0.415    -
-> 2.301761                                                
->             .9498735
-        pre1 |  -.5932818    .116132    -5.11   0.000    -
-> .8208964                                                
->            -.3656671
-        pre2 |   -.420527   .1200866    -3.50   0.000    -
-> .6558924                                                
->            -.1851617
-        pre3 |  -.4089303   .0902315    -4.53   0.000    -
-> .5857808                                                
->            -.2320798
-        pre4 |  -.1908888   .1715173    -1.11   0.266    -
-> .5270565                                                
->              .145279
-        pre5 |  -.3604766   .1340462    -2.69   0.007    -
-> .6232024                                                
->            -.0977509
-----------------------------------------------------------
-> --------------------
+                                                  
+>        Number of obs                            
+>                      = 8,370
+--------------------------------------------------
+> ----------------------------
+   unmatched | Coefficient  Std. err.      z    P>
+> |z|                                             
+>         [95% con                                
+>                 f. interval]
+-------------+------------------------------------
+> ----------------------------
+      tau0_0 |   .0035299   .1338209     0.03   0.
+> 979                                             
+>        -.2587542                                
+>                      .265814
+      tau0_1 |   .1878732   .1595061     1.18   0.
+> 239                                             
+>        -.1247531                                
+>                     .5004995
+      tau1_0 |   .0672554   .1585032     0.42   0.
+> 671                                             
+>        -.2434052                                
+>                      .377916
+      tau1_1 |   .0208171   .0822534     0.25   0.
+> 800                                             
+>        -.1403966                                
+>                     .1820308
+      tau2_0 |  -.2039028   .1645928    -1.24   0.
+> 215                                             
+>        -.5264988                                
+>                     .1186933
+      tau2_1 |  -.1309678   .1104622    -1.19   0.
+> 236                                             
+>        -.3474698                                
+>                     .0855341
+      tau3_0 |  -.3955152   .2156001    -1.83   0.
+> 067                                             
+>        -.8180836                                
+>                     .0270533
+      tau3_1 |  -.0363917    .156968    -0.23   0.
+> 817                                             
+>        -.3440432                                
+>                     .2712599
+      tau4_0 |  -.6279194    .405535    -1.55   0.
+> 122                                             
+>        -1.422753                                
+>                     .1669147
+      tau4_1 |  -.2965792   .4292854    -0.69   0.
+> 490                                             
+>        -1.137963                                
+>                     .5448047
+      tau5_0 |  -1.503254   .7843869    -1.92   0.
+> 055                                             
+>        -3.040624                                
+>                     .0341164
+      tau5_1 |  -.6759438   .8295138    -0.81   0.
+> 415                                             
+>        -2.301761                                
+>                     .9498734
+        pre1 |  -.5932818    .116132    -5.11   0.
+> 000                                             
+>        -.8208964                                
+>                    -.3656671
+        pre2 |   -.420527   .1200866    -3.50   0.
+> 000                                             
+>        -.6558924                                
+>                    -.1851617
+        pre3 |  -.4089303   .0902315    -4.53   0.
+> 000                                             
+>        -.5857808                                
+>                    -.2320798
+        pre4 |  -.1908888   .1715173    -1.11   0.
+> 266                                             
+>        -.5270565                                
+>                      .145279
+        pre5 |  -.3604766   .1340462    -2.69   0.
+> 007                                             
+>        -.6232024                                
+>                    -.0977509
+--------------------------------------------------
+> ----------------------------
 
  ( 1)  pre1 = 0
  ( 2)  pre2 = 0
@@ -825,10 +926,10 @@ Outcome variable: unmatched
            chi2(  5) =   37.65
          Prob > chi2 =    0.0000
 
-  (1)  ((_b[tau0_1] + _b[tau1_1] + _b[tau2_1] + _b[tau3_1]
->  + _b[tau4_1] + _b[tau5_1])/6) - ((_b[tau0_0] + _b[tau1_
-> 0] + _b[tau2_0] + _b[tau3_0] + _b[tau4_0] + _b[tau5_0])/
-> 6) = 0
+  (1)  ((_b[tau0_1] + _b[tau1_1] + _b[tau2_1] + _b
+> [tau3_1] + _b[tau4_1] + _b[tau5_1])/6) - ((_b[ta
+> u0_0] + _b[tau1_0] + _b[tau2_0] + _b[tau3_0] + _
+> b[tau4_0] + _b[tau5_0])/6) = 0
 
                chi2(1) =        3.79
            Prob > chi2 =        0.0516
@@ -864,93 +965,114 @@ Outcome variable: unmatched
          Prob > chi2 =    0.0634
 Average urban effect:    -0.443 (p =     0.000)
 Average rural effect:    -0.155 (p =     0.063)
-Difference (rural - urban):     0.288 (p =     0.052)
+Difference (rural - urban):     0.288 (p =     0.0
+> 52)
 Joint heterogeneity test p-value:     0.000
 Pretrend joint p-value:     0.000
 number of observations will be reset to 11
 Press any key to continue, or Break to abort
 Number of observations (_N) was 0, now 11.
 file
-    /Users/hhadah/Documents/GiT/residency-medicaid-expan
-    > sion/output/figures/223-hetero_urbanrural_unmatche
-    > d_event.png saved as PNG format
+    /Users/hhadah/Documents/GiT/residency-medica
+    > id-expansion/output/figures/223-hetero_urb
+    > anrural_unmatched_event.png saved as PNG
+    format
 file
-    /Users/hhadah/Documents/GiT/residency-medicaid-expan
-    > sion/my_paper/figures/223-hetero_urbanrural_unmatc
-    > hed_event.png saved as PNG format
+    /Users/hhadah/Documents/GiT/residency-medica
+    > id-expansion/my_paper/figures/223-hetero_u
+    > rbanrural_unmatched_event.png saved as PNG
+    format
 
-==========================================================
-> ===============
-HETEROGENEITY ANALYSIS: Matched Residency Positions per 10
-> 0k Population
+==================================================
+> =======================
+HETEROGENEITY ANALYSIS: Matched Residency Position
+> s per 100k Population
 Outcome variable: matched_per_100k
-==========================================================
-> ===============
+==================================================
+> =======================
 
 
-                                                         N
-> umber of obs                                            
->              = 8,370
-----------------------------------------------------------
-> --------------------
-matched~100k | Coefficient  Std. err.      z    P>|z|     
-> [95% con                                                
->         f. interval]
--------------+--------------------------------------------
-> --------------------
-      tau0_0 |   -.005198    .006438    -0.81   0.419    -
-> .0178161                                                
->             .0074202
-      tau0_1 |  -.0263253   .0049252    -5.35   0.000    -
-> .0359785                                                
->            -.0166722
-      tau1_0 |  -.0171435   .0089663    -1.91   0.056    -
-> .0347171                                                
->             .0004301
-      tau1_1 |  -.0366089   .0082844    -4.42   0.000     
-> -.052846                                                
->            -.0203718
-      tau2_0 |  -.0212174   .0104679    -2.03   0.043     
-> -.041734                                                
->            -.0007008
-      tau2_1 |  -.0465598   .0094475    -4.93   0.000    -
-> .0650765                                                
->            -.0280431
-      tau3_0 |  -.0313016   .0139182    -2.25   0.025    -
-> .0585808                                                
->            -.0040224
-      tau3_1 |   -.056454    .014007    -4.03   0.000    -
-> .0839073                                                
->            -.0290007
-      tau4_0 |  -.0401713   .0199565    -2.01   0.044    -
-> .0792852                                                
->            -.0010574
-      tau4_1 |  -.0556862   .0214607    -2.59   0.009    -
-> .0977484                                                
->            -.0136241
-      tau5_0 |  -.0432005   .0245635    -1.76   0.079     
-> -.091344                                                
->              .004943
-      tau5_1 |  -.0532531   .0272825    -1.95   0.051    -
-> .1067258                                                
->             .0002195
-        pre1 |   .0215534   .0170566     1.26   0.206    -
-> .0118768                                                
->             .0549836
-        pre2 |   .0233792   .0127774     1.83   0.067    -
-> .0016641                                                
->             .0484225
-        pre3 |   .0221359   .0118641     1.87   0.062    -
-> .0011174                                                
->             .0453891
-        pre4 |   .0212684   .0107669     1.98   0.048     
-> .0001657                                                
->             .0423712
-        pre5 |   .0211702   .0103585     2.04   0.041     
-> .0008679                                                
->             .0414724
-----------------------------------------------------------
-> --------------------
+                                                  
+>        Number of obs                            
+>                      = 8,370
+--------------------------------------------------
+> ----------------------------
+matched~100k | Coefficient  Std. err.      z    P>
+> |z|                                             
+>         [95% con                                
+>                 f. interval]
+-------------+------------------------------------
+> ----------------------------
+      tau0_0 |   -.005198   .0064379    -0.81   0.
+> 419                                             
+>        -.0178161                                
+>                     .0074202
+      tau0_1 |  -.0263253   .0049252    -5.35   0.
+> 000                                             
+>        -.0359784                                
+>                    -.0166722
+      tau1_0 |  -.0171435   .0089663    -1.91   0.
+> 056                                             
+>         -.034717                                
+>                     .0004301
+      tau1_1 |  -.0366089   .0082844    -4.42   0.
+> 000                                             
+>        -.0528459                                
+>                    -.0203718
+      tau2_0 |  -.0212174   .0104679    -2.03   0.
+> 043                                             
+>         -.041734                                
+>                    -.0007008
+      tau2_1 |  -.0465598   .0094475    -4.93   0.
+> 000                                             
+>        -.0650765                                
+>                    -.0280431
+      tau3_0 |  -.0313016   .0139182    -2.25   0.
+> 025                                             
+>        -.0585807                                
+>                    -.0040224
+      tau3_1 |   -.056454    .014007    -4.03   0.
+> 000                                             
+>        -.0839073                                
+>                    -.0290007
+      tau4_0 |  -.0401713   .0199564    -2.01   0.
+> 044                                             
+>        -.0792852                                
+>                    -.0010573
+      tau4_1 |  -.0556862   .0214607    -2.59   0.
+> 009                                             
+>        -.0977483                                
+>                    -.0136241
+      tau5_0 |  -.0432005   .0245634    -1.76   0.
+> 079                                             
+>         -.091344                                
+>                      .004943
+      tau5_1 |  -.0532531   .0272825    -1.95   0.
+> 051                                             
+>        -.1067257                                
+>                     .0002195
+        pre1 |   .0215534   .0170566     1.26   0.
+> 206                                             
+>        -.0118768                                
+>                     .0549836
+        pre2 |   .0233792   .0127774     1.83   0.
+> 067                                             
+>        -.0016641                                
+>                     .0484225
+        pre3 |   .0221359   .0118641     1.87   0.
+> 062                                             
+>        -.0011174                                
+>                     .0453891
+        pre4 |   .0212684   .0107669     1.98   0.
+> 048                                             
+>         .0001657                                
+>                     .0423712
+        pre5 |   .0211702   .0103585     2.04   0.
+> 041                                             
+>         .0008679                                
+>                     .0414724
+--------------------------------------------------
+> ----------------------------
 
  ( 1)  pre1 = 0
  ( 2)  pre2 = 0
@@ -961,10 +1083,10 @@ matched~100k | Coefficient  Std. err.      z    P>|z|
            chi2(  5) =    5.45
          Prob > chi2 =    0.3630
 
-  (1)  ((_b[tau0_1] + _b[tau1_1] + _b[tau2_1] + _b[tau3_1]
->  + _b[tau4_1] + _b[tau5_1])/6) - ((_b[tau0_0] + _b[tau1_
-> 0] + _b[tau2_0] + _b[tau3_0] + _b[tau4_0] + _b[tau5_0])/
-> 6) = 0
+  (1)  ((_b[tau0_1] + _b[tau1_1] + _b[tau2_1] + _b
+> [tau3_1] + _b[tau4_1] + _b[tau5_1])/6) - ((_b[ta
+> u0_0] + _b[tau1_0] + _b[tau2_0] + _b[tau3_0] + _
+> b[tau4_0] + _b[tau5_0])/6) = 0
 
                chi2(1) =        8.77
            Prob > chi2 =        0.0031
@@ -1000,93 +1122,114 @@ matched~100k | Coefficient  Std. err.      z    P>|z|
          Prob > chi2 =    0.0000
 Average urban effect:    -0.026 (p =     0.047)
 Average rural effect:    -0.046 (p =     0.000)
-Difference (rural - urban):    -0.019 (p =     0.003)
+Difference (rural - urban):    -0.019 (p =     0.0
+> 03)
 Joint heterogeneity test p-value:     0.000
 Pretrend joint p-value:     0.363
 number of observations will be reset to 11
 Press any key to continue, or Break to abort
 Number of observations (_N) was 0, now 11.
 file
-    /Users/hhadah/Documents/GiT/residency-medicaid-expan
-    > sion/output/figures/224-hetero_urbanrural_matched_
-    > per_100k_event.png saved as PNG format
+    /Users/hhadah/Documents/GiT/residency-medica
+    > id-expansion/output/figures/224-hetero_urb
+    > anrural_matched_per_100k_event.png saved
+    as PNG format
 file
-    /Users/hhadah/Documents/GiT/residency-medicaid-expan
-    > sion/my_paper/figures/224-hetero_urbanrural_matche
-    > d_per_100k_event.png saved as PNG format
+    /Users/hhadah/Documents/GiT/residency-medica
+    > id-expansion/my_paper/figures/224-hetero_u
+    > rbanrural_matched_per_100k_event.png saved
+    as PNG format
 
-==========================================================
-> ===============
-HETEROGENEITY ANALYSIS: Residency Quota Positions per 100k
->  Population
+==================================================
+> =======================
+HETEROGENEITY ANALYSIS: Residency Quota Positions 
+> per 100k Population
 Outcome variable: quota_per_100k
-==========================================================
-> ===============
+==================================================
+> =======================
 
 
-                                                         N
-> umber of obs                                            
->              = 8,370
-----------------------------------------------------------
-> --------------------
-quota_p~100k | Coefficient  Std. err.      z    P>|z|     
-> [95% con                                                
->         f. interval]
--------------+--------------------------------------------
-> --------------------
-      tau0_0 |   -.005225   .0066498    -0.79   0.432    -
-> .0182584                                                
->             .0078084
-      tau0_1 |   -.024541   .0052256    -4.70   0.000    -
-> .0347831                                                
->            -.0142989
-      tau1_0 |  -.0163901   .0095815    -1.71   0.087    -
-> .0351694                                                
->             .0023892
-      tau1_1 |  -.0364764   .0084982    -4.29   0.000    -
-> .0531326                                                
->            -.0198203
-      tau2_0 |  -.0235733   .0112009    -2.10   0.035    -
-> .0455267                                                
->              -.00162
-      tau2_1 |  -.0465289    .010318    -4.51   0.000    -
-> .0667519                                                
->             -.026306
-      tau3_0 |  -.0337714   .0144061    -2.34   0.019    -
-> .0620069                                                
->            -.0055359
-      tau3_1 |  -.0576658   .0141559    -4.07   0.000    -
-> .0854108                                                
->            -.0299208
-      tau4_0 |  -.0430776   .0210285    -2.05   0.041    -
-> .0842928                                                
->            -.0018625
-      tau4_1 |   -.054698   .0231169    -2.37   0.018    -
-> .1000064                                                
->            -.0093896
-      tau5_0 |  -.0528158   .0287105    -1.84   0.066    -
-> .1090873                                                
->             .0034557
-      tau5_1 |  -.0525861   .0326908    -1.61   0.108     
-> -.116659                                                
->             .0114867
-        pre1 |   .0183814   .0177586     1.04   0.301    -
-> .0164249                                                
->             .0531876
-        pre2 |    .020547   .0141755     1.45   0.147    -
-> .0072365                                                
->             .0483305
-        pre3 |   .0198315   .0129831     1.53   0.127    -
-> .0056148                                                
->             .0452779
-        pre4 |   .0209243   .0120941     1.73   0.084    -
-> .0027797                                                
->             .0446282
-        pre5 |   .0193266   .0112451     1.72   0.086    -
-> .0027134                                                
->             .0413665
-----------------------------------------------------------
-> --------------------
+                                                  
+>        Number of obs                            
+>                      = 8,370
+--------------------------------------------------
+> ----------------------------
+quota_p~100k | Coefficient  Std. err.      z    P>
+> |z|                                             
+>         [95% con                                
+>                 f. interval]
+-------------+------------------------------------
+> ----------------------------
+      tau0_0 |   -.005225   .0066498    -0.79   0.
+> 432                                             
+>        -.0182584                                
+>                     .0078084
+      tau0_1 |   -.024541   .0052256    -4.70   0.
+> 000                                             
+>        -.0347831                                
+>                    -.0142989
+      tau1_0 |  -.0163901   .0095815    -1.71   0.
+> 087                                             
+>        -.0351694                                
+>                     .0023892
+      tau1_1 |  -.0364764   .0084982    -4.29   0.
+> 000                                             
+>        -.0531326                                
+>                    -.0198203
+      tau2_0 |  -.0235733   .0112009    -2.10   0.
+> 035                                             
+>        -.0455267                                
+>                      -.00162
+      tau2_1 |  -.0465289    .010318    -4.51   0.
+> 000                                             
+>        -.0667519                                
+>                     -.026306
+      tau3_0 |  -.0337714   .0144061    -2.34   0.
+> 019                                             
+>        -.0620069                                
+>                    -.0055359
+      tau3_1 |  -.0576658   .0141559    -4.07   0.
+> 000                                             
+>        -.0854108                                
+>                    -.0299208
+      tau4_0 |  -.0430776   .0210285    -2.05   0.
+> 041                                             
+>        -.0842928                                
+>                    -.0018625
+      tau4_1 |   -.054698   .0231169    -2.37   0.
+> 018                                             
+>        -.1000064                                
+>                    -.0093896
+      tau5_0 |  -.0528158   .0287105    -1.84   0.
+> 066                                             
+>        -.1090873                                
+>                     .0034557
+      tau5_1 |  -.0525861   .0326908    -1.61   0.
+> 108                                             
+>         -.116659                                
+>                     .0114867
+        pre1 |   .0183814   .0177586     1.04   0.
+> 301                                             
+>        -.0164249                                
+>                     .0531876
+        pre2 |    .020547   .0141755     1.45   0.
+> 147                                             
+>        -.0072365                                
+>                     .0483305
+        pre3 |   .0198315   .0129831     1.53   0.
+> 127                                             
+>        -.0056148                                
+>                     .0452779
+        pre4 |   .0209243   .0120941     1.73   0.
+> 084                                             
+>        -.0027797                                
+>                     .0446282
+        pre5 |   .0193266   .0112451     1.72   0.
+> 086                                             
+>        -.0027134                                
+>                     .0413665
+--------------------------------------------------
+> ----------------------------
 
  ( 1)  pre1 = 0
  ( 2)  pre2 = 0
@@ -1097,10 +1240,10 @@ quota_p~100k | Coefficient  Std. err.      z    P>|z|
            chi2(  5) =    6.02
          Prob > chi2 =    0.3039
 
-  (1)  ((_b[tau0_1] + _b[tau1_1] + _b[tau2_1] + _b[tau3_1]
->  + _b[tau4_1] + _b[tau5_1])/6) - ((_b[tau0_0] + _b[tau1_
-> 0] + _b[tau2_0] + _b[tau3_0] + _b[tau4_0] + _b[tau5_0])/
-> 6) = 0
+  (1)  ((_b[tau0_1] + _b[tau1_1] + _b[tau2_1] + _b
+> [tau3_1] + _b[tau4_1] + _b[tau5_1])/6) - ((_b[ta
+> u0_0] + _b[tau1_0] + _b[tau2_0] + _b[tau3_0] + _
+> b[tau4_0] + _b[tau5_0])/6) = 0
 
                chi2(1) =        5.36
            Prob > chi2 =        0.0206
@@ -1136,93 +1279,114 @@ quota_p~100k | Coefficient  Std. err.      z    P>|z|
          Prob > chi2 =    0.0000
 Average urban effect:    -0.029 (p =     0.012)
 Average rural effect:    -0.045 (p =     0.000)
-Difference (rural - urban):    -0.016 (p =     0.021)
+Difference (rural - urban):    -0.016 (p =     0.0
+> 21)
 Joint heterogeneity test p-value:     0.000
 Pretrend joint p-value:     0.304
 number of observations will be reset to 11
 Press any key to continue, or Break to abort
 Number of observations (_N) was 0, now 11.
 file
-    /Users/hhadah/Documents/GiT/residency-medicaid-expan
-    > sion/output/figures/225-hetero_urbanrural_quota_pe
-    > r_100k_event.png saved as PNG format
+    /Users/hhadah/Documents/GiT/residency-medica
+    > id-expansion/output/figures/225-hetero_urb
+    > anrural_quota_per_100k_event.png saved as
+    PNG format
 file
-    /Users/hhadah/Documents/GiT/residency-medicaid-expan
-    > sion/my_paper/figures/225-hetero_urbanrural_quota_
-    > per_100k_event.png saved as PNG format
+    /Users/hhadah/Documents/GiT/residency-medica
+    > id-expansion/my_paper/figures/225-hetero_u
+    > rbanrural_quota_per_100k_event.png saved
+    as PNG format
 
-==========================================================
-> ===============
-HETEROGENEITY ANALYSIS: Unmatched Residency Positions per 
-> 100k Population
+==================================================
+> =======================
+HETEROGENEITY ANALYSIS: Unmatched Residency Positi
+> ons per 100k Population
 Outcome variable: unmatched_per_100k
-==========================================================
-> ===============
+==================================================
+> =======================
 
 
-                                                         N
-> umber of obs                                            
->              = 8,370
-----------------------------------------------------------
-> --------------------
-unmatch~100k | Coefficient  Std. err.      z    P>|z|     
-> [95% con                                                
->         f. interval]
--------------+--------------------------------------------
-> --------------------
-      tau0_0 |   -.000027   .0011471    -0.02   0.981    -
-> .0022754                                                
->             .0022213
-      tau0_1 |   .0017843   .0014773     1.21   0.227    -
-> .0011112                                                
->             .0046798
-      tau1_0 |   .0007534   .0014591     0.52   0.606    -
-> .0021064                                                
->             .0036132
-      tau1_1 |   .0001324   .0012573     0.11   0.916    -
-> .0023318                                                
->             .0025966
-      tau2_0 |   -.002356   .0014174    -1.66   0.096    -
-> .0051339                                                
->              .000422
-      tau2_1 |   .0000309   .0017795     0.02   0.986    -
-> .0034569                                                
->             .0035186
-      tau3_0 |  -.0024698   .0013839    -1.78   0.074    -
-> .0051823                                                
->             .0002426
-      tau3_1 |  -.0012118   .0011112    -1.09   0.275    -
-> .0033898                                                
->             .0009662
-      tau4_0 |  -.0029064   .0024629    -1.18   0.238    -
-> .0077336                                                
->             .0019209
-      tau4_1 |   .0009882    .003126     0.32   0.752    -
-> .0051386                                                
->              .007115
-      tau5_0 |  -.0096153   .0049151    -1.96   0.050    -
-> .0192488                                                
->             .0000182
-      tau5_1 |    .000667   .0072884     0.09   0.927     
-> -.013618                                                
->              .014952
-        pre1 |   -.003172    .002132    -1.49   0.137    -
-> .0073506                                                
->             .0010065
-        pre2 |  -.0028322   .0024234    -1.17   0.243    -
-> .0075819                                                
->             .0019176
-        pre3 |  -.0023043   .0022333    -1.03   0.302    -
-> .0066815                                                
->             .0020728
-        pre4 |  -.0003442    .002488    -0.14   0.890    -
-> .0052206                                                
->             .0045323
-        pre5 |  -.0018436   .0033466    -0.55   0.582    -
-> .0084029                                                
->             .0047156
-----------------------------------------------------------
-> --------------------
+                                                  
+>        Number of obs                            
+>                      = 8,370
+--------------------------------------------------
+> ----------------------------
+unmatch~100k | Coefficient  Std. err.      z    P>
+> |z|                                             
+>         [95% con                                
+>                 f. interval]
+-------------+------------------------------------
+> ----------------------------
+      tau0_0 |   -.000027   .0011471    -0.02   0.
+> 981                                             
+>        -.0022754                                
+>                     .0022214
+      tau0_1 |   .0017843   .0014773     1.21   0.
+> 227                                             
+>        -.0011111                                
+>                     .0046798
+      tau1_0 |   .0007534   .0014591     0.52   0.
+> 606                                             
+>        -.0021063                                
+>                     .0036132
+      tau1_1 |   .0001325   .0012573     0.11   0.
+> 916                                             
+>        -.0023318                                
+>                     .0025967
+      tau2_0 |  -.0023559   .0014174    -1.66   0.
+> 096                                             
+>        -.0051339                                
+>                     .0004221
+      tau2_1 |   .0000309   .0017795     0.02   0.
+> 986                                             
+>        -.0034569                                
+>                     .0035187
+      tau3_0 |  -.0024698   .0013839    -1.78   0.
+> 074                                             
+>        -.0051822                                
+>                     .0002426
+      tau3_1 |  -.0012118   .0011112    -1.09   0.
+> 276                                             
+>        -.0033898                                
+>                     .0009662
+      tau4_0 |  -.0029063   .0024629    -1.18   0.
+> 238                                             
+>        -.0077336                                
+>                      .001921
+      tau4_1 |   .0009883    .003126     0.32   0.
+> 752                                             
+>        -.0051385                                
+>                      .007115
+      tau5_0 |  -.0096153   .0049151    -1.96   0.
+> 050                                             
+>        -.0192487                                
+>                     .0000182
+      tau5_1 |    .000667   .0072884     0.09   0.
+> 927                                             
+>        -.0136179                                
+>                      .014952
+        pre1 |   -.003172    .002132    -1.49   0.
+> 137                                             
+>        -.0073506                                
+>                     .0010065
+        pre2 |  -.0028322   .0024234    -1.17   0.
+> 243                                             
+>        -.0075819                                
+>                     .0019176
+        pre3 |  -.0023043   .0022333    -1.03   0.
+> 302                                             
+>        -.0066815                                
+>                     .0020728
+        pre4 |  -.0003442    .002488    -0.14   0.
+> 890                                             
+>        -.0052206                                
+>                     .0045323
+        pre5 |  -.0018436   .0033466    -0.55   0.
+> 582                                             
+>        -.0084029                                
+>                     .0047156
+--------------------------------------------------
+> ----------------------------
 
  ( 1)  pre1 = 0
  ( 2)  pre2 = 0
@@ -1233,10 +1397,10 @@ unmatch~100k | Coefficient  Std. err.      z    P>|z|
            chi2(  5) =    4.99
          Prob > chi2 =    0.4170
 
-  (1)  ((_b[tau0_1] + _b[tau1_1] + _b[tau2_1] + _b[tau3_1]
->  + _b[tau4_1] + _b[tau5_1])/6) - ((_b[tau0_0] + _b[tau1_
-> 0] + _b[tau2_0] + _b[tau3_0] + _b[tau4_0] + _b[tau5_0])/
-> 6) = 0
+  (1)  ((_b[tau0_1] + _b[tau1_1] + _b[tau2_1] + _b
+> [tau3_1] + _b[tau4_1] + _b[tau5_1])/6) - ((_b[ta
+> u0_0] + _b[tau1_0] + _b[tau2_0] + _b[tau3_0] + _
+> b[tau4_0] + _b[tau5_0])/6) = 0
 
                chi2(1) =        4.80
            Prob > chi2 =        0.0284
@@ -1272,57 +1436,64 @@ unmatch~100k | Coefficient  Std. err.      z    P>|z|
          Prob > chi2 =    0.6119
 Average urban effect:    -0.003 (p =     0.069)
 Average rural effect:     0.000 (p =     0.612)
-Difference (rural - urban):     0.003 (p =     0.028)
+Difference (rural - urban):     0.003 (p =     0.0
+> 28)
 Joint heterogeneity test p-value:     0.027
 Pretrend joint p-value:     0.417
 number of observations will be reset to 11
 Press any key to continue, or Break to abort
 Number of observations (_N) was 0, now 11.
 file
-    /Users/hhadah/Documents/GiT/residency-medicaid-expan
-    > sion/output/figures/226-hetero_urbanrural_unmatche
-    > d_per_100k_event.png saved as PNG format
+    /Users/hhadah/Documents/GiT/residency-medica
+    > id-expansion/output/figures/226-hetero_urb
+    > anrural_unmatched_per_100k_event.png saved
+    as PNG format
 file
-    /Users/hhadah/Documents/GiT/residency-medicaid-expan
-    > sion/my_paper/figures/226-hetero_urbanrural_unmatc
-    > hed_per_100k_event.png saved as PNG format
+    /Users/hhadah/Documents/GiT/residency-medica
+    > id-expansion/my_paper/figures/226-hetero_u
+    > rbanrural_unmatched_per_100k_event.png
+    saved as PNG format
 
 . 
 . di ""
 
 
-. di "====================================================
-> ====================="
-==========================================================
-> ===============
+. di "============================================
+> ============================="
+==================================================
+> =======================
 
-. di "HETEROGENEITY ANALYSIS BY URBAN/RURAL CLASSIFICATION
->  COMPLETED"
-HETEROGENEITY ANALYSIS BY URBAN/RURAL CLASSIFICATION COMPL
-> ETED
+. di "HETEROGENEITY ANALYSIS BY URBAN/RURAL CLASSI
+> FICATION COMPLETED"
+HETEROGENEITY ANALYSIS BY URBAN/RURAL CLASSIFICATI
+> ON COMPLETED
 
 . di "Event study plots saved to:"
 Event study plots saved to:
 
-. di "  - ${figdir}/50-hetero_urbanrural_*_event.png"
-  - /Users/hhadah/Documents/GiT/residency-medicaid-expansi
-> on/output/figures/50-hetero_urbanrural_*_event.png
+. di "  - ${figdir}/50-hetero_urbanrural_*_event.p
+> ng"
+  - /Users/hhadah/Documents/GiT/residency-medicaid
+> -expansion/output/figures/50-hetero_urbanrural_*
+> _event.png
 
-. di "  - ${latex_figdir}/50-hetero_urbanrural_*_event.png
-> "
-  - /Users/hhadah/Documents/GiT/residency-medicaid-expansi
-> on/my_paper/figures/50-hetero_urbanrural_*_event.png
+. di "  - ${latex_figdir}/50-hetero_urbanrural_*_e
+> vent.png"
+  - /Users/hhadah/Documents/GiT/residency-medicaid
+> -expansion/my_paper/figures/50-hetero_urbanrural
+> _*_event.png
 
-. di "====================================================
-> ====================="
-==========================================================
-> ===============
+. di "============================================
+> ============================="
+==================================================
+> =======================
 
 . 
 . log close
       name:  <unnamed>
-       log:  /Users/hhadah/Documents/GiT/residency-medicai
-> d-expansion/output/09-dd-analysis-hetero.log
+       log:  /Users/hhadah/Documents/GiT/residency
+> -medicaid-expansion/output/09-dd-analysis-hetero
+> .log
   log type:  text
- closed on:  27 Jan 2026, 19:44:20
-----------------------------------------------------------
+ closed on:  27 Jan 2026, 20:43:14
+--------------------------------------------------
