@@ -11,7 +11,7 @@ set varabbrev off
 * -------------------------------------------------------------------------
 * Define paths
 * -------------------------------------------------------------------------
-global topdir "/Users/hhadah/Documents/GiT/residency-medicaid-expansion"
+global topdir "/Users/hhadah/Projects/GiT/residency-medicaid-expansion"
 global progdir "${topdir}/programs"
 global outputdir "${topdir}/output"
 
@@ -51,16 +51,16 @@ else {
 di ""
 
 * =========================================================================
-* SCRIPT 06: DID Analysis by Specialty (Weighted, Specialty-Level)
+* SCRIPT 07: Heterogeneity Analysis - Urban/Rural (Weighted, Program-Level)
 * =========================================================================
 di ""
-di ">>> Running Script 06: DID Analysis by Specialty (Weighted)"
-di "    File: 06-did-analysis-byspeciality.do"
+di ">>> Running Script 06: Heterogeneity Analysis Urban/Rural (Weighted)"
+di "    File: 06-dd-analysis-hetero.do"
 di ""
-capture noisily do "${progdir}/06-did-analysis-byspeciality.do"
+capture noisily do "${progdir}/06-dd-analysis-hetero.do"
 if (_rc != 0) {
     di as error "ERROR: Script 06 failed with code " _rc
-    di as error "Check ${outputdir}/06-did-analysis-byspeciality.log for details"
+    di as error "Check ${outputdir}/06-dd-analysis-hetero.log for details"
 }
 else {
     di as result "COMPLETED: Script 06"
@@ -68,104 +68,19 @@ else {
 di ""
 
 * =========================================================================
-* SCRIPT 07: DID Analysis Unweighted (Program-Level)
+* SCRIPT 07: DID Analysis by Specialty (Primary Care vs Non-Primary Care)
 * =========================================================================
 di ""
-di ">>> Running Script 07: DID Analysis (Unweighted, Program-Level)"
-di "    File: 07-dd-analysis-unweighted.do"
+di ">>> Running Script 07: DID Analysis (Primary Care vs Non-Primary Care)"
+di "    File: 07-did-analysis-byspeciality.do"
 di ""
-capture noisily do "${progdir}/07-dd-analysis-unweighted.do"
+capture noisily do "${progdir}/07-did-analysis-byspeciality.do"
 if (_rc != 0) {
     di as error "ERROR: Script 07 failed with code " _rc
-    di as error "Check ${outputdir}/07-dd-analysis-unweighted.log for details"
+    di as error "Check ${outputdir}/06-did-analysis-byspeciality.log for details"
 }
 else {
     di as result "COMPLETED: Script 07"
-}
-di ""
-
-* =========================================================================
-* SCRIPT 08: DID Analysis by Specialty Unweighted (Specialty-Level)
-* =========================================================================
-di ""
-di ">>> Running Script 08: DID Analysis by Specialty (Unweighted)"
-di "    File: 08-did-analysis-byspeciality-unweighted.do"
-di ""
-capture noisily do "${progdir}/08-did-analysis-byspeciality-unweighted.do"
-if (_rc != 0) {
-    di as error "ERROR: Script 08 failed with code " _rc
-    di as error "Check ${outputdir}/08-did-analysis-byspeciality-unweighted.log for details"
-}
-else {
-    di as result "COMPLETED: Script 08"
-}
-di ""
-
-* =========================================================================
-* SCRIPT 09: Heterogeneity Analysis - Urban/Rural (Weighted, Program-Level)
-* =========================================================================
-di ""
-di ">>> Running Script 09: Heterogeneity Analysis Urban/Rural (Weighted)"
-di "    File: 09-dd-analysis-hetero.do"
-di ""
-capture noisily do "${progdir}/09-dd-analysis-hetero.do"
-if (_rc != 0) {
-    di as error "ERROR: Script 09 failed with code " _rc
-    di as error "Check ${outputdir}/09-dd-analysis-hetero.log for details"
-}
-else {
-    di as result "COMPLETED: Script 09"
-}
-di ""
-
-* =========================================================================
-* SCRIPT 10: Heterogeneity Analysis - Urban/Rural Unweighted (Program-Level)
-* =========================================================================
-di ""
-di ">>> Running Script 10: Heterogeneity Analysis Urban/Rural (Unweighted)"
-di "    File: 10-dd-analysis-hetero-unweighted.do"
-di ""
-capture noisily do "${progdir}/10-dd-analysis-hetero-unweighted.do"
-if (_rc != 0) {
-    di as error "ERROR: Script 10 failed with code " _rc
-    di as error "Check ${outputdir}/10-dd-analysis-hetero-unweighted.log for details"
-}
-else {
-    di as result "COMPLETED: Script 10"
-}
-di ""
-
-* =========================================================================
-* SCRIPT 11: Heterogeneity Analysis - Urban/Rural by Specialty (Weighted)
-* =========================================================================
-di ""
-di ">>> Running Script 11: Heterogeneity Analysis Urban/Rural by Specialty (Weighted)"
-di "    File: 11-dd-analysis-hetero-byspecialty.do"
-di ""
-capture noisily do "${progdir}/11-dd-analysis-hetero-byspecialty.do"
-if (_rc != 0) {
-    di as error "ERROR: Script 11 failed with code " _rc
-    di as error "Check ${outputdir}/11-dd-analysis-hetero-byspecialty.log for details"
-}
-else {
-    di as result "COMPLETED: Script 11"
-}
-di ""
-
-* =========================================================================
-* SCRIPT 12: Heterogeneity Analysis - Urban/Rural by Specialty (Unweighted)
-* =========================================================================
-di ""
-di ">>> Running Script 12: Heterogeneity Analysis Urban/Rural by Specialty (Unweighted)"
-di "    File: 12-dd-analysis-hetero-byspecialty-unweighted.do"
-di ""
-capture noisily do "${progdir}/12-dd-analysis-hetero-byspecialty-unweighted.do"
-if (_rc != 0) {
-    di as error "ERROR: Script 12 failed with code " _rc
-    di as error "Check ${outputdir}/12-dd-analysis-hetero-byspecialty-unweighted.log for details"
-}
-else {
-    di as result "COMPLETED: Script 12"
 }
 di ""
 
@@ -181,13 +96,8 @@ di ""
 di "Log files created in: ${outputdir}/"
 di "  - 99-master-analysis.log (this file)"
 di "  - 05-dd-analysis.log"
+di "  - 06-dd-analysis-hetero.log"
 di "  - 06-did-analysis-byspeciality.log"
-di "  - 07-dd-analysis-unweighted.log"
-di "  - 08-did-analysis-byspeciality-unweighted.log"
-di "  - 09-dd-analysis-hetero.log"
-di "  - 10-dd-analysis-hetero-unweighted.log"
-di "  - 11-dd-analysis-hetero-byspecialty.log"
-di "  - 12-dd-analysis-hetero-byspecialty-unweighted.log"
 di ""
 di "Output figures and tables created in: ${outputdir}/figures/ and ${outputdir}/tables/"
 di "========================================================================="

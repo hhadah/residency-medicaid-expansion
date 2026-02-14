@@ -1,0 +1,544 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/06-dd-analysis-hetero.log
+  log type:  text
+ opened on:  14 Feb 2026, 10:04:31
+
+. 
+. cap mkdir "${figdir}"
+
+. cap mkdir "${tabdir}"
+
+. cap mkdir "${latex_figdir}"
+
+. 
+. * -------------------------------------------------------------------------
+. * Load cleaned data (produced by 02-data-cleaning.R)
+. * -------------------------------------------------------------------------
+. use "${datadir}/cleaned_program_residency_medicaid.dta", clear
+
+. 
+. *===============================================================================
+. * Data Setup
+. *===============================================================================
+. 
+. * Panel identifiers
+. egen program_numeric_id = group(state institution_code)
+
+. encode state, gen(state_id)
+
+. 
+. xtset program_numeric_id year
+
+Panel variable: program_numeric_id (strongly balanced)
+ Time variable: year, 2010 to 2019
+         Delta: 1 unit
+
+. 
+. * Create urban/rural group based on rural_urban_2010
+. * 0 = Urban (RUCA codes 1, 2, 3), 1 = Rural (RUCA codes > 3)
+. gen urban_rural = (rural_urban_2010 > 3) if !missing(rural_urban_2010)
+(220 missing values generated)
+
+. label define urban_rural_lab 0 "Urban" 1 "Rural"
+
+. label values urban_rural urban_rural_lab
+
+. 
+. * Keep only observations with non-missing group
+. keep if !missing(urban_rural)
+(220 observations deleted)
+
+. 
+. * Display basic information
+. describe rural_urban_2010 urban_rural
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+rural_urba~2010 double  %10.0g                
+urban_rural     float   %9.0g      urban_rural_lab
+                                              
+
+. tab urban_rural, missing
+
+urban_rural |      Freq.     Percent        Cum.
+------------+-----------------------------------
+      Urban |      7,810       93.31       93.31
+      Rural |        560        6.69      100.00
+------------+-----------------------------------
+      Total |      8,370      100.00
+
+. di "Urban/Rural coding: 0 = Urban, 1 = Rural"
+Urban/Rural coding: 0 = Urban, 1 = Rural
+
+. 
+. * -------------------------------------------------------------------------
+. * Outcomes and labels
+. * -------------------------------------------------------------------------
+. global outcomes "matched_per_100k quota_per_100k"
+
+. global label_quota_per_100k "Residency Quota Positions per 100k Population"
+
+. global label_matched_per_100k "Matched Residency Positions per 100k Population"
+
+. 
+. global short_quota_per_100k "quota_per_100k"
+
+. global short_matched_per_100k "matched_per_100k"
+
+. 
+. *===============================================================================
+. * Heterogeneity Analysis - Urban vs Rural
+. *===============================================================================
+. 
+. di ""
+
+
+. di "========================================================================="
+=========================================================================
+
+. di "HETEROGENEITY ANALYSIS: By Urban/Rural Classification"
+HETEROGENEITY ANALYSIS: By Urban/Rural Classification
+
+. di "Urban vs Rural"
+Urban vs Rural
+
+. di "========================================================================="
+=========================================================================
+
+. di ""
+
+
+. 
+. local plotnum = 7
+
+. 
+. foreach outcome of global outcomes {
+  2.     
+.     capture confirm variable `outcome'
+  3.     if _rc != 0 {
+  4.         di as error "Outcome `outcome' not found. Skipping."
+  5.         continue
+  6.     }
+  7.     
+.     quietly count if urban_rural == 0 & treated_state == 1 & !missing(`outcome')
+  8.     if (r(N) == 0) {
+  9.         di as error "Outcome `outcome': no treated urban observations."
+ 10.         continue
+ 11.     }
+ 12.     
+.     quietly count if urban_rural == 1 & treated_state == 1 & !missing(`outcome')
+ 13.     if (r(N) == 0) {
+ 14.         di as error "Outcome `outcome': no treated rural observations."
+ 15.         continue
+ 16.     }
+ 17.     
+.     di ""
+ 18.     di "========================================================================="
+ 19.     di "HETEROGENEITY ANALYSIS: ${label_`outcome'}"
+ 20.     di "Outcome variable: `outcome'"
+ 21.     di "========================================================================="
+ 22.     di ""
+ 23.     
+.     * Run did_imputation with heterogeneous effects by urban/rural (0 = urban, 1 = rural)
+.     capture noisily did_imputation `outcome' program_numeric_id year year_expanded [aw=total_population_10], ///
+>         horizons(0/5) pretrend(5) ///
+>         cluster(state_id) ///
+>         hetby(urban_rural) ///
+>         fe(program_numeric_id year) ///
+>         minn(0) autosample
+ 24.     
+.     if (_rc != 0) {
+ 25.         di as error "did_imputation failed for outcome `outcome'. Error code `_rc'."
+ 26.         continue
+ 27.     }
+ 28.     
+.     * =====================
+.     * Post-treatment averages and p-value tests
+.     * =====================
+.     * Test pretrend assumption
+.     test pre1 pre2 pre3 pre4 pre5
+ 29.     local pretrend_p = r(p)
+ 30. 
+.     * Calculate average effects for both groups
+.     local avg_urban = (_b[tau0_0] + _b[tau1_0] + _b[tau2_0] + _b[tau3_0] + _b[tau4_0] + _b[tau5_0])/6
+ 31.     local avg_rural = (_b[tau0_1] + _b[tau1_1] + _b[tau2_1] + _b[tau3_1] + _b[tau4_1] + _b[tau5_1])/6
+ 32.     local avg_diff = `avg_rural' - `avg_urban'
+ 33. 
+.     * Test difference in post averages and get p-value
+.     testnl ((_b[tau0_1] + _b[tau1_1] + _b[tau2_1] + _b[tau3_1] + _b[tau4_1] + _b[tau5_1])/6) - ((_b[tau0_0] + _b[tau1_0] + _b[tau2_0] + _b[tau3_0] + _b[tau4_0] + _b[tau5_0])/6) = 0
+ 34.     local avg_diff_p = r(p)
+ 35. 
+.     * Joint test of heterogeneity across all periods
+.     test (tau0_0 = tau0_1) (tau1_0 = tau1_1) (tau2_0 = tau2_1) (tau3_0 = tau3_1) (tau4_0 = tau4_1) (tau5_0 = tau5_1)
+ 36.     local joint_het_p = r(p)
+ 37. 
+.     * Test individual group significance (joint test for post-treatment effects)
+.     test tau0_0 tau1_0 tau2_0 tau3_0 tau4_0 tau5_0
+ 38.     local urban_p = r(p)
+ 39.     test tau0_1 tau1_1 tau2_1 tau3_1 tau4_1 tau5_1
+ 40.     local rural_p = r(p)
+ 41. 
+.     * Calculate baseline means (pre-treatment observations in estimation sample)
+.     quietly summarize `outcome' if urban_rural == 0 & year < year_expanded & e(sample) [aw=total_population_10]
+ 42.     local baseline_urban = r(mean)
+ 43.     if missing(`baseline_urban') | `baseline_urban' == 0 {
+ 44.         local baseline_urban = 1
+ 45.     }
+ 46.     
+.     quietly summarize `outcome' if urban_rural == 1 & year < year_expanded & e(sample) [aw=total_population_10]
+ 47.     local baseline_rural = r(mean)
+ 48.     if missing(`baseline_rural') | `baseline_rural' == 0 {
+ 49.         local baseline_rural = 1
+ 50.     }
+ 51.     
+.     local pct_urban = (`avg_urban' / `baseline_urban') * 100
+ 52.     local pct_rural = (`avg_rural' / `baseline_rural') * 100
+ 53.     if `pct_urban' < -100 local pct_urban = -100
+ 54.     if `pct_rural' < -100 local pct_rural = -100
+ 55. 
+.     * Store values in locals for annotation
+.     local text_urban = string(`avg_urban', "%9.2f")
+ 56.     local text_rural = string(`avg_rural', "%9.2f")
+ 57.     local text_urban_p = string(`urban_p', "%9.2f")
+ 58.     local text_rural_p = string(`rural_p', "%9.2f")
+ 59.     local text_het = string(`joint_het_p', "%9.2f")
+ 60.     local text_avg_diff = string(`avg_diff', "%9.2f")
+ 61.     local text_avg_diff_p = string(`avg_diff_p', "%9.2f")
+ 62.     local text_baseline_urban = string(`baseline_urban', "%9.2f")
+ 63.     local text_baseline_rural = string(`baseline_rural', "%9.2f")
+ 64.     local text_pct_urban = string(`pct_urban', "%9.1f")
+ 65.     local text_pct_rural = string(`pct_rural', "%9.1f")
+ 66.     
+.     di "Average urban effect: " %9.3f `avg_urban' " (p = " %9.3f `urban_p' ")"
+ 67.     di "Average rural effect: " %9.3f `avg_rural' " (p = " %9.3f `rural_p' ")"
+ 68.     di "Difference (rural - urban): " %9.3f `avg_diff' " (p = " %9.3f `avg_diff_p' ")"
+ 69.     di "Joint heterogeneity test p-value: " %9.3f `joint_het_p'
+ 70.     di "Pretrend joint p-value: " %9.3f `pretrend_p'
+ 71. 
+.     * =====================
+.     * Plotting with annotation
+.     * =====================
+.     * Create matrices for both groups (0 = urban, 1 = rural)
+.     matrix urban = J(11, 5, .)  // 5 pretrends + 6 treatment periods
+ 72.     matrix rural = J(11, 5, .)
+ 73.     matrix colnames urban = period coef se ci_upper ci_lower
+ 74.     matrix colnames rural = period coef se ci_upper ci_lower
+ 75.     
+.     local row = 1
+ 76.     
+.     * Pretrend coefficients (same for both groups)
+.     forval h = 5(-1)1 {
+ 77.         * Urban counties
+.         matrix urban[`row',1] = -`h'
+ 78.         matrix urban[`row',2] = _b[pre`h']
+ 79.         matrix urban[`row',3] = _se[pre`h']
+ 80.         matrix urban[`row',4] = _b[pre`h'] + 1.96*_se[pre`h']
+ 81.         matrix urban[`row',5] = _b[pre`h'] - 1.96*_se[pre`h']
+ 82.         
+.         * Rural counties (same pretrends)
+.         matrix rural[`row',1] = -`h'
+ 83.         matrix rural[`row',2] = _b[pre`h']
+ 84.         matrix rural[`row',3] = _se[pre`h']  
+ 85.         matrix rural[`row',4] = _b[pre`h'] + 1.96*_se[pre`h']
+ 86.         matrix rural[`row',5] = _b[pre`h'] - 1.96*_se[pre`h']
+ 87.         
+.         local ++row
+ 88.     }
+ 89.     
+.     * Treatment coefficients - separate by group
+.     forval h = 0/5 {
+ 90.         * Urban (tau_0)
+.         matrix urban[`row',1] = `h'
+ 91.         matrix urban[`row',2] = _b[tau`h'_0]
+ 92.         matrix urban[`row',3] = _se[tau`h'_0]
+ 93.         matrix urban[`row',4] = _b[tau`h'_0] + 1.96*_se[tau`h'_0]
+ 94.         matrix urban[`row',5] = _b[tau`h'_0] - 1.96*_se[tau`h'_0]
+ 95.         
+.         * Rural (tau_1)
+.         matrix rural[`row',1] = `h'
+ 96.         matrix rural[`row',2] = _b[tau`h'_1]
+ 97.         matrix rural[`row',3] = _se[tau`h'_1]
+ 98.         matrix rural[`row',4] = _b[tau`h'_1] + 1.96*_se[tau`h'_1]
+ 99.         matrix rural[`row',5] = _b[tau`h'_1] - 1.96*_se[tau`h'_1]
+100.         
+.         local ++row
+101.     }
+102.     
+.     * Convert matrices to variables for plotting
+.     preserve
+103.     clear
+104.     svmat urban, names(urb)
+105.     svmat rural, names(rur)
+106.     
+.     * Rename variables
+.     rename urb1 urb_period
+107.     rename urb2 urb_coef  
+108.     rename urb3 urb_se
+109.     rename urb4 urb_ci_upper
+110.     rename urb5 urb_ci_lower
+111.     
+.     rename rur1 rur_period
+112.     rename rur2 rur_coef
+113.     rename rur3 rur_se  
+114.     rename rur4 rur_ci_upper
+115.     rename rur5 rur_ci_lower
+116.     
+.     * Create pre/post indicators for plotting
+.     gen urb_pre = (urb_period < 0)
+117.     gen urb_post = (urb_period >= 0)
+118.     gen rur_pre = (rur_period < 0)  
+119.     gen rur_post = (rur_period >= 0)
+120. 
+.     * Calculate dynamic annotation coordinates using maximum upper confidence intervals from both groups
+.     quietly summarize urb_ci_upper
+121.     local max1 = r(max)
+122.     quietly summarize rur_ci_upper
+123.     local max2 = r(max) 
+124.     local y_annot = max(`max1', `max2') * 0.9
+125.     local x_annot = -2
+126.     
+.     local short = "${short_`outcome'}"
+127.     local label = "${label_`outcome'}"
+128.     if ("`label'" == "") {
+129.         local label = "`outcome'"
+130.     }
+131.     local prefix : display %02.0f `plotnum'
+132.     local ytitle_str "Treatment Effect (difference-in-differences)"
+133.     local plot_title "Heterogeneity: Urban vs Rural - `label'"
+134.     
+.     * Adjust for per 100k outcomes
+.     if (strpos("`short'", "_100k") > 0) {
+135.         local ytitle_str "Treatment Effect (per 100,000 population)"
+136.         local x_annot = -2
+137.     }
+138.     
+.     * Create combined plot using twoway, with annotation
+.     twoway (rarea urb_ci_upper urb_ci_lower urb_period if urb_pre, fcolor("31 119 180%20") lcolor("31 119 180%20") lwidth(none)) ///
+>            (rarea urb_ci_upper urb_ci_lower urb_period if urb_post, fcolor("31 119 180%20") lcolor("31 119 180%20") lwidth(none)) ///
+>            (rarea rur_ci_upper rur_ci_lower rur_period if rur_pre, fcolor("255 127 14%25") lcolor("255 127 14%25") lwidth(none)) ///
+>            (rarea rur_ci_upper rur_ci_lower rur_period if rur_post, fcolor("255 127 14%25") lcolor("255 127 14%25") lwidth(none)) ///
+>            (line urb_coef urb_period if urb_pre, lcolor("31 119 180") lwidth(medium) lpattern(solid)) ///
+>            (line urb_coef urb_period if urb_post, lcolor("31 119 180") lwidth(medium) lpattern(solid)) ///
+>            (line rur_coef rur_period if rur_pre, lcolor("255 127 14") lwidth(medium) lpattern(dash)) ///
+>            (line rur_coef rur_period if rur_post, lcolor("255 127 14") lwidth(medium) lpattern(dash)) ///
+>            (scatter urb_coef urb_period if urb_pre, mcolor("31 119 180") msize(medium) msymbol(circle)) ///
+>            (scatter urb_coef urb_period if urb_post, mcolor("31 119 180") msize(medium) msymbol(circle)) ///
+>            (scatter rur_coef rur_period if rur_pre, mcolor("255 127 14") msize(medium) msymbol(triangle)) ///
+>            (scatter rur_coef rur_period if rur_post, mcolor("255 127 14") msize(medium) msymbol(triangle)) ///
+>            , ///
+>            xline(-0.5, lcolor(black) lpattern(solid) lwidth(thin)) ///
+>            yline(0, lcolor(black) lpattern(solid) lwidth(thin)) ///
+>            xlabel(-5(1)5, labsize(small)) ///
+>            ylabel(#10, labsize(small) format(%9.2f)) ///
+>            xtitle("Years relative to Medicaid expansion", size(small)) ///
+>            ytitle("`ytitle_str'", size(small)) ///
+>            legend(order(9 11) label(9 "Urban") label(11 "Rural") ///
+>                position(6) rows(1) size(small)) ///
+>            text(`y_annot' `x_annot' `"Urban Avg: `text_urban' (p=`text_urban_p')"' `"Rural Avg: `text_rural' (p=`text_rural_p')"' `"Difference: `text_avg_diff' (p=`text_avg_diff_p')"', size(large)) /
+> //
+>            graphregion(color(white)) plotregion(color(white))
+139.     
+.     graph export "${figdir}/`prefix'-hetero_urbanrural_`short'_event.png", as(png) replace width(1200) height(800)
+140.     graph export "${latex_figdir}/`prefix'-hetero_urbanrural_`short'_event.png", as(png) replace width(1200) height(800)
+141.     
+.     restore
+142.     local ++plotnum
+143. }
+
+=========================================================================
+HETEROGENEITY ANALYSIS: Matched Residency Positions per 100k Population
+Outcome variable: matched_per_100k
+=========================================================================
+
+
+                                                         Number of obs = 8,370
+------------------------------------------------------------------------------
+matched~100k | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+      tau0_0 |  -.0051979   .0064379    -0.81   0.419    -.0178161    .0074202
+      tau0_1 |  -.0263253   .0049252    -5.35   0.000    -.0359784   -.0166722
+      tau1_0 |  -.0171434   .0089663    -1.91   0.056     -.034717    .0004301
+      tau1_1 |  -.0366088   .0082844    -4.42   0.000    -.0528459   -.0203718
+      tau2_0 |  -.0212174   .0104678    -2.03   0.043     -.041734   -.0007007
+      tau2_1 |  -.0465598   .0094475    -4.93   0.000    -.0650765    -.028043
+      tau3_0 |  -.0313015   .0139182    -2.25   0.025    -.0585807   -.0040224
+      tau3_1 |  -.0564539    .014007    -4.03   0.000    -.0839072   -.0290007
+      tau4_0 |  -.0401712   .0199564    -2.01   0.044    -.0792851   -.0010573
+      tau4_1 |  -.0556862   .0214607    -2.59   0.009    -.0977483   -.0136241
+      tau5_0 |  -.0432005   .0245634    -1.76   0.079    -.0913439     .004943
+      tau5_1 |  -.0532531   .0272825    -1.95   0.051    -.1067257    .0002195
+        pre1 |   .0215534   .0170566     1.26   0.206    -.0118768    .0549836
+        pre2 |   .0233792   .0127774     1.83   0.067    -.0016641    .0484225
+        pre3 |   .0221359   .0118641     1.87   0.062    -.0011174    .0453891
+        pre4 |   .0212684   .0107669     1.98   0.048     .0001657    .0423712
+        pre5 |   .0211702   .0103585     2.04   0.041     .0008679    .0414724
+------------------------------------------------------------------------------
+
+ ( 1)  pre1 = 0
+ ( 2)  pre2 = 0
+ ( 3)  pre3 = 0
+ ( 4)  pre4 = 0
+ ( 5)  pre5 = 0
+
+           chi2(  5) =    5.45
+         Prob > chi2 =    0.3630
+
+  (1)  ((_b[tau0_1] + _b[tau1_1] + _b[tau2_1] + _b[tau3_1] + _b[tau4_1] + _b[tau5_1])/6) - ((_b[tau0_0] + _b[tau1_0] + _b[tau2_0] + _b[tau3_0] + _b[tau4_0] + _b[tau5_0])/6) = 0
+
+               chi2(1) =        8.77
+           Prob > chi2 =        0.0031
+
+ ( 1)  tau0_0 - tau0_1 = 0
+ ( 2)  tau1_0 - tau1_1 = 0
+ ( 3)  tau2_0 - tau2_1 = 0
+ ( 4)  tau3_0 - tau3_1 = 0
+ ( 5)  tau4_0 - tau4_1 = 0
+ ( 6)  tau5_0 - tau5_1 = 0
+
+           chi2(  6) =   45.11
+         Prob > chi2 =    0.0000
+
+ ( 1)  tau0_0 = 0
+ ( 2)  tau1_0 = 0
+ ( 3)  tau2_0 = 0
+ ( 4)  tau3_0 = 0
+ ( 5)  tau4_0 = 0
+ ( 6)  tau5_0 = 0
+
+           chi2(  6) =   12.79
+         Prob > chi2 =    0.0465
+
+ ( 1)  tau0_1 = 0
+ ( 2)  tau1_1 = 0
+ ( 3)  tau2_1 = 0
+ ( 4)  tau3_1 = 0
+ ( 5)  tau4_1 = 0
+ ( 6)  tau5_1 = 0
+
+           chi2(  6) =   47.78
+         Prob > chi2 =    0.0000
+Average urban effect:    -0.026 (p =     0.047)
+Average rural effect:    -0.046 (p =     0.000)
+Difference (rural - urban):    -0.019 (p =     0.003)
+Joint heterogeneity test p-value:     0.000
+Pretrend joint p-value:     0.363
+number of observations will be reset to 11
+Press any key to continue, or Break to abort
+Number of observations (_N) was 0, now 11.
+file /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/figures/07-hetero_urbanrural_matched_per_100k_event.png saved as PNG format
+file /Users/hhadah/Projects/GiT/residency-medicaid-expansion/my_paper/figures/07-hetero_urbanrural_matched_per_100k_event.png saved as PNG format
+
+=========================================================================
+HETEROGENEITY ANALYSIS: Residency Quota Positions per 100k Population
+Outcome variable: quota_per_100k
+=========================================================================
+
+
+                                                         Number of obs = 8,370
+------------------------------------------------------------------------------
+quota_p~100k | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+      tau0_0 |   -.005225   .0066498    -0.79   0.432    -.0182584    .0078084
+      tau0_1 |   -.024541   .0052256    -4.70   0.000    -.0347831   -.0142989
+      tau1_0 |  -.0163901   .0095815    -1.71   0.087    -.0351694    .0023892
+      tau1_1 |  -.0364764   .0084982    -4.29   0.000    -.0531326   -.0198203
+      tau2_0 |  -.0235733   .0112009    -2.10   0.035    -.0455267     -.00162
+      tau2_1 |  -.0465289    .010318    -4.51   0.000    -.0667519    -.026306
+      tau3_0 |  -.0337714   .0144061    -2.34   0.019    -.0620069   -.0055359
+      tau3_1 |  -.0576658   .0141559    -4.07   0.000    -.0854108   -.0299208
+      tau4_0 |  -.0430776   .0210285    -2.05   0.041    -.0842928   -.0018625
+      tau4_1 |   -.054698   .0231169    -2.37   0.018    -.1000064   -.0093896
+      tau5_0 |  -.0528158   .0287105    -1.84   0.066    -.1090873    .0034557
+      tau5_1 |  -.0525861   .0326908    -1.61   0.108     -.116659    .0114867
+        pre1 |   .0183814   .0177586     1.04   0.301    -.0164249    .0531876
+        pre2 |    .020547   .0141755     1.45   0.147    -.0072365    .0483305
+        pre3 |   .0198315   .0129831     1.53   0.127    -.0056148    .0452779
+        pre4 |   .0209243   .0120941     1.73   0.084    -.0027797    .0446282
+        pre5 |   .0193266   .0112451     1.72   0.086    -.0027134    .0413665
+------------------------------------------------------------------------------
+
+ ( 1)  pre1 = 0
+ ( 2)  pre2 = 0
+ ( 3)  pre3 = 0
+ ( 4)  pre4 = 0
+ ( 5)  pre5 = 0
+
+           chi2(  5) =    6.02
+         Prob > chi2 =    0.3039
+
+  (1)  ((_b[tau0_1] + _b[tau1_1] + _b[tau2_1] + _b[tau3_1] + _b[tau4_1] + _b[tau5_1])/6) - ((_b[tau0_0] + _b[tau1_0] + _b[tau2_0] + _b[tau3_0] + _b[tau4_0] + _b[tau5_0])/6) = 0
+
+               chi2(1) =        5.36
+           Prob > chi2 =        0.0206
+
+ ( 1)  tau0_0 - tau0_1 = 0
+ ( 2)  tau1_0 - tau1_1 = 0
+ ( 3)  tau2_0 - tau2_1 = 0
+ ( 4)  tau3_0 - tau3_1 = 0
+ ( 5)  tau4_0 - tau4_1 = 0
+ ( 6)  tau5_0 - tau5_1 = 0
+
+           chi2(  6) =   35.17
+         Prob > chi2 =    0.0000
+
+ ( 1)  tau0_0 = 0
+ ( 2)  tau1_0 = 0
+ ( 3)  tau2_0 = 0
+ ( 4)  tau3_0 = 0
+ ( 5)  tau4_0 = 0
+ ( 6)  tau5_0 = 0
+
+           chi2(  6) =   16.34
+         Prob > chi2 =    0.0120
+
+ ( 1)  tau0_1 = 0
+ ( 2)  tau1_1 = 0
+ ( 3)  tau2_1 = 0
+ ( 4)  tau3_1 = 0
+ ( 5)  tau4_1 = 0
+ ( 6)  tau5_1 = 0
+
+           chi2(  6) =   43.27
+         Prob > chi2 =    0.0000
+Average urban effect:    -0.029 (p =     0.012)
+Average rural effect:    -0.045 (p =     0.000)
+Difference (rural - urban):    -0.016 (p =     0.021)
+Joint heterogeneity test p-value:     0.000
+Pretrend joint p-value:     0.304
+number of observations will be reset to 11
+Press any key to continue, or Break to abort
+Number of observations (_N) was 0, now 11.
+file /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/figures/08-hetero_urbanrural_quota_per_100k_event.png saved as PNG format
+file /Users/hhadah/Projects/GiT/residency-medicaid-expansion/my_paper/figures/08-hetero_urbanrural_quota_per_100k_event.png saved as PNG format
+
+. 
+. di ""
+
+
+. di "========================================================================="
+=========================================================================
+
+. di "HETEROGENEITY ANALYSIS BY URBAN/RURAL CLASSIFICATION COMPLETED"
+HETEROGENEITY ANALYSIS BY URBAN/RURAL CLASSIFICATION COMPLETED
+
+. di "Event study plots saved to:"
+Event study plots saved to:
+
+. di "  - ${figdir}/50-hetero_urbanrural_*_event.png"
+  - /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/figures/50-hetero_urbanrural_*_event.png
+
+. di "  - ${latex_figdir}/50-hetero_urbanrural_*_event.png"
+  - /Users/hhadah/Projects/GiT/residency-medicaid-expansion/my_paper/figures/50-hetero_urbanrural_*_event.png
+
+. di "========================================================================="
+=========================================================================
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/06-dd-analysis-hetero.log
+  log type:  text
+ closed on:  14 Feb 2026, 10:04:35
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

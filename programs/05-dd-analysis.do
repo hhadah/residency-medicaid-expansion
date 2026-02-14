@@ -10,7 +10,7 @@ set more off
 * -------------------------------------------------------------------------
 * Define paths
 * -------------------------------------------------------------------------
-global topdir "/Users/hhadah/Documents/GiT/residency-medicaid-expansion"
+global topdir "/Users/hhadah/Projects/GiT/residency-medicaid-expansion"
 global datadir "${topdir}/data/datasets"
 global figdir "${topdir}/output/figures"
 global tabdir "${topdir}/output/tables"
@@ -36,26 +36,16 @@ xtset program_numeric_id year
 * -------------------------------------------------------------------------
 * Outcomes and labels
 * -------------------------------------------------------------------------
-global outcomes "quota matched unmatched matched_per_100k quota_per_100k unmatched_per_100k"
-global label_quota     "Residency Quota Positions"
-global label_matched   "Matched Residency Positions"
-global label_unmatched "Unmatched Residency Positions"
+global outcomes "matched_per_100k quota_per_100k"
 global label_quota_100k "Residency Quota Positions per 100k Population"
 global label_matched_100k "Matched Residency Positions per 100k Population"
-global label_unmatched_100k "Unmatched Residency Positions per 100k Population"
 global label_quota_per_100k "Residency Quota Positions per 100k Population"
 global label_matched_per_100k "Matched Residency Positions per 100k Population"
-global label_unmatched_per_100k "Unmatched Residency Positions per 100k Population"
 
-global short_quota     "quota"
-global short_matched   "matched"
-global short_unmatched "unmatched"
 global short_quota_100k "quota_100k"
 global short_matched_100k "matched_100k"
-global short_unmatched_100k "unmatched_100k"
 global short_quota_per_100k "quota_per_100k"
 global short_matched_per_100k "matched_per_100k"
-global short_unmatched_per_100k "unmatched_per_100k"
 
 * -------------------------------------------------------------------------
 * Store DID estimates
@@ -189,12 +179,12 @@ foreach outcome of global outcomes {
     local plot_title "Event Study: `label'"
     * Calculate annotation position dynamically
     quietly summarize ci_upper
-    local y_annot = r(max)
-    local x_annot = -4
+    local y_annot = r(max) * 0.9
+    local x_annot = -3
     * Adjust for per 100k outcomes
     if (strpos("`short'", "_100k") > 0) {
         local ytitle_str "Treatment Effect (per 100,000 population)"
-        local x_annot = -4
+        local x_annot = -3
     }
     twoway ///
         (rarea ci_upper ci_lower period if pre_period, fcolor(dkgreen%45) lcolor(dkgreen%45) lwidth(none)) ///
@@ -211,8 +201,7 @@ foreach outcome of global outcomes {
         ylabel(#8, labsize(small) format(%9.2f)) ///
         xtitle("Years relative to Medicaid expansion", size(small)) ///
         ytitle("`ytitle_str'", size(small)) ///
-        title("`plot_title'", size(medium)) ///
-        text(`y_annot' `x_annot' `"Baseline Mean: `baseline_text'"' `"Post avg = `avg_text' (`pct_text'%)"' `"p-value = `treat_text'"', size(small)) ///
+        text(`y_annot' `x_annot' `"Baseline Mean: `baseline_text'"' `"Post avg = `avg_text' (`pct_text'%)"' `"p-value = `treat_text'"', size(large)) ///
         legend(off) ///
         graphregion(color(white)) plotregion(color(white))
     graph export "${figdir}/`prefix'-did_`short'_event.png", as(png) replace width(1200) height(800)
