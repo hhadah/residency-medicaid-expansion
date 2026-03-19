@@ -16,6 +16,7 @@ figures_wd <- paste0(git_mdir,"/output/figures")
 programs <- paste0(git_mdir,"/programs")
 thesis_tabs <- paste0(git_mdir,"/my_paper/tables")
 thesis_plots <- paste0(git_mdir,"/my_paper/figures")
+options(modelsummary_factory_latex = "kableExtra")
 
 ### run do files and scripts
 

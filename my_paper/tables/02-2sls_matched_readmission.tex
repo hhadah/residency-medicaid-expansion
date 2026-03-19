@@ -1,0 +1,48 @@
+\begin{table}[H]
+\centering\centering
+\caption{2SLS: Effect of Matched Residents on 30-Day Readmission Rates \label{tab:2sls_matched}}
+\centering
+\resizebox{\ifdim\width>\linewidth\linewidth\else\width\fi}{!}{
+\begin{threeparttable}
+\begin{tabular}[t]{lcccccccc}
+\toprule
+  & \specialcell{(1) \\ Hospital-Wide \\ Readmission} & \specialcell{(2) \\ AMI \\ Readmission} & \specialcell{(3) \\ CABG \\ Readmission} & \specialcell{(4) \\ COPD \\ Readmission} & \specialcell{(5) \\ Heart Failure \\ Readmission} & \specialcell{(6) \\ Hip/Knee \\ Readmission} & \specialcell{(7) \\ Pneumonia \\ Readmission} & \specialcell{(8) \\ Stroke \\ Readmission}\\
+\midrule
+\addlinespace[0.5em]
+\multicolumn{9}{l}{\textit{Panel A: Matched (levels)}}\\
+\midrule \hspace{1em}Matched Residents & 0.11** & 0.056 & 0.078 & 0.067*** & 0.151** & 0.051 & 0.087 & 0.092\\
+\hspace{1em} & (0.049) & (0.061) & (0.06) & (0.023) & (0.057) & (0.036) & (0.065) & (0.055)\\
+\hspace{1em}Observations & 4,863 & 4,837 & 1,986 & 3,942 & 5,384 & 4,129 & 5,379 & \vphantom{1} 3,167\\
+\addlinespace[0.5em]
+\multicolumn{9}{l}{\textit{Panel B: Matched per 100,000}}\\
+\midrule \hspace{1em}Matched Residents per 100k & 15.037 & 9.633 & 7.489 & 7.298 & 19.43 & 6.99 & 12.39 & 9.738*\\
+\hspace{1em} & (14.323) & (23.139) & (7.587) & (4.404) & (27.057) & (8.04) & (19.949) & (5.534)\\
+\hspace{1em}Observations & 4,863 & 4,837 & 1,986 & 3,942 & 5,384 & 4,129 & 5,379 & 3,167\\
+First Stage F-stat (Matched) & 17.18 & 13.65 & 1.81 & 12.57 & 17.55 & 12.18 & 17.4 & 8.93\\
+First Stage F-stat (Matched/100k) & 1.37 & 1.37 & 0.85 & 2.51 & 2.97 & 2 & 1.24 & 3.57\\
+Mean Dep. Var. & 15.791 & 17.412 & 13.794 & 20.207 & 22.705 & 4.704 & 17.632 & 12.927\\
+\bottomrule
+\multicolumn{9}{l}{\rule{0pt}{1em}* p $<$ 0.1, ** p $<$ 0.05, *** p $<$ 0.01}\\
+\end{tabular}
+\begin{tablenotes}
+\item[1] \footnotesize{This table presents 2SLS estimates where Medicaid expansion instruments for
+the number of matched residents. The dependent variables are hospital-level 30-day unplanned
+readmission rates; lower values indicate better performance. Panel~A uses matched counts in levels;
+Panel~B uses matched per 100,000 state population. All specifications include institution and year
+fixed effects.}
+\item[2] \footnotesize{Standard errors are clustered at the state level.}
+\item[3] \footnotesize{Data sources: NRMP residency match data (2010--2019) merged with CMS
+Hospital Readmissions Reduction Program data.}
+\item[4] \footnotesize{\textit{Variable definitions.}
+Column~(1): Hospital-wide 30-day unplanned readmission rate.
+Column~(2): 30-day readmission rate for acute myocardial infarction (AMI) patients.
+Column~(3): 30-day readmission rate for coronary artery bypass graft (CABG) patients.
+Column~(4): 30-day readmission rate for chronic obstructive pulmonary disease (COPD) patients.
+Column~(5): 30-day readmission rate for heart failure (HF) patients.
+Column~(6): 30-day readmission rate after elective hip/knee surgery.
+Column~(7): 30-day readmission rate for pneumonia patients.
+Column~(8): 30-day readmission rate for stroke patients.
+All scores are reported as decimals; lower values indicate better hospital performance.}
+\end{tablenotes}
+\end{threeparttable}}
+\end{table}
