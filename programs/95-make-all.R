@@ -22,9 +22,9 @@ options(modelsummary_factory_latex = "kableExtra")
 
 # main scripts
 source(file.path(programs,"01-packages-wds.r")) # set up package
-source(file.path(programs,"02-data-cleaning.R")) # clean and merge data
-source(file.path(programs,"03-heat-map.r")) # generate heat map
-source(file.path(programs,"04-population-residents.r")) # generate population and residents data
+# source(file.path(programs,"02-data-cleaning.R")) # clean and merge data
+# source(file.path(programs,"03-heat-map.r")) # generate heat map
+# source(file.path(programs,"04-population-residents.r")) # generate population and residents data
 # stata do files
 # run sperately 
 # using stata

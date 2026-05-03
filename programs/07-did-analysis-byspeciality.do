@@ -105,10 +105,12 @@ encode state, gen(state_id)
 * -------------------------------------------------------------------------
 * Outcomes and labels
 * -------------------------------------------------------------------------
-global outcomes "matched_per_100k quota_per_100k"
+global outcomes "matched matched_per_100k quota_per_100k"
+global label_matched "Total Matched Residency Positions"
 global label_quota_per_100k "Residency Quota Positions per 100k Population"
 global label_matched_per_100k "Matched Residency Positions per 100k Population"
 
+global short_matched "matched"
 global short_quota_per_100k "quota_per_100k"
 global short_matched_per_100k "matched_per_100k"
 
@@ -117,10 +119,10 @@ global short_matched_per_100k "matched_per_100k"
 * -------------------------------------------------------------------------
 tempname did_results_spec
 tempfile did_results_spec_file
-postfile `did_results_spec' str30 specialty str12 outcome double coef se tstat pvalue avg_treat ///
+postfile `did_results_spec' str30 specialty str20 outcome double coef se tstat pvalue avg_treat ///
     pretrend_p treat_p n_programs n_states using "`did_results_spec_file'", replace
 
-local plotnum = 9
+local plotnum = 11
 
 * Loop over each specialty group
 levelsof specialty_group, local(spec_groups)
@@ -208,13 +210,37 @@ foreach spec of local spec_groups {
         
         capture levelsof state_id if specialty_group == `spec' & !missing(`outcome'), local(active_states)
         if (_rc == 0) local n_states : word count `active_states'
-        
+
+        * Compute national/total annual impact for annotation, restricted to this specialty group.
+        * matched (raw): avg_treat * N treated programs in this specialty.
+        * per_100k:      avg_treat * sum(state_pop across treated programs in this specialty) / 100k.
+        local national_effect = .
+        local has_national = 0
+        if "`outcome'" == "matched" {
+            quietly levelsof program_numeric_id if specialty_group == `spec' & treated_state == 1 & !missing(`outcome'), local(_tprogs)
+            local n_tprogs : word count `_tprogs'
+            local national_effect = `avg_treat' * `n_tprogs'
+            local has_national = 1
+        }
+        else if strpos("`outcome'", "_per_100k") > 0 {
+            preserve
+            keep if specialty_group == `spec' & treated_state == 1 & !missing(`outcome')
+            collapse (mean) total_population_10, by(program_numeric_id)
+            quietly summarize total_population_10
+            local sum_treated_prog_pop = r(sum)
+            restore
+            local national_effect = `avg_treat' * `sum_treated_prog_pop' / 100000
+            local has_national = 1
+        }
+        local national_text = cond(`has_national', string(`national_effect', "%9.0fc"), "NA")
+
         post `did_results_spec' ("`spec_name'") ("`outcome'") ///
             (`coef') (`se') (`tstat') (`pvalue') (`avg_treat') ///
             (`pretrend_p') (`treat_p') (`n_programs') (`n_states')
-        
+
         di "ATT (tau0): " %9.3f `coef' "  SE: " %9.3f `se' "  p = " %9.3f `pvalue'
         di "Average post-treatment effect: " %9.3f `avg_treat'
+        if (`has_national') di "Avg. annual aggregate effect: " %15.0fc `national_effect'
         
         * =====================================================================
         * Event study plot
@@ -267,6 +293,21 @@ foreach spec of local spec_groups {
             local ytitle_str "Treatment Effect (per 100,000 population)"
             local x_annot = -2
         }
+        if ("`outcome'" == "matched") {
+            local ytitle_str "Treatment Effect (number of residency positions)"
+        }
+        * Build text annotations.
+        * Main annotation (left): baseline mean, post avg, p-value.
+        * Extra annotation at x = 3, same y-level: national/total impact (residency positions
+        * for raw matched; additional doctors nationally for per-100k).
+        local main_text `"text(`y_annot' `x_annot' `"Baseline Mean: `baseline_text'"' `"Post avg = `avg_text' (`pct_text'%)"' `"p-value = `treat_text'"', size(large))"'
+        local extra_text ""
+        if ("`outcome'" == "matched") {
+            local extra_text `"text(`y_annot' 3 `"Avg. annual change in"' `"residency positions:"' `"`national_text'"', size(large))"'
+        }
+        else if (strpos("`short'", "_100k") > 0) {
+            local extra_text `"text(`y_annot' 3 `"Avg. annual change in"' `"doctors nationally:"' `"`national_text'"', size(large))"'
+        }
         twoway ///
             (rarea ci_upper ci_lower period if pre_period, fcolor(dkgreen%45) lcolor(dkgreen%45) lwidth(none)) ///
             (rarea ci_upper ci_lower period if post_period, fcolor(maroon%45) lcolor(maroon%45) lwidth(none)) ///
@@ -282,7 +323,8 @@ foreach spec of local spec_groups {
             ylabel(#10, labsize(small) format(%9.3f)) ///
             xtitle("Years relative to Medicaid expansion", size(small)) ///
             ytitle("`ytitle_str'", size(small)) ///
-            text(`y_annot' `x_annot' `"Baseline Mean: `baseline_text'"' `"Post avg = `avg_text' (`pct_text'%)"' `"p-value = `treat_text'"', size(large)) ///
+            `main_text' ///
+            `extra_text' ///
             legend(off) ///
             graphregion(color(white)) plotregion(color(white))
         

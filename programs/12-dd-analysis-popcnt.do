@@ -1,7 +1,9 @@
 * =============================================================================
-* Difference-in-Differences Analysis (no triple DDD)
-* Outcomes: quota, matched, unmatched (quota - matched)
-* Event-study plotting follows prior scheme (pre/post shading + bands)
+* Difference-in-Differences Analysis: Unweighted with Population as a Control
+* Mirror of 05-dd-analysis.do but:
+*   - No analytic weights (no [aw=total_population_10])
+*   - total_population_10 added as a control via controls() in did_imputation
+* Outcomes: matched (raw), matched_per_100k, quota_per_100k
 * =============================================================================
 
 clear all
@@ -19,6 +21,8 @@ global latex_figdir "${topdir}/my_paper/figures"
 cap mkdir "${figdir}"
 cap mkdir "${tabdir}"
 cap mkdir "${latex_figdir}"
+
+log using "${topdir}/output/12-dd-analysis-popcnt.log", replace
 
 * -------------------------------------------------------------------------
 * Load cleaned data (produced by 02-data-cleaning.R)
@@ -50,11 +54,13 @@ global short_quota_per_100k "quota_per_100k"
 global short_matched_per_100k "matched_per_100k"
 
 * -------------------------------------------------------------------------
-* Pre-compute aggregate annual change in residency positions from the
-* raw count regressions (matched, quota). The per-100k figure annotations
-* reuse these so the "Avg. annual change" number matches the raw count
-* version (otherwise the per-100k specification implicitly reweights and
-* yields a different aggregate).
+* Pre-compute aggregate annual change in residency positions from the raw
+* count regressions (matched, quota). These are reused for the per-100k
+* annotations so the "Avg. annual change" number is consistent across
+* specifications.
+* NOTE: total_population_10 is a 2010 census state-level value that is
+* time-invariant within program. With program FE it is collinear and gets
+* absorbed by did_imputation; it is included to satisfy the spec request.
 * -------------------------------------------------------------------------
 global agg_matched ""
 global agg_quota ""
@@ -67,10 +73,10 @@ foreach raw_outcome in matched quota {
     quietly count if treated_state == 0 & !missing(`raw_outcome')
     if (r(N) == 0) continue
 
-    di "Pre-computing aggregate effect for `raw_outcome'..."
-    capture noisily did_imputation `raw_outcome' program_numeric_id year year_expanded ///
-        [aw=total_population_10], horizons(0/5) pretrend(5) ///
-        fe(program_numeric_id year) cluster(state_id) minn(0)
+    di "Pre-computing aggregate effect for `raw_outcome' (unweighted, pop control)..."
+    capture noisily did_imputation `raw_outcome' program_numeric_id year year_expanded, ///
+        horizons(0/5) pretrend(5) fe(program_numeric_id year) ///
+        controls(total_population_10) cluster(state_id) minn(0)
     if (_rc != 0) continue
 
     local _sum = 0
@@ -100,7 +106,7 @@ postfile `did_results' str20 outcome double coef se tstat pvalue avg_treat ///
     pretrend_p treat_p n_programs n_states using "`did_results_file'", replace
 
 
-local plotnum = 5
+local plotnum = 22
 foreach outcome of global outcomes {
     capture confirm variable `outcome'
     if _rc != 0 {
@@ -119,13 +125,13 @@ foreach outcome of global outcomes {
     }
     di ""
     di "========================================================================="
-    di "DID ANALYSIS: ${label_`outcome'}"
+    di "DID ANALYSIS (unweighted, pop control): ${label_`outcome'}"
     di "Outcome variable: `outcome'"
     di "========================================================================="
     di ""
-    capture noisily did_imputation `outcome' program_numeric_id year year_expanded  [aw=total_population_10], ///
+    capture noisily did_imputation `outcome' program_numeric_id year year_expanded, ///
         horizons(0/5) pretrend(5) fe(program_numeric_id year) ///
-        cluster(state_id) minn(0)
+        controls(total_population_10) cluster(state_id) minn(0)
     if (_rc != 0) {
         di as error "did_imputation failed for outcome `outcome'. Error code `_rc'."
         continue
@@ -155,8 +161,8 @@ foreach outcome of global outcomes {
     if (_rc == 0) {
         local treat_p = r(p)
     }
-    * Calculate baseline mean (pre-treatment observations in treated states)
-    quietly summarize `outcome' if treated_state == 1 & year < year_expanded [aw=total_population_10]
+    * Calculate baseline mean (pre-treatment observations in treated states, unweighted)
+    quietly summarize `outcome' if treated_state == 1 & year < year_expanded
     local baseline_mean = r(mean)
     if missing(`baseline_mean') | `baseline_mean' == 0 {
         local baseline_mean = 1
@@ -236,18 +242,16 @@ foreach outcome of global outcomes {
         local post_line "(scatteri `avg_treat' 0 `avg_treat' 5, recast(line) lpattern(dash) lcolor(red) lwidth(medium))"
     }
     local short = "${short_`outcome'}"
-	local label = "${label_`outcome'}"
-	if ("`label'" == "") {
-		local label = "`outcome'"
-	}
+    local label = "${label_`outcome'}"
+    if ("`label'" == "") {
+        local label = "`outcome'"
+    }
     local prefix : display %02.0f `plotnum'
     local ytitle_str "Treatment Effect (difference-in-differences)"
     local plot_title "Event Study: `label'"
-    * Calculate annotation position dynamically
     quietly summarize ci_upper
     local y_annot = r(max) * 0.9
     local x_annot = -3
-    * Adjust for per 100k outcomes
     if (strpos("`short'", "_100k") > 0) {
         local ytitle_str "Treatment Effect (per 100,000 population)"
         local x_annot = -3
@@ -255,10 +259,6 @@ foreach outcome of global outcomes {
     if ("`outcome'" == "matched") {
         local ytitle_str "Treatment Effect (number of residency positions)"
     }
-    * Build text annotations.
-    * Main annotation (left): baseline mean, post avg, p-value.
-    * Extra annotation at x = 3, same y-level: national/total impact (residency positions
-    * for raw matched; additional doctors nationally for per-100k).
     local main_text `"text(`y_annot' `x_annot' `"Baseline Mean: `baseline_text'"' `"Post avg = `avg_text' (`pct_text'%)"' `"p-value = `treat_text'"', size(large))"'
     local extra_text ""
     if (`has_national') {
@@ -283,8 +283,8 @@ foreach outcome of global outcomes {
         `extra_text' ///
         legend(off) ///
         graphregion(color(white)) plotregion(color(white))
-    graph export "${figdir}/`prefix'-did_`short'_event.png", as(png) replace width(1200) height(800)
-    graph export "${latex_figdir}/`prefix'-did_`short'_event.png", as(png) replace width(1200) height(800)
+    graph export "${figdir}/`prefix'-did_`short'_popcnt_event.png", as(png) replace width(1200) height(800)
+    graph export "${latex_figdir}/`prefix'-did_`short'_popcnt_event.png", as(png) replace width(1200) height(800)
     restore
     local ++plotnum
 }
@@ -293,15 +293,17 @@ postclose `did_results'
 
 use "`did_results_file'", clear
 order outcome coef se tstat pvalue avg_treat pretrend_p treat_p n_programs n_states
-save "${tabdir}/did_summary_residency.dta", replace
-export delimited using "${tabdir}/did_summary_residency.csv", replace
+save "${tabdir}/did_summary_residency_popcnt.dta", replace
+export delimited using "${tabdir}/did_summary_residency_popcnt.csv", replace
 
 di ""
 di "=================================================================="
-di "Difference-in-differences estimates completed for quota/matched/unmatched."
+di "Difference-in-differences (unweighted, pop control) completed."
 di "Summary table:"
-di "  - ${tabdir}/did_summary_residency.dta"
-di "  - ${tabdir}/did_summary_residency.csv"
+di "  - ${tabdir}/did_summary_residency_popcnt.dta"
+di "  - ${tabdir}/did_summary_residency_popcnt.csv"
 di "Figures:"
-di "  - ${figdir}/did_*_event.png (and LaTeX copies)"
+di "  - ${figdir}/{22..}-did_*_popcnt_event.png (and LaTeX copies)"
 di "=================================================================="
+
+log close

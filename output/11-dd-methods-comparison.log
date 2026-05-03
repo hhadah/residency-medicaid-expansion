@@ -1,0 +1,1957 @@
+--------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/hhadah/Projects/GiT/residency-medica
+> id-expansion/output/11-dd-methods-comparison.log
+  log type:  text
+ opened on:   2 May 2026, 19:26:20
+
+. 
+. * ----------------------------------------------------
+> ---------------------
+. * Load cleaned data
+. * ----------------------------------------------------
+> ---------------------
+. use "${datadir}/cleaned_program_residency_medicaid.dta
+> ", clear
+
+. 
+. * ----------------------------------------------------
+> ---------------------
+. * Panel identifiers
+. * ----------------------------------------------------
+> ---------------------
+. egen program_numeric_id = group(state institution_code
+> )
+
+. encode state, gen(state_id)
+
+. xtset program_numeric_id year
+
+Panel variable: program_numeric_id (strongly balanced)
+ Time variable: year, 2010 to 2019
+         Delta: 1 unit
+
+. 
+. * ----------------------------------------------------
+> ---------------------
+. * Treatment setup shared across estimators
+. *   gvar         = first treatment year, 0 for never-t
+> reated (csdid)
+. *   never_treat  = indicator for never-treated program
+> s
+. *   D            = treatment dummy (1 if currently tre
+> ated)
+. *   rel_time     = year - year_expanded
+. *   L_h, F_h     = relative-time dummies (5 leads, 5 l
+> ags, endpoints binned)
+. *   ref          = reference-period dummy (rel_time ==
+>  -1) for stackedev
+. * ----------------------------------------------------
+> ---------------------
+. gen gvar = year_expanded
+(2,120 missing values generated)
+
+. replace gvar = 0 if missing(year_expanded)
+(2,120 real changes made)
+
+. 
+. gen byte never_treat = missing(year_expanded)
+
+. 
+. capture confirm variable post_expansion
+
+. if _rc != 0 {
+.     gen byte post_expansion = (treated_state == 1 & ye
+> ar_expanded < . & year >= year_expanded)
+. }
+
+. gen byte D = post_expansion
+
+. 
+. gen rel_time = year - year_expanded
+(2,120 missing values generated)
+
+. 
+. local maxlag  = 5
+
+. local maxlead = 5
+
+. 
+. * Lags 0..(maxlag-1) exact, last lag binned (>= maxlag
+> )
+. forval h = 0/`=`maxlag' - 1' {
+  2.     gen byte L_`h' = (rel_time == `h')
+  3. }
+
+. gen byte L_`maxlag' = (rel_time >= `maxlag' & !missing
+> (rel_time))
+
+. 
+. * Leads 1..(maxlead-1) exact, last lead binned (<= -ma
+> xlead)
+. forval h = 1/`=`maxlead' - 1' {
+  2.     gen byte F_`h' = (rel_time == -`h')
+  3. }
+
+. gen byte F_`maxlead' = (rel_time <= -`maxlead' & !miss
+> ing(rel_time))
+
+. 
+. gen byte ref = (rel_time == -1)
+
+. 
+. * ----------------------------------------------------
+> ---------------------
+. * Outcomes and labels
+. * ----------------------------------------------------
+> ---------------------
+. global outcomes "matched matched_per_100k quota_per_10
+> 0k"
+
+. global label_matched          "Total Matched Residency
+>  Positions"
+
+. global label_matched_per_100k "Matched Residency Posit
+> ions per 100k Population"
+
+. global label_quota_per_100k   "Residency Quota Positio
+> ns per 100k Population"
+
+. 
+. local plotnum = 17
+
+. local nocsdid_plotnum = 20
+
+. 
+. foreach Y of global outcomes {
+  2. 
+.     capture confirm variable `Y'
+  3.     if _rc != 0 {
+  4.         di as error "Outcome `Y' not found. Skippin
+> g."
+  5.         continue
+  6.     }
+  7. 
+.     di ""
+  8.     di "===========================================
+> =============================="
+  9.     di "DiD METHODS COMPARISON: ${label_`Y'}"
+ 10.     di "Outcome: `Y'"
+ 11.     di "===========================================
+> =============================="
+ 12. 
+.     ************
+.     *** TWFE ***
+.     ************
+.     * F_1 omitted as reference period.
+.     di "--- TWFE (reghdfe) ---"
+ 13.     capture noisily reghdfe `Y' L_0 L_1 L_2 L_3 L_4
+>  L_5 F_2 F_3 F_4 F_5 ///
+>         [aw=total_population_10], absorb(program_numer
+> ic_id year) cluster(state_id)
+ 14.     if (_rc == 0) estimates store twfe
+ 15. 
+.     *************
+.     *** csdid ***
+.     *************
+.     di "--- csdid (Callaway & Sant'Anna 2020) ---"
+ 16.     capture noisily csdid `Y' [iw=total_population_
+> 10], ///
+>         ivar(program_numeric_id) time(year) gvar(gvar)
+>  notyet
+ 17.     if (_rc == 0) {
+ 18.         capture noisily estat event, window(-`maxle
+> ad' `maxlag') estore(csdd)
+ 19.     }
+ 20. 
+.     ***********************
+.     *** did_imputation  ***
+.     ***********************
+.     di "--- did_imputation (Borusyak, Jaravel & Spiess
+>  2021) ---"
+ 21.     capture noisily did_imputation `Y' program_nume
+> ric_id year year_expanded ///
+>         [aw=total_population_10], horizons(0/`maxlag')
+>  pretrend(`maxlead') ///
+>         fe(program_numeric_id year) cluster(state_id) 
+> minn(0)
+ 22.     if (_rc == 0) estimates store didimp
+ 23. 
+.     ***********************
+.     *** did_multiplegt  ***
+.     ***********************
+.     di "--- did_multiplegt_dyn (de Chaisemartin & D'Ha
+> ultfoeuille 2020) ---"
+ 24.     capture noisily did_multiplegt_dyn `Y' program_
+> numeric_id year D, ///
+>         effects(`maxlag') placebo(`maxlead') cluster(s
+> tate_id)
+ 25.     capture matrix didmgt_b = e(estimates)
+ 26.     capture matrix didmgt_v = e(variances)
+ 27. 
+.     *****************************
+.     ***  eventstudyinteract   ***
+.     *****************************
+.     di "--- eventstudyinteract (Sun & Abraham 2020) --
+> -"
+ 28.     capture noisily eventstudyinteract `Y' L_0 L_1 
+> L_2 L_3 L_4 L_5 F_2 F_3 F_4 F_5 ///
+>         [aw=total_population_10], vce(cluster state_id
+> ) ///
+>         absorb(program_numeric_id year) cohort(year_ex
+> panded) control_cohort(never_treat)
+ 29.     capture matrix evtstint_b = e(b_iw)
+ 30.     capture matrix evtstint_v = e(V_iw)
+ 31. 
+.     ***************
+.     *** did2s   ***
+.     ***************
+.     di "--- did2s (Gardner 2021) ---"
+ 32.     capture noisily did2s `Y' [aw=total_population_
+> 10], ///
+>         first_stage(program_numeric_id year) ///
+>         second_stage(F_2 F_3 F_4 F_5 L_0 L_1 L_2 L_3 L
+> _4 L_5) ///
+>         treatment(D) cluster(state_id)
+ 33.     capture matrix did2s_b = e(b)
+ 34.     capture matrix did2s_v = e(V)
+ 35. 
+.     ******************
+.     *** stackedev  ***
+.     ******************
+.     di "--- stackedev (Cengiz, Dube, Lindner & Zippere
+> r 2019) ---"
+ 36.     capture noisily stackedev `Y' F_2 F_3 F_4 F_5 L
+> _0 L_1 L_2 L_3 L_4 L_5 ref, ///
+>         cohort(year_expanded) time(year) never_treat(n
+> ever_treat) ///
+>         unit_fe(program_numeric_id) clust_unit(state_i
+> d)
+ 37.     capture matrix stackedev_b = e(b)
+ 38.     capture matrix stackedev_v = e(V)
+ 39. 
+.     * Color palette
+.     colorpalette tableau, nograph
+ 40. 
+.     local label  = "${label_`Y'}"
+ 41.     local prefix : display %02.0f `plotnum'
+ 42. 
+.     * ------------------------------------------------
+> ---------------------
+.     * Combined event-plot overlaying all estimators
+.     * ------------------------------------------------
+> ---------------------
+.     event_plot twfe csdd didimp didmgt_b#didmgt_v evts
+> tint_b#evtstint_v stackedev_b#stackedev_v did2s_b#did2
+> s_v, ///
+>         stub_lag(L_# Tp# tau# Effect_# L_# L_# L_#) //
+> /
+>         stub_lead(F_# Tm# pre# Placebo_# F_# F_# F_#) 
+> ///
+>         together perturb(-0.30(0.10)0.30) trimlead(`ma
+> xlead') trimlag(`maxlag') noautolegend ///
+>         plottype(scatter) ciplottype(rspike) ///
+>         lag_opt1(msymbol(+)   msize(2.0) mlwidth(0.3) 
+> color(black))           lag_ci_opt1(color(black)      
+>   lw(0.15)) ///
+>         lag_opt2(msymbol(lgx) msize(2.0) mlwidth(0.3) 
+> color("`r(p1)'"))       lag_ci_opt2(color("`r(p1)'")  
+>   lw(0.15)) ///
+>         lag_opt3(msymbol(Dh)  msize(2.0) mlwidth(0.3) 
+> color("`r(p2)'"))       lag_ci_opt3(color("`r(p2)'")  
+>   lw(0.15)) ///
+>         lag_opt4(msymbol(Th)  msize(2.0) mlwidth(0.3) 
+> color("`r(p3)'"))       lag_ci_opt4(color("`r(p3)'")  
+>   lw(0.15)) ///
+>         lag_opt5(msymbol(Sh)  msize(2.0) mlwidth(0.3) 
+> color("`r(p4)'"))       lag_ci_opt5(color("`r(p4)'")  
+>   lw(0.15)) ///
+>         lag_opt6(msymbol(Oh)  msize(2.0) mlwidth(0.3) 
+> color("`r(p5)'"))       lag_ci_opt6(color("`r(p5)'")  
+>   lw(0.15)) ///
+>         lag_opt7(msymbol(V)   msize(2.0) mlwidth(0.3) 
+> color("`r(p6)'"))       lag_ci_opt7(color("`r(p6)'")  
+>   lw(0.15)) ///
+>         graph_opt( ///
+>             title("Event Study Robustness: `label'", s
+> ize(medsmall)) ///
+>             xtitle("Years relative to Medicaid expansi
+> on") ///
+>             ytitle("Average effect") xlabel(-`maxlead'
+> (1)`maxlag') ///
+>             legend(order(1 "TWFE" 3 "csdid (CS 2020)" 
+> 5 "did_imputation (BJS 2021)" ///
+>                          7 "did_multiplegt (CD 2020)" 
+> 9 "eventstudyinteract (SA 2020)" ///
+>                          11 "stackedev (CDLZ 2019)" 13
+>  "did2s (G 2021)") ///
+>                    pos(6) rows(3) region(style(none)) 
+> size(small)) ///
+>             xline(-0.5, lc(gs8) lp(dash)) ///
+>             yline(0,    lc(gs8) lp(dash)) ///
+>             graphregion(color(white)) plotregion(color
+> (white)) ///
+>         )
+ 43. 
+.     graph export "${figdir}/`prefix'-dd_methods_`Y'.pn
+> g", as(png) replace width(1200) height(800)
+ 44.     graph export "${latex_figdir}/`prefix'-dd_metho
+> ds_`Y'.png", as(png) replace width(1200) height(800)
+ 45. 
+.     * ------------------------------------------------
+> ---------------------
+.     * For per-100k outcomes only: also produce a no-cs
+> did version
+.     * (figures 20 and 21).
+.     * ------------------------------------------------
+> ---------------------
+.     if (strpos("`Y'", "_per_100k") > 0) {
+ 46.         local nc_prefix : display %02.0f `nocsdid_p
+> lotnum'
+ 47. 
+.         event_plot twfe didimp didmgt_b#didmgt_v evtst
+> int_b#evtstint_v stackedev_b#stackedev_v did2s_b#did2s
+> _v, ///
+>             stub_lag(L_# tau# Effect_# L_# L_# L_#) //
+> /
+>             stub_lead(F_# pre# Placebo_# F_# F_# F_#) 
+> ///
+>             together perturb(-0.25(0.10)0.25) trimlead
+> (`maxlead') trimlag(`maxlag') noautolegend ///
+>             plottype(scatter) ciplottype(rspike) ///
+>             lag_opt1(msymbol(+)   msize(2.0) mlwidth(0
+> .3) color(black))           lag_ci_opt1(color(black)  
+>       lw(0.15)) ///
+>             lag_opt2(msymbol(Dh)  msize(2.0) mlwidth(0
+> .3) color("`r(p2)'"))       lag_ci_opt2(color("`r(p2)'
+> ")    lw(0.15)) ///
+>             lag_opt3(msymbol(Th)  msize(2.0) mlwidth(0
+> .3) color("`r(p3)'"))       lag_ci_opt3(color("`r(p3)'
+> ")    lw(0.15)) ///
+>             lag_opt4(msymbol(Sh)  msize(2.0) mlwidth(0
+> .3) color("`r(p4)'"))       lag_ci_opt4(color("`r(p4)'
+> ")    lw(0.15)) ///
+>             lag_opt5(msymbol(Oh)  msize(2.0) mlwidth(0
+> .3) color("`r(p5)'"))       lag_ci_opt5(color("`r(p5)'
+> ")    lw(0.15)) ///
+>             lag_opt6(msymbol(V)   msize(2.0) mlwidth(0
+> .3) color("`r(p6)'"))       lag_ci_opt6(color("`r(p6)'
+> ")    lw(0.15)) ///
+>             graph_opt( ///
+>                 title("Event Study Robustness (no csdi
+> d): `label'", size(medsmall)) ///
+>                 xtitle("Years relative to Medicaid exp
+> ansion") ///
+>                 ytitle("Average effect") xlabel(-`maxl
+> ead'(1)`maxlag') ///
+>                 legend(order(1 "TWFE" 3 "did_imputatio
+> n (BJS 2021)" ///
+>                              5 "did_multiplegt (CD 202
+> 0)" 7 "eventstudyinteract (SA 2020)" ///
+>                              9 "stackedev (CDLZ 2019)"
+>  11 "did2s (G 2021)") ///
+>                        pos(6) rows(3) region(style(non
+> e)) size(small)) ///
+>                 xline(-0.5, lc(gs8) lp(dash)) ///
+>                 yline(0,    lc(gs8) lp(dash)) ///
+>                 graphregion(color(white)) plotregion(c
+> olor(white)) ///
+>             )
+ 48. 
+.         graph export "${figdir}/`nc_prefix'-dd_methods
+> _`Y'_nocsdid.png", as(png) replace width(1200) height(
+> 800)
+ 49.         graph export "${latex_figdir}/`nc_prefix'-d
+> d_methods_`Y'_nocsdid.png", as(png) replace width(1200
+> ) height(800)
+ 50. 
+.         local ++nocsdid_plotnum
+ 51.     }
+ 52. 
+.     local ++plotnum
+ 53. }
+
+========================================================
+> =================
+DiD METHODS COMPARISON: Total Matched Residency Position
+> s
+Outcome: matched
+========================================================
+> =================
+--- TWFE (reghdfe) ---
+(MWFE estimator converged in 2 iterations)
+
+HDFE Linear regression                            Number
+>  of obs                                               
+>           =      8,590
+Absorbing 2 HDFE groups                           F(  10
+> ,     50)                                             
+>           =      14.52
+Statistics robust to heteroskedasticity           Prob >
+>  F                                                    
+>           =     0.0000
+                                                  R-squa
+> red                                                   
+>           =     0.9686
+                                                  Adj R-
+> squared                                               
+>           =     0.9651
+                                                  Within
+>  R-sq.                                                
+>           =     0.0106
+Number of clusters (state_id) =         51        Root M
+> SE                                                    
+>           =    10.2562
+
+                              (Std. err. adjusted for 51
+>  clusters in state_id)
+--------------------------------------------------------
+> ----------------------
+             |               Robust
+     matched | Coefficient  std. err.      t    P>|t|   
+>   [95% con                                            
+>           f. interval]
+-------------+------------------------------------------
+> ----------------------
+         L_0 |  -1.093637   .4009121    -2.73   0.009   
+>  -1.898892                                            
+>              -.2883809
+         L_1 |  -2.294666   .6503883    -3.53   0.001   
+>   -3.60101                                            
+>              -.9883231
+         L_2 |  -3.225962   .9498086    -3.40   0.001   
+>  -5.133709                                            
+>              -1.318215
+         L_3 |  -4.621145   1.395203    -3.31   0.002   
+>  -7.423493                                            
+>              -1.818797
+         L_4 |  -5.265583   2.156574    -2.44   0.018   
+>  -9.597189                                            
+>              -.9339757
+         L_5 |  -5.834021   2.718016    -2.15   0.037   
+>  -11.29332                                            
+>              -.3747248
+         F_2 |   .2438754   .7479532     0.33   0.746   
+>  -1.258433                                            
+>               1.746184
+         F_3 |   .3650865   .7731374     0.47   0.639   
+>  -1.187806                                            
+>               1.917979
+         F_4 |   .7155304    .799282     0.90   0.375   
+>  -.8898747                                            
+>               2.320935
+         F_5 |   2.724195   .5427008     5.02   0.000   
+>   1.634148                                            
+>               3.814242
+       _cons |   34.68114   .6537935    53.05   0.000   
+>   33.36796                                            
+>               35.99433
+--------------------------------------------------------
+> ----------------------
+
+Absorbed degrees of freedom:
+--------------------------------------------------------
+> ----+
+        Absorbed FE | Categories  - Redundant  = Num. Co
+> efs                                                   
+>     |
+--------------------+-----------------------------------
+> ----|
+ program_numeric_id |       859         859           0 
+>    *                                                  
+>     |
+               year |        10           1           9 
+>                                                       
+>     |
+--------------------------------------------------------
+> ----+
+* = FE nested within cluster; treated as redundant for D
+> oF computation
+--- csdid (Callaway & Sant'Anna 2020) ---
+....................................
+Difference-in-difference with Multiple Time Periods
+
+                                                        
+>  Number of obs                                        
+>                = 8,590
+Outcome model  : regression adjustment
+Treatment model: none
+--------------------------------------------------------
+> ----------------------
+             | Coefficient  Std. err.      z    P>|z|   
+>   [95% con                                            
+>           f. interval]
+-------------+------------------------------------------
+> ----------------------
+g2014        |
+ t_2010_2011 |   .1125411     .30949     0.36   0.716   
+>  -.4940482                                            
+>               .7191303
+ t_2011_2012 |    .050053   .4257995     0.12   0.906   
+>  -.7844986                                            
+>               .8846046
+ t_2012_2013 |   .3490269   .4849856     0.72   0.472   
+>  -.6015274                                            
+>               1.299581
+ t_2013_2014 |  -1.011395   .4668283    -2.17   0.030   
+>  -1.926362                                            
+>              -.0964287
+ t_2013_2015 |  -2.677447    1.35541    -1.98   0.048   
+>  -5.334002                                            
+>               -.020892
+ t_2013_2016 |  -3.595226   1.490112    -2.41   0.016   
+>  -6.515791                                            
+>              -.6746606
+ t_2013_2017 |  -4.917539   1.738515    -2.83   0.005   
+>  -8.324966                                            
+>              -1.510112
+ t_2013_2018 |  -5.779944   2.099818    -2.75   0.006   
+>  -9.895512                                            
+>              -1.664375
+ t_2013_2019 |  -6.715666   2.270759    -2.96   0.003   
+>  -11.16627                                            
+>               -2.26506
+-------------+------------------------------------------
+> ----------------------
+g2015        |
+ t_2010_2011 |  -.3586044   .4571896    -0.78   0.433   
+>   -1.25468                                            
+>               .5374708
+ t_2011_2012 |  -.3079602    .424181    -0.73   0.468   
+>   -1.13934                                            
+>               .5234193
+ t_2012_2013 |    .597371   .8106148     0.74   0.461   
+>  -.9914049                                            
+>               2.186147
+ t_2013_2014 |  -2.251987   .5229361    -4.31   0.000   
+>  -3.276923                                            
+>              -1.227051
+ t_2014_2015 |  -1.158304   1.426764    -0.81   0.417   
+>   -3.95471                                            
+>               1.638101
+ t_2014_2016 |  -2.364438   1.481285    -1.60   0.110   
+>  -5.267704                                            
+>               .5388282
+ t_2014_2017 |  -3.415693   1.760943    -1.94   0.052   
+>  -6.867078                                            
+>               .0356921
+ t_2014_2018 |  -5.195904   2.087181    -2.49   0.013   
+>  -9.286703                                            
+>              -1.105104
+ t_2014_2019 |  -5.813711   2.347356    -2.48   0.013   
+>  -10.41445                                            
+>              -1.212977
+-------------+------------------------------------------
+> ----------------------
+g2016        |
+ t_2010_2011 |   1.315948   1.213901     1.08   0.278   
+>  -1.063255                                            
+>               3.695151
+ t_2011_2012 |   -2.07585   .7828731    -2.65   0.008   
+>  -3.610253                                            
+>              -.5414471
+ t_2012_2013 |   1.235345   1.601217     0.77   0.440   
+>  -1.902983                                            
+>               4.373672
+ t_2013_2014 |   -1.81521   1.384483    -1.31   0.190   
+>  -4.528747                                            
+>               .8983275
+ t_2014_2015 |   .5862375   1.588072     0.37   0.712   
+>  -2.526327                                            
+>               3.698802
+ t_2015_2016 |  -1.922122   .8094131    -2.37   0.018   
+>  -3.508542                                            
+>              -.3357014
+ t_2015_2017 |  -3.713417   1.304505    -2.85   0.004   
+>  -6.270199                                            
+>              -1.156635
+ t_2015_2018 |  -4.475329   2.313568    -1.93   0.053   
+>  -9.009839                                            
+>                 .05918
+ t_2015_2019 |  -7.491219   2.380009    -3.15   0.002   
+>  -12.15595                                            
+>              -2.826486
+-------------+------------------------------------------
+> ----------------------
+g2019        |
+ t_2010_2011 |  -.4375604   .5543466    -0.79   0.430   
+>   -1.52406                                            
+>                .648939
+ t_2011_2012 |  -1.060564   .4602227    -2.30   0.021   
+>  -1.962584                                            
+>              -.1585445
+ t_2012_2013 |   .3114228   1.389792     0.22   0.823   
+>  -2.412519                                            
+>               3.035365
+ t_2013_2014 |  -.7276014   1.060649    -0.69   0.493   
+>  -2.806436                                            
+>               1.351233
+ t_2014_2015 |  -.1990095   2.005077    -0.10   0.921   
+>  -4.128889                                            
+>                3.73087
+ t_2015_2016 |  -.5279314   1.266777    -0.42   0.677   
+>  -3.010768                                            
+>               1.954905
+ t_2016_2017 |   -1.60095   .8826248    -1.81   0.070   
+>  -3.330863                                            
+>               .1289625
+ t_2017_2018 |  -1.326173    1.25187    -1.06   0.289   
+>  -3.779792                                            
+>               1.127447
+ t_2018_2019 |  -.4779495   1.140431    -0.42   0.675   
+>  -2.713154                                            
+>               1.757255
+--------------------------------------------------------
+> ----------------------
+Control: Not yet Treated
+
+See Callaway and Sant'Anna (2021) for details
+ATT by Periods Before and After treatment
+Event Study:Dynamic effects
+--------------------------------------------------------
+> ----------------------
+             | Coefficient  Std. err.      z    P>|z|   
+>   [95% con                                            
+>           f. interval]
+-------------+------------------------------------------
+> ----------------------
+     Pre_avg |  -.0669946   .2547973    -0.26   0.793   
+>  -.5663881                                            
+>               .4323988
+    Post_avg |  -4.120602   1.387472    -2.97   0.003   
+>  -6.839997                                            
+>              -1.401207
+         Tm5 |  -.1051631   .8385451    -0.13   0.900   
+>  -1.748681                                            
+>               1.538355
+         Tm4 |   -.438849   .4500329    -0.98   0.329   
+>  -1.320897                                            
+>               .4431992
+         Tm3 |   .0701303   .2794662     0.25   0.802   
+>  -.4776133                                            
+>               .6178739
+         Tm2 |   .0626449   .3867819     0.16   0.871   
+>  -.6954336                                            
+>               .8207235
+         Tm1 |   .0762638   .4365188     0.17   0.861   
+>  -.7792974                                            
+>               .9318249
+         Tp0 |  -1.023226   .4278659    -2.39   0.017   
+>  -1.861828                                            
+>              -.1846247
+         Tp1 |  -2.654547   1.306244    -2.03   0.042   
+>  -5.214738                                            
+>              -.0943566
+         Tp2 |  -3.584129   1.453822    -2.47   0.014   
+>  -6.433567                                            
+>              -.7346903
+         Tp3 |   -4.96281   1.706808    -2.91   0.004   
+>  -8.308092                                            
+>              -1.617528
+         Tp4 |  -5.783234   2.059492    -2.81   0.005   
+>  -9.819764                                            
+>              -1.746704
+         Tp5 |  -6.715666   2.270759    -2.96   0.003   
+>  -11.16627                                            
+>               -2.26506
+--------------------------------------------------------
+> ----------------------
+--- did_imputation (Borusyak, Jaravel & Spiess 2021) ---
+
+                                                        
+>  Number of obs                                        
+>                = 8,590
+--------------------------------------------------------
+> ----------------------
+     matched | Coefficient  Std. err.      z    P>|z|   
+>   [95% con                                            
+>           f. interval]
+-------------+------------------------------------------
+> ----------------------
+        tau0 |  -.9597854   .7520339    -1.28   0.202   
+>  -2.433745                                            
+>                .514174
+        tau1 |   -2.41017   .7956418    -3.03   0.002   
+>  -3.969599                                            
+>              -.8507407
+        tau2 |  -3.326795   .9865377    -3.37   0.001   
+>  -5.260373                                            
+>              -1.393217
+        tau3 |  -4.705453   1.294121    -3.64   0.000   
+>  -7.241883                                            
+>              -2.169022
+        tau4 |  -5.518586   2.099265    -2.63   0.009   
+>  -9.633069                                            
+>              -1.404103
+        tau5 |  -6.193002   2.679063    -2.31   0.021   
+>  -11.44387                                            
+>               -.942134
+        pre1 |  -2.589817   .8330115    -3.11   0.002   
+>  -4.222489                                            
+>              -.9571442
+        pre2 |  -2.410253   .6866926    -3.51   0.000   
+>  -3.756146                                            
+>               -1.06436
+        pre3 |  -2.342219   .8064601    -2.90   0.004   
+>  -3.922852                                            
+>               -.761586
+        pre4 |  -2.141539   .8783435    -2.44   0.015   
+>   -3.86306                                            
+>              -.4200173
+        pre5 |  -1.043362   .7737992    -1.35   0.178   
+>  -2.559981                                            
+>               .4732564
+--------------------------------------------------------
+> ----------------------
+--- did_multiplegt_dyn (de Chaisemartin & D'Haultfoeuill
+> e 2020) ---
+
+The number of placebos which can be estimated is at most
+>  4. The command will therefore try to estimate 4 place
+> bo(s).
+
+
+--------------------------------------------------------
+> ------------------------
+             Estimation of treatment effects: Event-stud
+> y effects
+--------------------------------------------------------
+> ------------------------
+
+             |  Estimate         SE      LB CI 
+-------------+---------------------------------
+    Effect_1 | -.6573235   .4234037  -1.487179 
+    Effect_2 | -1.966173   .6388425  -3.218281 
+    Effect_3 |  -2.55214   .9814453  -4.475737 
+    Effect_4 |  -3.65855   1.301368  -6.209184 
+    Effect_5 | -4.285013   1.836767   -7.88501 
+
+             |     UB CI          N  Switchers 
+-------------+--------------------------------
+    Effect_1 |  .1725325       1662        647 
+    Effect_2 | -.7140644       1341        626 
+    Effect_3 | -.6285423       1325        626 
+    Effect_4 | -1.107916       1304        626 
+    Effect_5 | -.6850155       1055        610 
+--------------------------------------------------------
+> ------------------------
+Test of joint nullity of the effects : p-value = .000156
+> 99
+
+
+--------------------------------------------------------
+> ------------------------
+               Average cumulative (total) effect per tre
+> atment unit
+--------------------------------------------------------
+> ------------------------
+
+             |  Estimate         SE      LB CI 
+-------------+---------------------------------
+  Av_tot_eff | -2.602189   .9821963  -4.527258 
+
+             |     UB CI          N     Switch 
+-------------+---------------------------------
+  Av_tot_eff | -.6771194       4616       3135 
+
+             | x Periods 
+-------------+----------
+  Av_tot_eff |           
+--------------------------------------------------------
+> ------------------------
+Average number of time periods over which a treatment's 
+> effect is accumulated = 2.9763955
+
+
+--------------------------------------------------------
+> ------------------------
+          Testing the parallel trends and no anticipatio
+> n assumptions
+--------------------------------------------------------
+> ------------------------
+
+             |  Estimate         SE      LB CI 
+-------------+---------------------------------
+   Placebo_1 | -.2902027   .4939299  -1.258288 
+   Placebo_2 | -.6851617   .5999765  -1.861094 
+   Placebo_3 | -.6578865    .607574   -1.84871 
+   Placebo_4 |  1.458396   .5871756   .3075526 
+
+             |     UB CI          N  Switchers 
+-------------+--------------------------------
+   Placebo_1 |  .6778822       1662        647 
+   Placebo_2 |  .4907706       1341        626 
+   Placebo_3 |  .5329367       1325        626 
+   Placebo_4 |  2.609238        533         88 
+--------------------------------------------------------
+> ------------------------
+Test of joint nullity of the placebos : p-value = .00764
+> 124
+
+
+The development of this package was funded by the Europe
+> an Union (ERC, REALLYCREDIBLE,GA N°101043899).
+--- eventstudyinteract (Sun & Abraham 2020) ---
+(sum of wgt is 88,279,838,250)
+(obs=6,470)
+
+IW estimates for dynamic effects                       N
+> umber of obs                                          
+>              =   8,590
+Absorbing 2 HDFE groups                                F
+> (31, 50)                                              
+>              =       .
+                                                       P
+> rob > F                                               
+>              =       .
+                                                       R
+> -squared                                              
+>              =  0.9686
+                                                       A
+> dj R-squared                                          
+>              =  0.9650
+                                                       R
+> oot MSE                                               
+>              = 10.2661
+                              (Std. err. adjusted for 51
+>  clusters in state_id)
+--------------------------------------------------------
+> ----------------------
+             |               Robust
+     matched | Coefficient  std. err.      t    P>|t|   
+>   [95% con                                            
+>           f. interval]
+-------------+------------------------------------------
+> ----------------------
+         L_0 |  -1.522358   .3487307    -4.37   0.000   
+>  -2.222804                                            
+>              -.8219117
+         L_1 |  -2.739199   .6588401    -4.16   0.000   
+>  -4.062518                                            
+>               -1.41588
+         L_2 |  -3.677356   .9690892    -3.79   0.000   
+>  -5.623829                                            
+>              -1.730884
+         L_3 |  -5.135635   1.431055    -3.59   0.001   
+>  -8.009995                                            
+>              -2.261275
+         L_4 |  -6.000809    2.37405    -2.53   0.015   
+>  -10.76923                                            
+>              -1.232389
+         L_5 |  -6.724947   2.913118    -2.31   0.025   
+>  -12.57612                                            
+>               -.873776
+         F_2 |  -.2179975   .8303267    -0.26   0.794   
+>  -1.885758                                            
+>               1.449763
+         F_3 |  -.1927383   .9853212    -0.20   0.846   
+>  -2.171814                                            
+>               1.786338
+         F_4 |  -.1867455   .9361334    -0.20   0.843   
+>  -2.067025                                            
+>               1.693534
+         F_5 |   3.227585   .7101871     4.54   0.000   
+>   1.801132                                            
+>               4.654037
+--------------------------------------------------------
+> ----------------------
+--- did2s (Gardner 2021) ---
+(0 observations deleted)
+                               (Std. err. adjusted for c
+> lustering on state_id)
+--------------------------------------------------------
+> ----------------------
+             | Coefficient  Std. err.      z    P>|z|   
+>   [95% con                                            
+>           f. interval]
+-------------+------------------------------------------
+> ----------------------
+         F_2 |  -.6643056   1.266851    -0.52   0.600   
+>  -3.147287                                            
+>               1.818676
+         F_3 |   .0683568   1.073734     0.06   0.949   
+>  -2.036123                                            
+>               2.172837
+         F_4 |    .857096   .8356999     1.03   0.305   
+>  -.7808458                                            
+>               2.495038
+         F_5 |  -5.737491   2.726001    -2.10   0.035   
+>  -11.08035                                            
+>              -.3946276
+         L_0 |   -1.12174   2.098837    -0.53   0.593   
+>  -5.235386                                            
+>               2.991905
+         L_1 |  -2.154833   2.461755    -0.88   0.381   
+>  -6.979785                                            
+>               2.670119
+         L_2 |  -2.954766   2.728961    -1.08   0.279   
+>  -8.303433                                            
+>                 2.3939
+         L_3 |  -3.821237   2.984316    -1.28   0.200   
+>  -9.670389                                            
+>               2.027916
+         L_4 |  -3.821688   3.257526    -1.17   0.241   
+>  -10.20632                                            
+>               2.562945
+         L_5 |  -2.799745   3.563497    -0.79   0.432   
+>  -9.784072                                            
+>               4.184581
+--------------------------------------------------------
+> ----------------------
+--- stackedev (Cengiz, Dube, Lindner & Zipperer 2019) --
+> -
+**** Building Stack 2014 ****
+**** Building Stack 2015 ****
+**** Building Stack 2016 ****
+**** Building Stack 2019 ****
+**** Appending Stacks ****
+**** Estimating Model with reghdfe ****
+(MWFE estimator converged in 2 iterations)
+note: ref omitted because of collinearity
+
+HDFE Linear regression                            Number
+>  of obs                                               
+>           =     14,950
+Absorbing 2 HDFE groups                           F(  10
+> ,    101)                                             
+>           =       4.94
+Statistics robust to heteroskedasticity           Prob >
+>  F                                                    
+>           =     0.0000
+                                                  R-squa
+> red                                                   
+>           =     0.9733
+                                                  Adj R-
+> squared                                               
+>           =     0.9702
+                                                  Within
+>  R-sq.                                                
+>           =     0.0060
+Number of clusters (unit_stack) =        102      Root M
+> SE                                                    
+>           =     9.4091
+
+                           (Std. err. adjusted for 102 c
+> lusters in unit_stack)
+--------------------------------------------------------
+> ----------------------
+             |               Robust
+     matched | Coefficient  std. err.      t    P>|t|   
+>   [95% con                                            
+>           f. interval]
+-------------+------------------------------------------
+> ----------------------
+         F_2 |  -.0412518   .5130562    -0.08   0.936   
+>  -1.059017                                            
+>               .9765138
+         F_3 |  -.0193514   .5525245    -0.04   0.972   
+>  -1.115411                                            
+>               1.076709
+         F_4 |  -.0285758   .5815858    -0.05   0.961   
+>  -1.182286                                            
+>               1.125134
+         F_5 |    1.57921   .7740304     2.04   0.044   
+>    .043742                                            
+>               3.114678
+         L_0 |   -1.00454   .3144933    -3.19   0.002   
+>   -1.62841                                            
+>              -.3806701
+         L_1 |  -1.877145   .5474821    -3.43   0.001   
+>  -2.963203                                            
+>              -.7910883
+         L_2 |  -2.516295   .7770522    -3.24   0.002   
+>  -4.057758                                            
+>              -.9748325
+         L_3 |  -3.855787   1.001734    -3.85   0.000   
+>  -5.842957                                            
+>              -1.868617
+         L_4 |  -4.415056   1.474659    -2.99   0.003   
+>  -7.340383                                            
+>              -1.489728
+         L_5 |   -4.49558    2.20123    -2.04   0.044   
+>  -8.862228                                            
+>              -.1289318
+         ref |          0  (omitted)
+       _cons |   34.67039   .2722641   127.34   0.000   
+>    34.1303                                            
+>               35.21049
+--------------------------------------------------------
+> ----------------------
+
+Absorbed degrees of freedom:
+--------------------------------------------------------
+> ------------+
+                Absorbed FE | Categories  - Redundant  =
+>  Num. Coefs                                           
+>             |
+----------------------------+---------------------------
+> ------------|
+   program_numeric_id#stack |      1495        1495     
+>       0                                               
+>            *                                          
+>             |
+                 year#stack |        40           1     
+>      39                                               
+>                                                       
+>             |
+--------------------------------------------------------
+> ------------+
+* = FE nested within cluster; treated as redundant for D
+> oF computation
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expa
+    > nsion/output/figures/17-dd_methods_matched.png
+    saved as PNG format
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expa
+    > nsion/my_paper/figures/17-dd_methods_matched.png
+    saved as PNG format
+
+========================================================
+> =================
+DiD METHODS COMPARISON: Matched Residency Positions per 
+> 100k Population
+Outcome: matched_per_100k
+========================================================
+> =================
+--- TWFE (reghdfe) ---
+(MWFE estimator converged in 2 iterations)
+
+HDFE Linear regression                            Number
+>  of obs                                               
+>           =     14,950
+Absorbing 2 HDFE groups                           F(  10
+> ,     50)                                             
+>           =       6.53
+Statistics robust to heteroskedasticity           Prob >
+>  F                                                    
+>           =     0.0000
+                                                  R-squa
+> red                                                   
+>           =     0.9799
+                                                  Adj R-
+> squared                                               
+>           =     0.9786
+                                                  Within
+>  R-sq.                                                
+>           =     0.0094
+Number of clusters (state_id) =         51        Root M
+> SE                                                    
+>           =     0.0878
+
+                              (Std. err. adjusted for 51
+>  clusters in state_id)
+--------------------------------------------------------
+> ----------------------
+             |               Robust
+matched~100k | Coefficient  std. err.      t    P>|t|   
+>   [95% con                                            
+>           f. interval]
+-------------+------------------------------------------
+> ----------------------
+         L_0 |  -.0077277   .0021236    -3.64   0.001   
+>   -.011993                                            
+>              -.0034624
+         L_1 |  -.0162821   .0044409    -3.67   0.001   
+>  -.0252018                                            
+>              -.0073624
+         L_2 |  -.0216843   .0069637    -3.11   0.003   
+>  -.0356713                                            
+>              -.0076973
+         L_3 |  -.0323634   .0110162    -2.94   0.005   
+>    -.05449                                            
+>              -.0102367
+         L_4 |  -.0404239    .017612    -2.30   0.026   
+>  -.0757987                                            
+>              -.0050491
+         L_5 |  -.0451595   .0232636    -1.94   0.058   
+>  -.0918858                                            
+>               .0015668
+         F_2 |   .0004039   .0084513     0.05   0.962   
+>  -.0165711                                            
+>               .0173789
+         F_3 |   .0001184   .0104167     0.01   0.991   
+>  -.0208041                                            
+>                .021041
+         F_4 |  -.0000391   .0119349    -0.00   0.997   
+>  -.0240111                                            
+>                .023933
+         F_5 |  -.0062923    .016715    -0.38   0.708   
+>  -.0398654                                            
+>               .0272808
+       _cons |   .2717918   .0024336   111.68   0.000   
+>   .2669037                                            
+>               .2766799
+--------------------------------------------------------
+> ----------------------
+
+Absorbed degrees of freedom:
+--------------------------------------------------------
+> ----+
+        Absorbed FE | Categories  - Redundant  = Num. Co
+> efs                                                   
+>     |
+--------------------+-----------------------------------
+> ----|
+ program_numeric_id |       859         859           0 
+>    *                                                  
+>     |
+               year |        10           1           9 
+>                                                       
+>     |
+--------------------------------------------------------
+> ----+
+* = FE nested within cluster; treated as redundant for D
+> oF computation
+--- csdid (Callaway & Sant'Anna 2020) ---
+repeated time values within panel
+--- did_imputation (Borusyak, Jaravel & Spiess 2021) ---
+
+                                                        
+> Number of obs                                         
+>               = 14,950
+--------------------------------------------------------
+> ----------------------
+matched~100k | Coefficient  Std. err.      z    P>|z|   
+>   [95% con                                            
+>           f. interval]
+-------------+------------------------------------------
+> ----------------------
+        tau0 |  -.0076111   .0062925    -1.21   0.226   
+>  -.0199441                                            
+>               .0047219
+        tau1 |  -.0168946   .0083929    -2.01   0.044   
+>  -.0333444                                            
+>              -.0004448
+        tau2 |  -.0219174   .0102263    -2.14   0.032   
+>  -.0419606                                            
+>              -.0018743
+        tau3 |   -.032496   .0139809    -2.32   0.020   
+>  -.0598982                                            
+>              -.0050939
+        tau4 |  -.0409939   .0201344    -2.04   0.042   
+>  -.0804566                                            
+>              -.0015313
+        tau5 |  -.0446604   .0244181    -1.83   0.067   
+>   -.092519                                            
+>               .0031982
+        pre1 |   .0213976   .0171988     1.24   0.213   
+>  -.0123115                                            
+>               .0551067
+        pre2 |   .0217475   .0122905     1.77   0.077   
+>  -.0023414                                            
+>               .0458364
+        pre3 |   .0214963   .0118164     1.82   0.069   
+>  -.0016635                                            
+>                .044656
+        pre4 |   .0216296   .0110212     1.96   0.050   
+>   .0000285                                            
+>               .0432308
+        pre5 |   .0218732   .0104132     2.10   0.036   
+>   .0014637                                            
+>               .0422828
+--------------------------------------------------------
+> ----------------------
+--- did_multiplegt_dyn (de Chaisemartin & D'Haultfoeuill
+> e 2020) ---
+
+The number of placebos which can be estimated is at most
+>  4. The command will therefore try to estimate 4 place
+> bo(s).
+
+
+--------------------------------------------------------
+> ------------------------
+             Estimation of treatment effects: Event-stud
+> y effects
+--------------------------------------------------------
+> ------------------------
+
+             |  Estimate         SE      LB CI 
+-------------+---------------------------------
+    Effect_1 | -.0090537   .0054894  -.0198127 
+    Effect_2 | -.0196719   .0090051  -.0373217 
+    Effect_3 | -.0267036   .0104391  -.0471639 
+    Effect_4 | -.0348919    .014601  -.0635094 
+    Effect_5 | -.0428995   .0213157  -.0846776 
+
+             |     UB CI          N  Switchers 
+-------------+--------------------------------
+    Effect_1 |  .0017053       4206        647 
+    Effect_2 | -.0020222       3249        626 
+    Effect_3 | -.0062433       3233        626 
+    Effect_4 | -.0062745       3212        626 
+    Effect_5 | -.0011215       2327        610 
+--------------------------------------------------------
+> ------------------------
+Test of joint nullity of the effects : p-value = .205140
+> 95
+
+
+--------------------------------------------------------
+> ------------------------
+               Average cumulative (total) effect per tre
+> atment unit
+--------------------------------------------------------
+> ------------------------
+
+             |  Estimate         SE      LB CI 
+-------------+---------------------------------
+  Av_tot_eff | -.0264433    .010487  -.0469974 
+
+             |     UB CI          N     Switch 
+-------------+---------------------------------
+  Av_tot_eff | -.0058893       8432       3135 
+
+             | x Periods 
+-------------+----------
+  Av_tot_eff |           
+--------------------------------------------------------
+> ------------------------
+Average number of time periods over which a treatment's 
+> effect is accumulated = 2.9763955
+
+
+--------------------------------------------------------
+> ------------------------
+          Testing the parallel trends and no anticipatio
+> n assumptions
+--------------------------------------------------------
+> ------------------------
+
+             |  Estimate         SE      LB CI 
+-------------+---------------------------------
+   Placebo_1 | -.0105632   .0166276  -.0431527 
+   Placebo_2 | -.0139917   .0239806  -.0609927 
+   Placebo_3 | -.0122959   .0269899  -.0651953 
+   Placebo_4 |  .0179408   .0373565  -.0552767 
+
+             |     UB CI          N  Switchers 
+-------------+--------------------------------
+   Placebo_1 |  .0220264       4206        647 
+   Placebo_2 |  .0330093       3249        626 
+   Placebo_3 |  .0406034       3233        626 
+   Placebo_4 |  .0911582       1805         88 
+--------------------------------------------------------
+> ------------------------
+Test of joint nullity of the placebos : p-value = .93327
+> 894
+
+
+The development of this package was funded by the Europe
+> an Union (ERC, REALLYCREDIBLE,GA N°101043899).
+--- eventstudyinteract (Sun & Abraham 2020) ---
+(sum of wgt is 88,279,838,250)
+(obs=6,470)
+
+IW estimates for dynamic effects                        
+> Number of obs                                         
+>               = 14,950
+Absorbing 2 HDFE groups                                 
+> F(31, 50)                                             
+>               =      .
+                                                        
+> Prob > F                                              
+>               =      .
+                                                        
+> R-squared                                             
+>               = 0.9799
+                                                        
+> Adj R-squared                                         
+>               = 0.9786
+                                                        
+> Root MSE                                              
+>               = 0.0879
+                              (Std. err. adjusted for 51
+>  clusters in state_id)
+--------------------------------------------------------
+> ----------------------
+             |               Robust
+matched~100k | Coefficient  std. err.      t    P>|t|   
+>   [95% con                                            
+>           f. interval]
+-------------+------------------------------------------
+> ----------------------
+         L_0 |   -.008677   .0020048    -4.33   0.000   
+>  -.0127037                                            
+>              -.0046503
+         L_1 |  -.0169612   .0045993    -3.69   0.001   
+>  -.0261991                                            
+>              -.0077233
+         L_2 |  -.0222364   .0070114    -3.17   0.003   
+>  -.0363192                                            
+>              -.0081537
+         L_3 |  -.0329258   .0110962    -2.97   0.005   
+>  -.0552131                                            
+>              -.0106386
+         L_4 |   -.041042   .0179348    -2.29   0.026   
+>   -.077065                                            
+>              -.0050189
+         L_5 |  -.0457513   .0227809    -2.01   0.050   
+>  -.0915081                                            
+>               5.53e-06
+         F_2 |  -.0008184   .0089369    -0.09   0.927   
+>  -.0187688                                            
+>               .0171319
+         F_3 |  -.0009352   .0109969    -0.09   0.933   
+>  -.0230231                                            
+>               .0211527
+         F_4 |  -.0000858   .0128549    -0.01   0.995   
+>  -.0259057                                            
+>               .0257341
+         F_5 |  -.0045313   .0119554    -0.38   0.706   
+>  -.0285444                                            
+>               .0194817
+--------------------------------------------------------
+> ----------------------
+--- did2s (Gardner 2021) ---
+(0 observations deleted)
+                               (Std. err. adjusted for c
+> lustering on state_id)
+--------------------------------------------------------
+> ----------------------
+             | Coefficient  Std. err.      z    P>|z|   
+>   [95% con                                            
+>           f. interval]
+-------------+------------------------------------------
+> ----------------------
+         F_2 |  -.0173217   .0479747    -0.36   0.718   
+>  -.1113504                                            
+>                .076707
+         F_3 |  -.0104664   .0406134    -0.26   0.797   
+>  -.0900672                                            
+>               .0691343
+         F_4 |  -.0026257   .0337577    -0.08   0.938   
+>  -.0687895                                            
+>               .0635381
+         F_5 |   .0670658   .0990044     0.68   0.498   
+>  -.1269793                                            
+>               .2611108
+         L_0 |  -.0238958    .064153    -0.37   0.710   
+>  -.1496333                                            
+>               .1018418
+         L_1 |  -.0374747   .0700983    -0.53   0.593   
+>  -.1748649                                            
+>               .0999156
+         L_2 |  -.0461502   .0773128    -0.60   0.551   
+>  -.1976805                                            
+>               .1053801
+         L_3 |  -.0546415   .0845403    -0.65   0.518   
+>  -.2203375                                            
+>               .1110544
+         L_4 |  -.0623205   .0915533    -0.68   0.496   
+>  -.2417616                                            
+>               .1171207
+         L_5 |  -.0623294   .1015631    -0.61   0.539   
+>  -.2613894                                            
+>               .1367306
+--------------------------------------------------------
+> ----------------------
+--- stackedev (Cengiz, Dube, Lindner & Zipperer 2019) --
+> -
+**** Building Stack 2014 ****
+**** Building Stack 2015 ****
+**** Building Stack 2016 ****
+**** Building Stack 2019 ****
+**** Appending Stacks ****
+**** Estimating Model with reghdfe ****
+(MWFE estimator converged in 2 iterations)
+note: ref omitted because of collinearity
+
+HDFE Linear regression                            Number
+>  of obs                                               
+>           =     40,390
+Absorbing 2 HDFE groups                           F(  10
+> ,    101)                                             
+>           =       1.82
+Statistics robust to heteroskedasticity           Prob >
+>  F                                                    
+>           =     0.0667
+                                                  R-squa
+> red                                                   
+>           =     0.9783
+                                                  Adj R-
+> squared                                               
+>           =     0.9774
+                                                  Within
+>  R-sq.                                                
+>           =     0.0008
+Number of clusters (unit_stack) =        102      Root M
+> SE                                                    
+>           =     0.1633
+
+                           (Std. err. adjusted for 102 c
+> lusters in unit_stack)
+--------------------------------------------------------
+> ----------------------
+             |               Robust
+matched~100k | Coefficient  std. err.      t    P>|t|   
+>   [95% con                                            
+>           f. interval]
+-------------+------------------------------------------
+> ----------------------
+         F_2 |  -.0095044    .015599    -0.61   0.544   
+>  -.0404487                                            
+>               .0214398
+         F_3 |  -.0102447   .0212922    -0.48   0.631   
+>  -.0524827                                            
+>               .0319933
+         F_4 |  -.0100892   .0237781    -0.42   0.672   
+>  -.0572587                                            
+>               .0370802
+         F_5 |  -.0038312   .0299962    -0.13   0.899   
+>  -.0633356                                            
+>               .0556731
+         L_0 |  -.0101922   .0052575    -1.94   0.055   
+>  -.0206216                                            
+>               .0002372
+         L_1 |  -.0178946   .0082741    -2.16   0.033   
+>  -.0343082                                            
+>              -.0014811
+         L_2 |  -.0248278   .0090701    -2.74   0.007   
+>  -.0428205                                            
+>              -.0068352
+         L_3 |  -.0349391   .0130661    -2.67   0.009   
+>  -.0608588                                            
+>              -.0090194
+         L_4 |  -.0452119   .0193177    -2.34   0.021   
+>  -.0835331                                            
+>              -.0068907
+         L_5 |  -.0366955   .0266335    -1.38   0.171   
+>  -.0895292                                            
+>               .0161381
+         ref |          0  (omitted)
+       _cons |   .5295874   .0012271   431.59   0.000   
+>   .5271533                                            
+>               .5320216
+--------------------------------------------------------
+> ----------------------
+
+Absorbed degrees of freedom:
+--------------------------------------------------------
+> ------------+
+                Absorbed FE | Categories  - Redundant  =
+>  Num. Coefs                                           
+>             |
+----------------------------+---------------------------
+> ------------|
+   program_numeric_id#stack |      1495        1495     
+>       0                                               
+>            *                                          
+>             |
+                 year#stack |        40           1     
+>      39                                               
+>                                                       
+>             |
+--------------------------------------------------------
+> ------------+
+* = FE nested within cluster; treated as redundant for D
+> oF computation
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expa
+    > nsion/output/figures/18-dd_methods_matched_per_1
+    > 00k.png saved as PNG format
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expa
+    > nsion/my_paper/figures/18-dd_methods_matched_per
+    > _100k.png saved as PNG format
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expa
+    > nsion/output/figures/20-dd_methods_matched_per_1
+    > 00k_nocsdid.png saved as PNG format
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expa
+    > nsion/my_paper/figures/20-dd_methods_matched_per
+    > _100k_nocsdid.png saved as PNG format
+
+========================================================
+> =================
+DiD METHODS COMPARISON: Residency Quota Positions per 10
+> 0k Population
+Outcome: quota_per_100k
+========================================================
+> =================
+--- TWFE (reghdfe) ---
+(MWFE estimator converged in 2 iterations)
+
+HDFE Linear regression                            Number
+>  of obs                                               
+>           =     40,390
+Absorbing 2 HDFE groups                           F(  10
+> ,     50)                                             
+>           =       4.32
+Statistics robust to heteroskedasticity           Prob >
+>  F                                                    
+>           =     0.0002
+                                                  R-squa
+> red                                                   
+>           =     0.9817
+                                                  Adj R-
+> squared                                               
+>           =     0.9813
+                                                  Within
+>  R-sq.                                                
+>           =     0.0070
+Number of clusters (state_id) =         51        Root M
+> SE                                                    
+>           =     0.0861
+
+                              (Std. err. adjusted for 51
+>  clusters in state_id)
+--------------------------------------------------------
+> ----------------------
+             |               Robust
+quota_p~100k | Coefficient  std. err.      t    P>|t|   
+>   [95% con                                            
+>           f. interval]
+-------------+------------------------------------------
+> ----------------------
+         L_0 |  -.0067187   .0024505    -2.74   0.008   
+>  -.0116408                                            
+>              -.0017967
+         L_1 |  -.0152759   .0050535    -3.02   0.004   
+>  -.0254261                                            
+>              -.0051257
+         L_2 |  -.0234139   .0075849    -3.09   0.003   
+>  -.0386486                                            
+>              -.0081791
+         L_3 |  -.0342688   .0116809    -2.93   0.005   
+>  -.0577307                                            
+>               -.010807
+         L_4 |  -.0431075   .0197043    -2.19   0.033   
+>  -.0826846                                            
+>              -.0035303
+         L_5 |  -.0536304    .027921    -1.92   0.060   
+>  -.1097114                                            
+>               .0024506
+         F_2 |   .0003983   .0080869     0.05   0.961   
+>  -.0158448                                            
+>               .0166414
+         F_3 |  -.0000518   .0105091    -0.00   0.996   
+>  -.0211599                                            
+>               .0210563
+         F_4 |   .0027633   .0123062     0.22   0.823   
+>  -.0219545                                            
+>               .0274811
+         F_5 |  -.0034094   .0158929    -0.21   0.831   
+>  -.0353313                                            
+>               .0285125
+       _cons |   .2954877   .0010989   268.89   0.000   
+>   .2932805                                            
+>                .297695
+--------------------------------------------------------
+> ----------------------
+
+Absorbed degrees of freedom:
+--------------------------------------------------------
+> ----+
+        Absorbed FE | Categories  - Redundant  = Num. Co
+> efs                                                   
+>     |
+--------------------+-----------------------------------
+> ----|
+ program_numeric_id |       859         859           0 
+>    *                                                  
+>     |
+               year |        10           1           9 
+>                                                       
+>     |
+--------------------------------------------------------
+> ----+
+* = FE nested within cluster; treated as redundant for D
+> oF computation
+--- csdid (Callaway & Sant'Anna 2020) ---
+repeated time values within panel
+--- did_imputation (Borusyak, Jaravel & Spiess 2021) ---
+
+                                                        
+> Number of obs                                         
+>               = 40,390
+--------------------------------------------------------
+> ----------------------
+quota_p~100k | Coefficient  Std. err.      z    P>|z|   
+>   [95% con                                            
+>           f. interval]
+-------------+------------------------------------------
+> ----------------------
+        tau0 |  -.0073128   .0068223    -1.07   0.284   
+>  -.0206843                                            
+>               .0060587
+        tau1 |  -.0160281   .0090512    -1.77   0.077   
+>  -.0337682                                            
+>               .0017119
+        tau2 |  -.0241882   .0111421    -2.17   0.030   
+>  -.0460263                                            
+>                -.00235
+        tau3 |  -.0349403   .0146073    -2.39   0.017   
+>  -.0635702                                            
+>              -.0063104
+        tau4 |  -.0439673   .0215408    -2.04   0.041   
+>  -.0861865                                            
+>              -.0017481
+        tau5 |  -.0540185   .0286951    -1.88   0.060   
+>    -.11026                                            
+>               .0022229
+        pre1 |    .018609   .0177914     1.05   0.296   
+>  -.0162616                                            
+>               .0534796
+        pre2 |   .0189964   .0136585     1.39   0.164   
+>  -.0077738                                            
+>               .0457667
+        pre3 |   .0185502   .0128545     1.44   0.149   
+>  -.0066441                                            
+>               .0437445
+        pre4 |   .0214273   .0124931     1.72   0.086   
+>  -.0030587                                            
+>               .0459133
+        pre5 |   .0202728   .0113911     1.78   0.075   
+>  -.0020533                                            
+>               .0425988
+--------------------------------------------------------
+> ----------------------
+--- did_multiplegt_dyn (de Chaisemartin & D'Haultfoeuill
+> e 2020) ---
+
+The number of placebos which can be estimated is at most
+>  4. The command will therefore try to estimate 4 place
+> bo(s).
+
+
+--------------------------------------------------------
+> ------------------------
+             Estimation of treatment effects: Event-stud
+> y effects
+--------------------------------------------------------
+> ------------------------
+
+             |  Estimate         SE      LB CI 
+-------------+---------------------------------
+    Effect_1 | -.0034434   .0065029  -.0161888 
+    Effect_2 | -.0150863    .007719  -.0302153 
+    Effect_3 | -.0273039   .0099364  -.0467788 
+    Effect_4 | -.0329207   .0138982  -.0601608 
+    Effect_5 | -.0396874   .0214478  -.0817244 
+
+             |     UB CI          N  Switchers 
+-------------+--------------------------------
+    Effect_1 |   .009302      14382        647 
+    Effect_2 |  .0000427      10881        626 
+    Effect_3 | -.0078289      10865        626 
+    Effect_4 | -.0056807      10844        626 
+    Effect_5 |  .0023495       7415        610 
+--------------------------------------------------------
+> ------------------------
+Test of joint nullity of the effects : p-value = .176730
+> 74
+
+
+--------------------------------------------------------
+> ------------------------
+               Average cumulative (total) effect per tre
+> atment unit
+--------------------------------------------------------
+> ------------------------
+
+             |  Estimate         SE      LB CI 
+-------------+---------------------------------
+  Av_tot_eff | -.0234711   .0101021  -.0432708 
+
+             |     UB CI          N     Switch 
+-------------+---------------------------------
+  Av_tot_eff | -.0036714      23696       3135 
+
+             | x Periods 
+-------------+----------
+  Av_tot_eff |           
+--------------------------------------------------------
+> ------------------------
+Average number of time periods over which a treatment's 
+> effect is accumulated = 2.9763955
+
+
+--------------------------------------------------------
+> ------------------------
+          Testing the parallel trends and no anticipatio
+> n assumptions
+--------------------------------------------------------
+> ------------------------
+
+             |  Estimate         SE      LB CI 
+-------------+---------------------------------
+   Placebo_1 | -.0090441   .0156191   -.039657 
+   Placebo_2 | -.0123787   .0218116  -.0551287 
+   Placebo_3 |   -.00819   .0265315  -.0601908 
+   Placebo_4 |  .0162233   .0373975  -.0570744 
+
+             |     UB CI          N  Switchers 
+-------------+--------------------------------
+   Placebo_1 |  .0215688      14382        647 
+   Placebo_2 |  .0303712      10881        626 
+   Placebo_3 |  .0438109      10865        626 
+   Placebo_4 |   .089521       6893         88 
+--------------------------------------------------------
+> ------------------------
+Test of joint nullity of the placebos : p-value = .83901
+> 943
+
+
+The development of this package was funded by the Europe
+> an Union (ERC, REALLYCREDIBLE,GA N°101043899).
+--- eventstudyinteract (Sun & Abraham 2020) ---
+(sum of wgt is 88,279,838,250)
+(obs=6,470)
+
+IW estimates for dynamic effects                        
+> Number of obs                                         
+>               = 40,390
+Absorbing 2 HDFE groups                                 
+> F(31, 50)                                             
+>               =      .
+                                                        
+> Prob > F                                              
+>               =      .
+                                                        
+> R-squared                                             
+>               = 0.9817
+                                                        
+> Adj R-squared                                         
+>               = 0.9813
+                                                        
+> Root MSE                                              
+>               = 0.0861
+                              (Std. err. adjusted for 51
+>  clusters in state_id)
+--------------------------------------------------------
+> ----------------------
+             |               Robust
+quota_p~100k | Coefficient  std. err.      t    P>|t|   
+>   [95% con                                            
+>           f. interval]
+-------------+------------------------------------------
+> ----------------------
+         L_0 |  -.0069238   .0024136    -2.87   0.006   
+>  -.0117716                                            
+>              -.0020759
+         L_1 |  -.0154608   .0052007    -2.97   0.005   
+>  -.0259067                                            
+>              -.0050148
+         L_2 |   -.023693   .0077113    -3.07   0.003   
+>  -.0391816                                            
+>              -.0082044
+         L_3 |  -.0344649   .0117953    -2.92   0.005   
+>  -.0581564                                            
+>              -.0107734
+         L_4 |  -.0431741   .0199389    -2.17   0.035   
+>  -.0832226                                            
+>              -.0031256
+         L_5 |  -.0539591   .0278441    -1.94   0.058   
+>  -.1098856                                            
+>               .0019674
+         F_2 |   .0000943   .0084031     0.01   0.991   
+>  -.0167838                                            
+>               .0169723
+         F_3 |  -.0003572    .010766    -0.03   0.974   
+>  -.0219814                                            
+>                .021267
+         F_4 |   .0027109   .0126275     0.21   0.831   
+>  -.0226522                                            
+>                .028074
+         F_5 |  -.0017922   .0118819    -0.15   0.881   
+>  -.0256578                                            
+>               .0220734
+--------------------------------------------------------
+> ----------------------
+--- did2s (Gardner 2021) ---
+(0 observations deleted)
+                               (Std. err. adjusted for c
+> lustering on state_id)
+--------------------------------------------------------
+> ----------------------
+             | Coefficient  Std. err.      z    P>|z|   
+>   [95% con                                            
+>           f. interval]
+-------------+------------------------------------------
+> ----------------------
+         F_2 |   -.024155   .0765094    -0.32   0.752   
+>  -.1741108                                            
+>               .1258007
+         F_3 |  -.0176421   .0723037    -0.24   0.807   
+>  -.1593547                                            
+>               .1240704
+         F_4 |  -.0088071   .0688266    -0.13   0.898   
+>  -.1437048                                            
+>               .1260906
+         F_5 |   .0727888   .1174404     0.62   0.535   
+>  -.1573902                                            
+>               .3029679
+         L_0 |  -.0309393   .0863196    -0.36   0.720   
+>  -.2001226                                            
+>               .1382439
+         L_1 |  -.0446491   .0897656    -0.50   0.619   
+>  -.2205865                                            
+>               .1312883
+         L_2 |  -.0550911   .0933471    -0.59   0.555   
+>  -.2380481                                            
+>               .1278659
+         L_3 |  -.0631156   .0974342    -0.65   0.517   
+>   -.254083                                            
+>               .1278519
+         L_4 |  -.0708043   .1012034    -0.70   0.484   
+>  -.2691594                                            
+>               .1275507
+         L_5 |   -.069617   .1110424    -0.63   0.531   
+>  -.2872561                                            
+>               .1480221
+--------------------------------------------------------
+> ----------------------
+--- stackedev (Cengiz, Dube, Lindner & Zipperer 2019) --
+> -
+**** Building Stack 2014 ****
+**** Building Stack 2015 ****
+**** Building Stack 2016 ****
+**** Building Stack 2019 ****
+**** Appending Stacks ****
+**** Estimating Model with reghdfe ****
+(MWFE estimator converged in 2 iterations)
+note: ref omitted because of collinearity
+
+HDFE Linear regression                            Number
+>  of obs                                               
+>           =    142,150
+Absorbing 2 HDFE groups                           F(  10
+> ,    101)                                             
+>           =       1.03
+Statistics robust to heteroskedasticity           Prob >
+>  F                                                    
+>           =     0.4248
+                                                  R-squa
+> red                                                   
+>           =     0.9803
+                                                  Adj R-
+> squared                                               
+>           =     0.9801
+                                                  Within
+>  R-sq.                                                
+>           =     0.0004
+Number of clusters (unit_stack) =        102      Root M
+> SE                                                    
+>           =     0.1470
+
+                           (Std. err. adjusted for 102 c
+> lusters in unit_stack)
+--------------------------------------------------------
+> ----------------------
+             |               Robust
+quota_p~100k | Coefficient  std. err.      t    P>|t|   
+>   [95% con                                            
+>           f. interval]
+-------------+------------------------------------------
+> ----------------------
+         F_2 |  -.0086917   .0150619    -0.58   0.565   
+>  -.0385704                                            
+>               .0211871
+         F_3 |  -.0104937   .0198003    -0.53   0.597   
+>  -.0497721                                            
+>               .0287847
+         F_4 |  -.0065893   .0237502    -0.28   0.782   
+>  -.0537034                                            
+>               .0405248
+         F_5 |   .0053762   .0273252     0.20   0.844   
+>  -.0488297                                            
+>               .0595821
+         L_0 |   -.003543   .0064147    -0.55   0.582   
+>   -.016268                                            
+>                .009182
+         L_1 |   -.014102   .0070837    -1.99   0.049   
+>  -.0281541                                            
+>              -.0000499
+         L_2 |  -.0262635   .0089014    -2.95   0.004   
+>  -.0439215                                            
+>              -.0086055
+         L_3 |  -.0324128   .0125763    -2.58   0.011   
+>  -.0573609                                            
+>              -.0074647
+         L_4 |  -.0408997   .0196092    -2.09   0.040   
+>   -.079799                                            
+>              -.0020003
+         L_5 |  -.0427093   .0297377    -1.44   0.154   
+>  -.1017009                                            
+>               .0162824
+         ref |          0  (omitted)
+       _cons |    .549703   .0003442  1597.07   0.000   
+>   .5490202                                            
+>               .5503858
+--------------------------------------------------------
+> ----------------------
+
+Absorbed degrees of freedom:
+--------------------------------------------------------
+> ------------+
+                Absorbed FE | Categories  - Redundant  =
+>  Num. Coefs                                           
+>             |
+----------------------------+---------------------------
+> ------------|
+   program_numeric_id#stack |      1495        1495     
+>       0                                               
+>            *                                          
+>             |
+                 year#stack |        40           1     
+>      39                                               
+>                                                       
+>             |
+--------------------------------------------------------
+> ------------+
+* = FE nested within cluster; treated as redundant for D
+> oF computation
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expa
+    > nsion/output/figures/19-dd_methods_quota_per_100
+    > k.png saved as PNG format
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expa
+    > nsion/my_paper/figures/19-dd_methods_quota_per_1
+    > 00k.png saved as PNG format
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expa
+    > nsion/output/figures/21-dd_methods_quota_per_100
+    > k_nocsdid.png saved as PNG format
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expa
+    > nsion/my_paper/figures/21-dd_methods_quota_per_1
+    > 00k_nocsdid.png saved as PNG format
+
+. 
+. di ""
+
+
+. di "==================================================
+> ================"
+========================================================
+> ==========
+
+. di "DiD methods comparison completed."
+DiD methods comparison completed.
+
+. di "Figures:"
+Figures:
+
+. di "  - ${figdir}/{05..}-dd_methods_*.png (and LaTeX c
+> opies)"
+  - /Users/hhadah/Projects/GiT/residency-medicaid-expans
+> ion/output/figures/{05..}-dd_methods_*.png (and LaTeX 
+> copies)
+
+. di "==================================================
+> ================"
+========================================================
+> ==========
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /Users/hhadah/Projects/GiT/residency-medica
+> id-expansion/output/11-dd-methods-comparison.log
+  log type:  text
+ closed on:   2 May 2026, 19:26:41
+--------------------------------------------------------

@@ -57,10 +57,12 @@ di "Urban/Rural coding: 0 = Urban, 1 = Rural"
 * -------------------------------------------------------------------------
 * Outcomes and labels
 * -------------------------------------------------------------------------
-global outcomes "matched_per_100k quota_per_100k"
+global outcomes "matched matched_per_100k quota_per_100k"
+global label_matched "Total Matched Residency Positions"
 global label_quota_per_100k "Residency Quota Positions per 100k Population"
 global label_matched_per_100k "Matched Residency Positions per 100k Population"
 
+global short_matched "matched"
 global short_quota_per_100k "quota_per_100k"
 global short_matched_per_100k "matched_per_100k"
 
@@ -75,7 +77,7 @@ di "Urban vs Rural"
 di "========================================================================="
 di ""
 
-local plotnum = 7
+local plotnum = 8
 
 foreach outcome of global outcomes {
     
@@ -161,6 +163,41 @@ foreach outcome of global outcomes {
     if `pct_urban' < -100 local pct_urban = -100
     if `pct_rural' < -100 local pct_rural = -100
 
+    * Compute national/total annual impact for each group.
+    * matched (raw): avg * N treated programs in subset.
+    * per_100k:      avg * sum(state_pop across treated programs in subset) / 100k.
+    local urban_national = .
+    local rural_national = .
+    local has_national = 0
+    if "`outcome'" == "matched" {
+        quietly levelsof program_numeric_id if treated_state == 1 & urban_rural == 0 & !missing(`outcome'), local(_uprogs)
+        local n_uprogs : word count `_uprogs'
+        quietly levelsof program_numeric_id if treated_state == 1 & urban_rural == 1 & !missing(`outcome'), local(_rprogs)
+        local n_rprogs : word count `_rprogs'
+        local urban_national = `avg_urban' * `n_uprogs'
+        local rural_national = `avg_rural' * `n_rprogs'
+        local has_national = 1
+    }
+    else if strpos("`outcome'", "_per_100k") > 0 {
+        preserve
+        keep if treated_state == 1 & urban_rural == 0 & !missing(`outcome')
+        collapse (mean) total_population_10, by(program_numeric_id)
+        quietly summarize total_population_10
+        local sum_urban_pop = r(sum)
+        restore
+        preserve
+        keep if treated_state == 1 & urban_rural == 1 & !missing(`outcome')
+        collapse (mean) total_population_10, by(program_numeric_id)
+        quietly summarize total_population_10
+        local sum_rural_pop = r(sum)
+        restore
+        local urban_national = `avg_urban' * `sum_urban_pop' / 100000
+        local rural_national = `avg_rural' * `sum_rural_pop' / 100000
+        local has_national = 1
+    }
+    local urban_national_text = cond(`has_national', string(`urban_national', "%9.0fc"), "NA")
+    local rural_national_text = cond(`has_national', string(`rural_national', "%9.0fc"), "NA")
+
     * Store values in locals for annotation
     local text_urban = string(`avg_urban', "%9.2f")
     local text_rural = string(`avg_rural', "%9.2f")
@@ -179,6 +216,10 @@ foreach outcome of global outcomes {
     di "Difference (rural - urban): " %9.3f `avg_diff' " (p = " %9.3f `avg_diff_p' ")"
     di "Joint heterogeneity test p-value: " %9.3f `joint_het_p'
     di "Pretrend joint p-value: " %9.3f `pretrend_p'
+    if (`has_national') {
+        di "Avg. annual aggregate effect (urban): " %15.0fc `urban_national'
+        di "Avg. annual aggregate effect (rural): " %15.0fc `rural_national'
+    }
 
     * =====================
     * Plotting with annotation
@@ -270,13 +311,29 @@ foreach outcome of global outcomes {
     local prefix : display %02.0f `plotnum'
     local ytitle_str "Treatment Effect (difference-in-differences)"
     local plot_title "Heterogeneity: Urban vs Rural - `label'"
-    
+
     * Adjust for per 100k outcomes
     if (strpos("`short'", "_100k") > 0) {
         local ytitle_str "Treatment Effect (per 100,000 population)"
         local x_annot = -2
     }
-    
+    if ("`outcome'" == "matched") {
+        local ytitle_str "Treatment Effect (number of residency positions)"
+    }
+
+    * Build text annotations.
+    * Main annotation (left): urban/rural averages and difference.
+    * Extra annotation at x = 3, same y-level: national/total impact split by urban/rural
+    * (residency positions for raw matched; additional doctors nationally for per-100k).
+    local main_text `"text(`y_annot' `x_annot' `"Urban Avg: `text_urban' (p=`text_urban_p')"' `"Rural Avg: `text_rural' (p=`text_rural_p')"' `"Difference: `text_avg_diff' (p=`text_avg_diff_p')"', size(large))"'
+    local extra_text ""
+    if ("`outcome'" == "matched") {
+        local extra_text `"text(`y_annot' 3 `"Avg. annual change in"' `"residency positions:"' `"Urban: `urban_national_text'"' `"Rural: `rural_national_text'"', size(medium))"'
+    }
+    else if (strpos("`short'", "_100k") > 0) {
+        local extra_text `"text(`y_annot' 3 `"Avg. annual change in"' `"doctors nationally:"' `"Urban: `urban_national_text'"' `"Rural: `rural_national_text'"', size(medium))"'
+    }
+
     * Create combined plot using twoway, with annotation
     twoway (rarea urb_ci_upper urb_ci_lower urb_period if urb_pre, fcolor("31 119 180%20") lcolor("31 119 180%20") lwidth(none)) ///
            (rarea urb_ci_upper urb_ci_lower urb_period if urb_post, fcolor("31 119 180%20") lcolor("31 119 180%20") lwidth(none)) ///
@@ -299,7 +356,8 @@ foreach outcome of global outcomes {
            ytitle("`ytitle_str'", size(small)) ///
            legend(order(9 11) label(9 "Urban") label(11 "Rural") ///
                position(6) rows(1) size(small)) ///
-           text(`y_annot' `x_annot' `"Urban Avg: `text_urban' (p=`text_urban_p')"' `"Rural Avg: `text_rural' (p=`text_rural_p')"' `"Difference: `text_avg_diff' (p=`text_avg_diff_p')"', size(large)) ///
+           `main_text' ///
+           `extra_text' ///
            graphregion(color(white)) plotregion(color(white))
     
     graph export "${figdir}/`prefix'-hetero_urbanrural_`short'_event.png", as(png) replace width(1200) height(800)

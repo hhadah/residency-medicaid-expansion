@@ -12,12 +12,19 @@
 residency <- read_dta(file.path(datasets, "cleaned_residency_medicaid.dta"))
 
 # load CMS data (long format — one row per hospital-year)
-cms <- read_dta(file.path(raw, "readmission_wide.dta")) |>
-    select(
-      providerid, hospitalname, address, city, state, zipcode, year,
-      ami_score, cabg_score, copd_score, hf_score, hip_knee_score,
-      hosp_wide_score, pn_score, stk_score
-    )
+cms <- read_dta(file.path(raw, "readmission_wide.dta"))
+
+library(labelled)
+var_label(cms)       # all variable labels
+val_labels(cms)      # all value labels (the coded categories)
+look_for(cms)        # nice overview: names, labels, and value labels together
+
+# |>
+#     select(
+#       providerid, hospitalname, address, city, state, zipcode, year,
+#       ami_score, cabg_score, copd_score, hf_score, hip_knee_score,
+#       hosp_wide_score, pn_score, stk_score
+#     )
 
 # convert score columns to numeric
 score_cols <- c("ami_score", "cabg_score", "copd_score", "hf_score",

@@ -85,6 +85,40 @@ else {
 di ""
 
 * =========================================================================
+* SCRIPT 11: DID Methods Comparison (Robustness across estimators)
+* =========================================================================
+di ""
+di ">>> Running Script 11: DID Methods Comparison"
+di "    File: 11-dd-methods-comparison.do"
+di ""
+capture noisily do "${progdir}/11-dd-methods-comparison.do"
+if (_rc != 0) {
+    di as error "ERROR: Script 11 failed with code " _rc
+    di as error "Check ${outputdir}/11-dd-methods-comparison.log for details"
+}
+else {
+    di as result "COMPLETED: Script 11"
+}
+di ""
+
+* =========================================================================
+* SCRIPT 12: DID Analysis (Unweighted, Population Control)
+* =========================================================================
+di ""
+di ">>> Running Script 12: DID Analysis (Unweighted, Population Control)"
+di "    File: 12-dd-analysis-popcnt.do"
+di ""
+capture noisily do "${progdir}/12-dd-analysis-popcnt.do"
+if (_rc != 0) {
+    di as error "ERROR: Script 12 failed with code " _rc
+    di as error "Check ${outputdir}/12-dd-analysis-popcnt.log for details"
+}
+else {
+    di as result "COMPLETED: Script 12"
+}
+di ""
+
+* =========================================================================
 * SUMMARY
 * =========================================================================
 di ""
@@ -98,6 +132,8 @@ di "  - 99-master-analysis.log (this file)"
 di "  - 05-dd-analysis.log"
 di "  - 06-dd-analysis-hetero.log"
 di "  - 06-did-analysis-byspeciality.log"
+di "  - 11-dd-methods-comparison.log"
+di "  - 12-dd-analysis-popcnt.log"
 di ""
 di "Output figures and tables created in: ${outputdir}/figures/ and ${outputdir}/tables/"
 di "========================================================================="
