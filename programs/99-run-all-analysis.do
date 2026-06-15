@@ -119,6 +119,23 @@ else {
 di ""
 
 * =========================================================================
+* SCRIPT 14: Mechanism Test (Medicaid GME Formula: Volume-Responsive vs Not)
+* =========================================================================
+di ""
+di ">>> Running Script 13: Mechanism Test (Medicaid GME Formula)"
+di "    File: 13-mechanism-gme-formula.do"
+di ""
+capture noisily do "${progdir}/13-mechanism-gme-formula.do"
+if (_rc != 0) {
+    di as error "ERROR: Script 13 failed with code " _rc
+    di as error "Check ${outputdir}/13-mechanism-gme-formula.log for details"
+}
+else {
+    di as result "COMPLETED: Script 13"
+}
+di ""
+
+* =========================================================================
 * SUMMARY
 * =========================================================================
 di ""
@@ -134,6 +151,7 @@ di "  - 06-dd-analysis-hetero.log"
 di "  - 06-did-analysis-byspeciality.log"
 di "  - 11-dd-methods-comparison.log"
 di "  - 12-dd-analysis-popcnt.log"
+di "  - 13-mechanism-gme-formula.log"
 di ""
 di "Output figures and tables created in: ${outputdir}/figures/ and ${outputdir}/tables/"
 di "========================================================================="

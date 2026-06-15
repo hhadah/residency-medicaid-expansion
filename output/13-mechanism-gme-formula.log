@@ -1,0 +1,664 @@
+--------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/hhadah/Projects/GiT/residency-medica
+> id-expansion/output/13-mechanism-gme-formula.log
+  log type:  text
+ opened on:  14 Jun 2026, 21:45:16
+
+. 
+. * ----------------------------------------------------
+> ---------------------
+. * Load data and panel identifiers (same as 05/12)
+. * ----------------------------------------------------
+> ---------------------
+. use "${datadir}/cleaned_program_residency_medicaid.dta
+> ", clear
+
+. egen program_numeric_id = group(state institution_code
+> )
+
+. encode state, gen(state_id)
+
+. xtset program_numeric_id year
+
+Panel variable: program_numeric_id (strongly balanced)
+ Time variable: year, 2010 to 2019
+         Delta: 1 unit
+
+. 
+. * ----------------------------------------------------
+> ---------------------
+. * Merge the Medicaid GME formula classification (both 
+> vintages, keyed on state)
+. * ----------------------------------------------------
+> ---------------------
+. preserve
+
+.     import delimited "${rawdir}/gme_formula_classifica
+> tion.csv", clear ///
+>         varnames(1) stringcols(_all)
+(encoding automatically selected: ISO-8859-1)
+(4 vars, 51 obs)
+
+.     keep state gme_formula gme_formula_2015
+
+.     replace state = strtrim(upper(state))
+(0 real changes made)
+
+.     tempfile gme
+
+.     save `gme'
+file
+    /var/folders/yk/l30p1rcd2fsfx74wfvs62cmh0000gn/T//
+    > S_82951.000002 saved as .dta format
+
+. restore
+
+. 
+. replace state = strtrim(upper(state))
+(0 real changes made)
+
+. merge m:1 state using `gme', keep(master match) nogen
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                             8,590  
+    -----------------------------------------
+
+. 
+. * ----------------------------------------------------
+> ---------------------
+. * Store group-level summary results (one row per vinta
+> ge x group)
+. * ----------------------------------------------------
+> ---------------------
+. tempname mech
+
+. tempfile mech_file
+
+. postfile `mech' str16 vintage str20 group double att_p
+> ost pval_treat baseline pct n_treat_progs ///
+>     using "`mech_file'", replace
+(file
+    /var/folders/yk/l30p1rcd2fsfx74wfvs62cmh0000gn/T//
+    > S_82951.000003 not found)
+
+. 
+. * ====================================================
+> =====================
+. * OUTER LOOP over classification vintage
+. * ====================================================
+> =====================
+. foreach spec in gme_formula gme_formula_2015 {
+  2. 
+.     local vlab  = cond("`spec'"=="gme_formula", "2012 
+> baseline", "2015 robustness")
+  3.     local stag  = cond("`spec'"=="gme_formula", "",
+>  "_2015")
+  4.     local ttag  = cond("`spec'"=="gme_formula", "",
+>  " (2015 classification)")
+  5.     local pstart = cond("`spec'"=="gme_formula", 25
+> , 27)
+  6. 
+.     di ""
+  7.     di "###########################################
+> ##############################"
+  8.     di "## CLASSIFICATION VINTAGE: `vlab'  (`spec')
+> "
+  9.     di "###########################################
+> ##############################"
+ 10. 
+.     capture drop gme_vol gme_notvol
+ 11.     gen byte gme_vol    = (`spec' == "volume")
+ 12.     gen byte gme_notvol = inlist(`spec', "fixed", "
+> none")
+ 13. 
+.     * Report any treated states still unclassified und
+> er this vintage (excluded).
+.     quietly count if treated_state == 1 & (`spec' == "
+> TODO" | missing(`spec'))
+ 14.     if r(N) > 0 {
+ 15.         quietly levelsof state if treated_state == 
+> 1 & `spec' == "TODO", local(todo_states) clean
+ 16.         di as error "  NOTE: unclassified treated s
+> tates EXCLUDED (`spec'==TODO): `todo_states'"
+ 17.     }
+ 18.     di as text "  Expansion states by volume-respon
+> siveness (1 = volume-responsive):"
+ 19.     tab gme_vol if treated_state == 1 & (gme_vol ==
+>  1 | gme_notvol == 1)
+ 20. 
+.     * ------------------------------------------------
+> ---------------------
+.     * INNER LOOP over group (volume vs. non-responsive
+> )
+.     * ------------------------------------------------
+> ---------------------
+.     local plotnum = `pstart'
+ 21.     foreach grp in volume notvolume {
+ 22. 
+.         * Sample = this group's expansion states + ALL
+>  never-expansion controls.
+.         preserve
+ 23.         if "`grp'" == "volume"    keep if treated_s
+> tate == 0 | (treated_state == 1 & gme_vol == 1)
+ 24.         if "`grp'" == "notvolume" keep if treated_s
+> tate == 0 | (treated_state == 1 & gme_notvol == 1)
+ 25. 
+.         quietly count if treated_state == 1
+ 26.         if (r(N) == 0) {
+ 27.             di as error "  No treated obs for `grp'
+>  (`vlab') -- skipping."
+ 28.             restore
+ 29.             continue
+ 30.         }
+ 31. 
+.         di ""
+ 32.         di "  ---- `vlab': `grp'-formula expansion 
+> states vs. non-expansion controls ----"
+ 33. 
+.         capture noisily did_imputation matched_per_100
+> k program_numeric_id year year_expanded ///
+>             [aw=total_population_10], horizons(0/5) pr
+> etrend(5) ///
+>             fe(program_numeric_id year) cluster(state_
+> id) minn(0)
+ 34.         if (_rc != 0) {
+ 35.             di as error "  did_imputation failed fo
+> r `grp' (`vlab'), rc=`_rc'. Skipping."
+ 36.             restore
+ 37.             continue
+ 38.         }
+ 39. 
+.         * Average post-treatment ATT and joint signifi
+> cance
+.         local tau_sum = 0
+ 40.         local tau_n   = 0
+ 41.         forval h = 0/5 {
+ 42.             capture scalar __b = _b[tau`h']
+ 43.             if (_rc == 0) {
+ 44.                 local tau_sum = `tau_sum' + __b
+ 45.                 local tau_n   = `tau_n' + 1
+ 46.             }
+ 47.         }
+ 48.         local att_post = cond(`tau_n' > 0, `tau_sum
+> '/`tau_n', .)
+ 49.         local treat_p = .
+ 50.         capture test tau0 tau1 tau2 tau3 tau4 tau5
+ 51.         if (_rc == 0) local treat_p = r(p)
+ 52. 
+.         quietly summarize matched_per_100k if treated_
+> state == 1 & year < year_expanded [aw=total_population
+> _10]
+ 53.         local baseline = r(mean)
+ 54.         local pct = cond(`baseline' > 0, 100*`att_p
+> ost'/`baseline', .)
+ 55. 
+.         quietly levelsof program_numeric_id if treated
+> _state == 1, local(tp)
+ 56.         local n_tp : word count `tp'
+ 57. 
+.         post `mech' ("`vlab'") ("`grp'") (`att_post') 
+> (`treat_p') (`baseline') (`pct') (`n_tp')
+ 58.         di as result "  `vlab' / `grp': avg post AT
+> T = " %6.3f `att_post' ///
+>             "  (" %4.1f `pct' "% of baseline " %5.3f `
+> baseline' "); joint p = " %5.3f `treat_p'
+ 59. 
+.         * ---- Event-study plot (same scheme as 05/12)
+>  ----------------------
+.         matrix plot_coef = J(11, 3, .)
+ 60.         matrix colnames plot_coef = period coef se
+ 61.         local row = 1
+ 62.         forval h = 5(-1)1 {
+ 63.             matrix plot_coef[`row',1] = -`h'
+ 64.             capture matrix plot_coef[`row',2] = _b[
+> pre`h']
+ 65.             capture matrix plot_coef[`row',3] = _se
+> [pre`h']
+ 66.             local ++row
+ 67.         }
+ 68.         forval h = 0/5 {
+ 69.             matrix plot_coef[`row',1] = `h'
+ 70.             capture matrix plot_coef[`row',2] = _b[
+> tau`h']
+ 71.             capture matrix plot_coef[`row',3] = _se
+> [tau`h']
+ 72.             local ++row
+ 73.         }
+ 74.         drop _all
+ 75.         svmat plot_coef, names(col)
+ 76.         keep if !missing(period)
+ 77.         gen ci_upper = coef + 1.96*se
+ 78.         gen ci_lower = coef - 1.96*se
+ 79.         gen byte pre_period  = (period < 0)
+ 80.         gen byte post_period = (period >= 0)
+ 81. 
+.         local glab = cond("`grp'"=="volume", "Volume-R
+> esponsive GME States`ttag'", "Non-Responsive GME State
+> s (Fixed/None)`ttag'")
+ 82.         local fname = cond("`grp'"=="volume", "Volu
+> meResponsive`stag'", "NonResponsive`stag'")
+ 83.         local prefix : display %02.0f `plotnum'
+ 84.         local post_line ""
+ 85.         if (`att_post' < .) local post_line "(scatt
+> eri `att_post' 0 `att_post' 5, recast(line) lpattern(d
+> ash) lcolor(red) lwidth(medium))"
+ 86. 
+.         twoway ///
+>             (rarea ci_upper ci_lower period if pre_per
+> iod,  fcolor(dkgreen%45) lcolor(dkgreen%45) lwidth(non
+> e)) ///
+>             (rarea ci_upper ci_lower period if post_pe
+> riod, fcolor(maroon%45)  lcolor(maroon%45)  lwidth(non
+> e)) ///
+>             (line coef period if pre_period,  lcolor(d
+> kgreen) lwidth(medium)) ///
+>             (line coef period if post_period, lcolor(m
+> aroon)  lwidth(medium)) ///
+>             (scatter coef period if pre_period,  mcolo
+> r(dkgreen) msymbol(circle) msize(medlarge)) ///
+>             (scatter coef period if post_period, mcolo
+> r(maroon)  msymbol(circle) msize(medlarge)) ///
+>             `post_line' ///
+>             , xline(-0.5, lcolor(black) lwidth(thin)) 
+> yline(0, lcolor(black) lwidth(thin)) ///
+>             xlabel(-5(1)5, labsize(small)) ylabel(#8, 
+> labsize(small) format(%9.2f)) ///
+>             xtitle("Years relative to Medicaid expansi
+> on", size(small)) ///
+>             ytitle("Treatment Effect (per 100,000 popu
+> lation)", size(small)) ///
+>             title("`glab'", size(medsmall)) ///
+>             legend(off) graphregion(color(white)) plot
+> region(color(white))
+ 87. 
+.         graph export "${figdir}/`prefix'-did_matched_p
+> er_100k_`fname'_event.png", as(png) replace width(1200
+> ) height(800)
+ 88.         graph export "${latex_figdir}/`prefix'-did_
+> matched_per_100k_`fname'_event.png", as(png) replace w
+> idth(1200) height(800)
+ 89.         restore
+ 90.         local ++plotnum
+ 91.     }
+ 92. }
+
+########################################################
+> #################
+## CLASSIFICATION VINTAGE: 2012 baseline  (gme_formula)
+########################################################
+> #################
+  Expansion states by volume-responsiveness (1 = volume-
+> responsive):
+
+    gme_vol |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      4,280       66.15       66.15
+          1 |      2,190       33.85      100.00
+------------+-----------------------------------
+      Total |      6,470      100.00
+(4,280 observations deleted)
+
+  ---- 2012 baseline: volume-formula expansion states vs
+> . non-expansion controls ----
+
+                                                        
+>  Number of obs                                        
+>                = 4,310
+--------------------------------------------------------
+> ----------------------
+matched~100k | Coefficient  Std. err.      z    P>|z|   
+>   [95% con                                            
+>           f. interval]
+-------------+------------------------------------------
+> ----------------------
+        tau0 |    .011323    .007026     1.61   0.107   
+>  -.0024476                                            
+>               .0250936
+        tau1 |   .0025534   .0086932     0.29   0.769   
+>  -.0144851                                            
+>               .0195918
+        tau2 |   .0022495   .0098297     0.23   0.819   
+>  -.0170163                                            
+>               .0215153
+        tau3 |   .0005493   .0146185     0.04   0.970   
+>  -.0281025                                            
+>               .0292011
+        tau4 |   .0031549   .0230705     0.14   0.891   
+>  -.0420623                                            
+>               .0483722
+        tau5 |   .0208769   .0291029     0.72   0.473   
+>  -.0361637                                            
+>               .0779175
+        pre1 |   .0628274   .0172774     3.64   0.000   
+>   .0289643                                            
+>               .0966904
+        pre2 |   .0459979   .0123839     3.71   0.000   
+>   .0217259                                            
+>               .0702699
+        pre3 |   .0415146   .0121828     3.41   0.001   
+>   .0176367                                            
+>               .0653926
+        pre4 |   .0315473   .0113946     2.77   0.006   
+>   .0092144                                            
+>               .0538802
+        pre5 |   .0193457   .0211158     0.92   0.360   
+>  -.0220406                                            
+>                .060732
+--------------------------------------------------------
+> ----------------------
+  2012 baseline / volume: avg post ATT =  0.007  ( 1.7% 
+> of baseline 0.399); joint p = 0.002
+number of observations will be reset to 11
+Press any key to continue, or Break to abort
+Number of observations (_N) was 0, now 11.
+(0 observations deleted)
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expa
+    > nsion/output/figures/25-did_matched_per_100k_Vol
+    > umeResponsive_event.png saved as PNG format
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expa
+    > nsion/my_paper/figures/25-did_matched_per_100k_V
+    > olumeResponsive_event.png saved as PNG format
+(2,190 observations deleted)
+
+  ---- 2012 baseline: notvolume-formula expansion states
+>  vs. non-expansion controls ----
+
+                                                        
+>  Number of obs                                        
+>                = 6,400
+--------------------------------------------------------
+> ----------------------
+matched~100k | Coefficient  Std. err.      z    P>|z|   
+>   [95% con                                            
+>           f. interval]
+-------------+------------------------------------------
+> ----------------------
+        tau0 |  -.0103339   .0062314    -1.66   0.097   
+>  -.0225472                                            
+>               .0018795
+        tau1 |  -.0213996   .0086486    -2.47   0.013   
+>  -.0383505                                            
+>              -.0044487
+        tau2 |  -.0273596   .0103443    -2.64   0.008   
+>  -.0476341                                            
+>              -.0070851
+        tau3 |  -.0395245   .0136745    -2.89   0.004   
+>   -.066326                                            
+>              -.0127231
+        tau4 |  -.0498688   .0194189    -2.57   0.010   
+>   -.087929                                            
+>              -.0118085
+        tau5 |  -.0586698   .0238059    -2.46   0.014   
+>  -.1053285                                            
+>               -.012011
+        pre1 |   .0131607   .0161572     0.81   0.415   
+>  -.0185068                                            
+>               .0448282
+        pre2 |   .0181239   .0117014     1.55   0.121   
+>  -.0048104                                            
+>               .0410582
+        pre3 |   .0184241   .0107944     1.71   0.088   
+>  -.0027325                                            
+>               .0395807
+        pre4 |   .0202499   .0098239     2.06   0.039   
+>   .0009953                                            
+>               .0395044
+        pre5 |   .0213634   .0086071     2.48   0.013   
+>   .0044937                                            
+>                .038233
+--------------------------------------------------------
+> ----------------------
+  2012 baseline / notvolume: avg post ATT = -0.035  (-18
+> .5% of baseline 0.187); joint p = 0.001
+number of observations will be reset to 11
+Press any key to continue, or Break to abort
+Number of observations (_N) was 0, now 11.
+(0 observations deleted)
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expa
+    > nsion/output/figures/26-did_matched_per_100k_Non
+    > Responsive_event.png saved as PNG format
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expa
+    > nsion/my_paper/figures/26-did_matched_per_100k_N
+    > onResponsive_event.png saved as PNG format
+
+########################################################
+> #################
+## CLASSIFICATION VINTAGE: 2015 robustness  (gme_formula
+> _2015)
+########################################################
+> #################
+  Expansion states by volume-responsiveness (1 = volume-
+> responsive):
+
+    gme_vol |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |      2,630       40.65       40.65
+          1 |      3,840       59.35      100.00
+------------+-----------------------------------
+      Total |      6,470      100.00
+(2,630 observations deleted)
+
+  ---- 2015 robustness: volume-formula expansion states 
+> vs. non-expansion controls ----
+
+                                                        
+>  Number of obs                                        
+>                = 5,960
+--------------------------------------------------------
+> ----------------------
+matched~100k | Coefficient  Std. err.      z    P>|z|   
+>   [95% con                                            
+>           f. interval]
+-------------+------------------------------------------
+> ----------------------
+        tau0 |  -.0003883   .0059719    -0.07   0.948   
+>   -.012093                                            
+>               .0113165
+        tau1 |  -.0085518   .0078237    -1.09   0.274   
+>   -.023886                                            
+>               .0067824
+        tau2 |  -.0123136   .0092944    -1.32   0.185   
+>  -.0305302                                            
+>               .0059031
+        tau3 |  -.0201371   .0130459    -1.54   0.123   
+>  -.0457067                                            
+>               .0054324
+        tau4 |  -.0257206   .0194325    -1.32   0.186   
+>  -.0638076                                            
+>               .0123664
+        tau5 |   -.022617   .0243981    -0.93   0.354   
+>  -.0704365                                            
+>               .0252024
+        pre1 |   .0298747   .0167415     1.78   0.074   
+>  -.0029381                                            
+>               .0626876
+        pre2 |    .021009   .0117615     1.79   0.074   
+>   -.002043                                            
+>               .0440611
+        pre3 |   .0197167   .0112166     1.76   0.079   
+>  -.0022675                                            
+>                .041701
+        pre4 |   .0164494   .0103626     1.59   0.112   
+>  -.0038608                                            
+>               .0367597
+        pre5 |   .0070506   .0083152     0.85   0.396   
+>  -.0092469                                            
+>               .0233481
+--------------------------------------------------------
+> ----------------------
+  2015 robustness / volume: avg post ATT = -0.015  (-5.0
+> % of baseline 0.297); joint p = 0.017
+number of observations will be reset to 11
+Press any key to continue, or Break to abort
+Number of observations (_N) was 0, now 11.
+(0 observations deleted)
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expa
+    > nsion/output/figures/27-did_matched_per_100k_Vol
+    > umeResponsive_2015_event.png saved as PNG format
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expa
+    > nsion/my_paper/figures/27-did_matched_per_100k_V
+    > olumeResponsive_2015_event.png saved as PNG
+    format
+(3,840 observations deleted)
+
+  ---- 2015 robustness: notvolume-formula expansion stat
+> es vs. non-expansion controls ----
+
+                                                        
+>  Number of obs                                        
+>                = 4,750
+--------------------------------------------------------
+> ----------------------
+matched~100k | Coefficient  Std. err.      z    P>|z|   
+>   [95% con                                            
+>           f. interval]
+-------------+------------------------------------------
+> ----------------------
+        tau0 |  -.0130203   .0054302    -2.40   0.016   
+>  -.0236633                                            
+>              -.0023774
+        tau1 |  -.0243372   .0075272    -3.23   0.001   
+>  -.0390902                                            
+>              -.0095842
+        tau2 |  -.0299897   .0095308    -3.15   0.002   
+>  -.0486698                                            
+>              -.0113097
+        tau3 |  -.0426187    .013573    -3.14   0.002   
+>  -.0692213                                            
+>              -.0160161
+        tau4 |  -.0531789   .0194818    -2.73   0.006   
+>  -.0913625                                            
+>              -.0149953
+        tau5 |  -.0651312    .022951    -2.84   0.005   
+>  -.1101143                                            
+>              -.0201481
+        pre1 |   .3879263    .012408    31.26   0.000   
+>   .3636071                                            
+>               .4122456
+        pre2 |   .3972277   .0079947    49.69   0.000   
+>   .3815584                                            
+>                .412897
+        pre3 |   .3974032   .0067843    58.58   0.000   
+>   .3841062                                            
+>               .4107002
+        pre4 |   .3992717    .005316    75.11   0.000   
+>   .3888525                                            
+>               .4096908
+        pre5 |   .4003988   .0024779   161.59   0.000   
+>   .3955422                                            
+>               .4052555
+--------------------------------------------------------
+> ----------------------
+  2015 robustness / notvolume: avg post ATT = -0.038  (-
+> 23.8% of baseline 0.160); joint p = 0.000
+number of observations will be reset to 11
+Press any key to continue, or Break to abort
+Number of observations (_N) was 0, now 11.
+(0 observations deleted)
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expa
+    > nsion/output/figures/28-did_matched_per_100k_Non
+    > Responsive_2015_event.png saved as PNG format
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expa
+    > nsion/my_paper/figures/28-did_matched_per_100k_N
+    > onResponsive_2015_event.png saved as PNG format
+
+. 
+. postclose `mech'
+
+. 
+. * ----------------------------------------------------
+> ---------------------
+. * Combined comparison table (both vintages)
+. * ----------------------------------------------------
+> ---------------------
+. use "`mech_file'", clear
+
+. order vintage group att_post pct pval_treat baseline n
+> _treat_progs
+
+. list, clean noobs
+
+            vintage       group     att_post         pct
+>    pval_t~t   baseline   n_trea~s  
+      2012 baseline      volume     .0067845     1.70221
+>    .0023103   .3985703        219  
+      2012 baseline   notvolume   -.03452602   -18.48018
+>    .0014549   .1868273        428  
+    2015 robustness      volume   -.01495473   -5.038445
+>    .0167336   .2968125        384  
+    2015 robustness   notvolume     -.038046   -23.78054
+>    .0000387    .159988        263  
+
+. export delimited using "${tabdir}/mechanism-gme-formul
+> a-summary.csv", replace
+(file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expa
+    > nsion/output/tables/mechanism-gme-formula-summar
+    > y.csv not found)
+file /Users/hhadah/Projects/GiT/residency-medicaid-expan
+> sion/output/tables/mechanism-gme-formula-summary.csv s
+> aved
+
+. 
+. di ""
+
+
+. di "==================================================
+> ================"
+========================================================
+> ==========
+
+. di "Mechanism (GME-formula) split complete -- both vin
+> tages."
+Mechanism (GME-formula) split complete -- both vintages.
+
+. di "Baseline (2012):    25-..._VolumeResponsive / 26-.
+> .._NonResponsive"
+Baseline (2012):    25-..._VolumeResponsive / 26-..._Non
+> Responsive
+
+. di "Robustness (2015):  27-..._VolumeResponsive_2015 /
+>  28-..._NonResponsive_2015"
+Robustness (2015):  27-..._VolumeResponsive_2015 / 28-..
+> ._NonResponsive_2015
+
+. di "Summary: ${tabdir}/mechanism-gme-formula-summary.c
+> sv"
+Summary: /Users/hhadah/Projects/GiT/residency-medicaid-e
+> xpansion/output/tables/mechanism-gme-formula-summary.c
+> sv
+
+. di "NOTE: a formal between-group difference test (stat
+> e-clustered bootstrap of the"
+NOTE: a formal between-group difference test (state-clus
+> tered bootstrap of the
+
+. di "      difference in average post-ATTs) is left as 
+> a TODO."
+      difference in average post-ATTs) is left as a TODO
+> .
+
+. di "==================================================
+> ================"
+========================================================
+> ==========
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /Users/hhadah/Projects/GiT/residency-medica
+> id-expansion/output/13-mechanism-gme-formula.log
+  log type:  text
+ closed on:  14 Jun 2026, 21:45:21
+--------------------------------------------------------
