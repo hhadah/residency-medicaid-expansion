@@ -6,3 +6,6 @@
 *.dta
 *.csv
 *.zip
+
+# Downloaded CMS Provider of Services file (built by 17-merge-residency-gme-funding.R)
+data/raw/provider-of-services/

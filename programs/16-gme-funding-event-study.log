@@ -85,7 +85,7 @@ Running /Users/hhadah/profile.do ...
        log:  /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/16-
 > gme-funding-event-study.log
   log type:  text
- opened on:  13 Jul 2026, 13:16:58
+ opened on:  13 Jul 2026, 18:06:17
 
 . 
 . * -------------------------------------------------------------------------
@@ -195,7 +195,7 @@ Panel variable: provider_numeric_id (unbalanced)
 > /
 >     pretrend_p treat_p baseline pct_effect n_hospitals n_states ///
 >     using "`did_results_file'", replace
-(file /var/folders/yk/l30p1rcd2fsfx74wfvs62cmh0000gn/T//St36374.000001 not
+(file /var/folders/yk/l30p1rcd2fsfx74wfvs62cmh0000gn/T//St51394.000001 not
     found)
 
 . 
@@ -608,12 +608,8 @@ number of observations will be reset to 11
 Press any key to continue, or Break to abort
 Number of observations (_N) was 0, now 11.
 (0 observations deleted)
-(file /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/figures/30
-> -did_total_gme_mil_event.png not found)
 file /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/figures/30-
 > did_total_gme_mil_event.png written in PNG format
-(file /Users/hhadah/Projects/GiT/residency-medicaid-expansion/my_paper/figures/
-> 30-did_total_gme_mil_event.png not found)
 file /Users/hhadah/Projects/GiT/residency-medicaid-expansion/my_paper/figures/3
 > 0-did_total_gme_mil_event.png written in PNG format
 
@@ -689,7 +685,7 @@ Figures:
        log:  /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/16-
 > gme-funding-event-study.log
   log type:  text
- closed on:  13 Jul 2026, 13:17:10
+ closed on:  13 Jul 2026, 18:06:29
 -------------------------------------------------------------------------------
 
 . 

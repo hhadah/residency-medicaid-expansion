@@ -1,3 +1,65 @@
+
+  ___  ____  ____  ____  ____ ®
+ /__    /   ____/   /   ____/      StataNow 19.5
+___/   /   /___/   /   /___/       MP—Parallel Edition
+
+ Statistics and Data Science       Copyright 1985-2025 StataCorp LLC
+                                   StataCorp
+                                   4905 Lakeway Drive
+                                   College Station, Texas 77845 USA
+                                   800-782-8272        https://www.stata.com
+                                   979-696-4600        service@stata.com
+
+Stata license: Unlimited-user 2-core network, expiring 14 Dec 2026
+Serial number: 501909301438
+  Licensed to: Hussain Hadah
+               Tulane
+
+Notes:
+      1. Stata is running in batch mode.
+      2. Unicode is supported; see help unicode_advice.
+      3. More than 2 billion observations are allowed; see help obs_advice.
+      4. Maximum number of variables is set to 5,000 but can be increased;
+          see help set_maxvar.
+
+
+Running /Users/hhadah/profile.do ...
+
+. do 99-run-all-analysis.do 
+
+. /*
+> Master Script: Run All Analysis
+> Date: January 27, 2026
+> Purpose: Execute all analysis scripts in sequence
+> */
+. 
+. clear all
+
+. set more off
+
+. set varabbrev off
+
+. 
+. * -------------------------------------------------------------------------
+. * Define paths
+. * -------------------------------------------------------------------------
+. global topdir "/Users/hhadah/Projects/GiT/residency-medicaid-expansion"
+
+. global progdir "${topdir}/programs"
+
+. global outputdir "${topdir}/output"
+
+. 
+. * Create output directory if needed
+. cap mkdir "${outputdir}"
+
+. 
+. * =========================================================================
+. * MASTER LOG FILE
+. * =========================================================================
+. capture log close master
+
+. log using "${outputdir}/99-master-analysis.log", replace name(master)
 -------------------------------------------------------------------------------
       name:  master
        log:  /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/99-
@@ -3961,3 +4023,6 @@ Output figures and tables created in: /Users/hhadah/Projects/GiT/residency-medi
 
 . 
 . capture log close master
+
+. 
+end of do-file
