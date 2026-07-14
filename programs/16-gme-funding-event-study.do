@@ -251,7 +251,7 @@ foreach outcome of global outcomes {
     local y_annot = r(max) * 0.9
     local x_annot = -3
 
-    local main_text `"text(`y_annot' `x_annot' `"Baseline Mean: `base_text'"' `"Post avg = `avg_text' (`pct_text'%)"' `"Joint p-value = `treat_text'"', size(medsmall))"'
+    local main_text `"text(`y_annot' `x_annot' `"Baseline Mean: `base_text'"' `"Post avg = `avg_text' (`pct_text'%)"' `"Joint p-value = `treat_text'"', size(large))"'
 
     twoway ///
         (rarea ci_upper ci_lower period if pre_period,  fcolor(dkgreen%45) lcolor(dkgreen%45) lwidth(none)) ///
@@ -268,7 +268,6 @@ foreach outcome of global outcomes {
         ylabel(#8, labsize(small) format(%9.2f)) ///
         xtitle("Years relative to Medicaid expansion", size(small)) ///
         ytitle("Treatment Effect: `label'", size(small)) ///
-        title("`plot_title'", size(medsmall)) ///
         `main_text' ///
         legend(off) ///
         graphregion(color(white)) plotregion(color(white))
