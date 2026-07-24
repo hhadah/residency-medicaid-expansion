@@ -1,10 +1,24 @@
-# This is a script
-# to plot heatmaps
-# and some outcome
-# plots by treatment
-# status
+# ==============================================================================
+# 03-heat-map.r
+# Descriptive figures: panelview treatment-timing plot (desc-timing) and
+# matched-positions-by-cohort plots in levels and per 100,000
+# (desc-cohort-levels, desc-cohort-percapita), each saved as PNG + PDF to
+# output/figures/ and my_paper/figures/.
+# Input: data/datasets/cleaned_residency_medicaid.dta
+# Normally sourced from 95-make-all.R (which defines path globals); the guard
+# below makes it standalone-runnable.
+# Date: April 12th, 2025 (revised 2026-07-24)
+# ==============================================================================
 
-# Date: April 12th, 2025
+library(scales)
+
+if (!exists("datasets")) {
+  git_mdir     <- here::here()
+  datasets     <- file.path(git_mdir, "data", "datasets")
+  figures_wd   <- file.path(git_mdir, "output", "figures")
+  thesis_plots <- file.path(git_mdir, "my_paper", "figures")
+  source(file.path(git_mdir, "programs", "01-packages-wds.r"))
+}
 
 # open data
 long_data <- read_dta(file.path(datasets,"cleaned_residency_medicaid.dta"))
@@ -39,10 +53,9 @@ dir.create(thesis_plots, recursive = TRUE, showWarnings = FALSE)
 ## ----------------------------------------------------
 
 
-# Save panelview plot to a known file using png() device
-panelview_file <- file.path(figures_wd, "01-staggarred_sample_raw.png")
-png(filename = panelview_file, width = 1800, height = 1000, res = 100)
-panelview(
+# Build the panelview plot once, then save PNG (raster) + PDF (vector) to both
+# output locations.
+timing_plot <- panelview(
   matched ~ medicaid_expansion,
   data = long_data,
   index = c("institution_code","year"),
@@ -53,38 +66,20 @@ panelview(
   ylab = "Number of Programs",
   background = "white",
   collapse.history = TRUE,
-  cex.main = 12,
-  cex.axis = 12,
-  cex.lab = 12,
-  cex.legend = 10,
+  cex.main = 28,
+  cex.axis = 24,
+  cex.lab = 24,
+  cex.legend = 28,
   axis.lab.gap = c(1,0),
   gridOff = FALSE,
   main = ""
 )
-dev.off()
-
-panelview_file <- file.path(thesis_plots, "01-staggarred_sample_raw.png")
-png(filename = panelview_file, width = 1800, height = 1000, res = 100)
-panelview(
-  matched ~ medicaid_expansion,
-  data = long_data,
-  index = c("institution_code","year"),
-  by.timing = TRUE,
-  pre.post = TRUE,
-  display.all = TRUE,
-  xlab = "Year",
-  ylab = "Number of Programs",
-  background = "white",
-  collapse.history = TRUE,
-  cex.main = 12,
-  cex.axis = 12,
-  cex.lab = 12,
-  cex.legend = 10,
-  axis.lab.gap = c(1,0),
-  gridOff = FALSE,
-  main = ""
-)
-dev.off()
+for (dir_out in c(figures_wd, thesis_plots)) {
+  ggsave(file.path(dir_out, "desc-timing.png"), plot = timing_plot,
+         width = 18, height = 10, units = "in", dpi = 100)
+  ggsave(file.path(dir_out, "desc-timing.pdf"), plot = timing_plot,
+         width = 18, height = 10, units = "in")
+}
 
 #-----------------------------------
 # Plot the evolution of average 
@@ -162,7 +157,6 @@ pch_types <- c(16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 1)
 
 matched_by_cohort$cohort <- factor(matched_by_cohort$cohort, levels = unique(matched_by_cohort$cohort))
 
-library(scales)
 
 p <- ggplot(matched_by_cohort, aes(x = year, y = total_matched, group = cohort, color = cohort, linetype = cohort, shape = cohort)) +
   geom_line() +
@@ -178,8 +172,10 @@ p <- ggplot(matched_by_cohort, aes(x = year, y = total_matched, group = cohort, 
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   geom_vline(xintercept = cohort_years, linetype = "dashed", color = "grey40")
 p
-ggsave(path = figures_wd, filename = "02-matched-positions-by-cohort.png", width = 10, height = 6, units = "in")
-ggsave(path = thesis_plots, filename = "02-matched-positions-by-cohort.png", width = 10, height = 6, units = "in")
+ggsave(path = figures_wd, filename = "desc-cohort-levels.png", plot = p, width = 10, height = 6, units = "in")
+ggsave(path = thesis_plots, filename = "desc-cohort-levels.png", plot = p, width = 10, height = 6, units = "in")
+ggsave(path = figures_wd, filename = "desc-cohort-levels.pdf", plot = p, width = 10, height = 6, units = "in")
+ggsave(path = thesis_plots, filename = "desc-cohort-levels.pdf", plot = p, width = 10, height = 6, units = "in")
 
 #-----------------------------------
 # Calculate matched_per_100k
@@ -204,5 +200,7 @@ p_per_100k <- ggplot(matched_per_100k_by_cohort, aes(x = year, y = mean_matched_
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   geom_vline(xintercept = cohort_years, linetype = "dashed", color = "grey40")
 
-ggsave(path = figures_wd, filename = "03-matched-per-100k-by-cohort.png", width = 10, height = 6, units = "in")
-ggsave(path = thesis_plots, filename = "03-matched-per-100k-by-cohort.png", width = 10, height = 6, units = "in")
+ggsave(path = figures_wd, filename = "desc-cohort-percapita.png", plot = p_per_100k, width = 10, height = 6, units = "in")
+ggsave(path = thesis_plots, filename = "desc-cohort-percapita.png", plot = p_per_100k, width = 10, height = 6, units = "in")
+ggsave(path = figures_wd, filename = "desc-cohort-percapita.pdf", plot = p_per_100k, width = 10, height = 6, units = "in")
+ggsave(path = thesis_plots, filename = "desc-cohort-percapita.pdf", plot = p_per_100k, width = 10, height = 6, units = "in")

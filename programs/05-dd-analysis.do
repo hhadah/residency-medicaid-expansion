@@ -36,7 +36,10 @@ xtset program_numeric_id year
 * -------------------------------------------------------------------------
 * Outcomes and labels
 * -------------------------------------------------------------------------
-global outcomes "matched matched_per_100k quota_per_100k"
+* matched -> appendix levels headline; quota_per_100k -> appendix quota headline.
+* (matched_per_100k dropped: the fixed-2010 per-capita figure is superseded by the
+*  year-varying headline in script 24.)
+global outcomes "matched quota_per_100k"
 global label_matched "Total Matched Residency Positions"
 global label_quota_100k "Residency Quota Positions per 100k Population"
 global label_matched_100k "Matched Residency Positions per 100k Population"
@@ -48,6 +51,10 @@ global short_quota_100k "quota_100k"
 global short_matched_100k "matched_100k"
 global short_quota_per_100k "quota_per_100k"
 global short_matched_per_100k "matched_per_100k"
+
+* Semantic output basenames (no numeric prefix).
+global fname_matched        "appx-levels-headline"
+global fname_quota_per_100k "appx-quota-headline"
 
 * -------------------------------------------------------------------------
 * Pre-compute aggregate annual change in residency positions from the
@@ -229,6 +236,7 @@ foreach outcome of global outcomes {
     gen byte post_period = (period >= 0)
     local avg_text = cond(`avg_treat' < ., string(`avg_treat', "%9.2f"), "NA")
     local treat_text = cond(`treat_p' < ., string(`treat_p', "%9.2f"), "NA")
+    local pretrend_text = cond(`pretrend_p' < ., string(`pretrend_p', "%9.2f"), "NA")
     local baseline_text = string(`baseline_mean', "%9.2f")
     local pct_text = string(`pct_effect', "%9.1f")
     local post_line ""
@@ -259,10 +267,10 @@ foreach outcome of global outcomes {
     * Main annotation (left): baseline mean, post avg, p-value.
     * Extra annotation at x = 3, same y-level: national/total impact (residency positions
     * for raw matched; additional doctors nationally for per-100k).
-    local main_text `"text(`y_annot' `x_annot' `"Baseline Mean: `baseline_text'"' `"Post avg = `avg_text' (`pct_text'%)"' `"p-value = `treat_text'"', size(large))"'
+    local main_text `"text(`y_annot' `x_annot' `"Baseline Mean: `baseline_text'"' `"Post avg = `avg_text' (`pct_text'%)"' `"Treatment p = `treat_text'"' `"Pre-trend p = `pretrend_text'"', size(medsmall))"'
     local extra_text ""
     if (`has_national') {
-        local extra_text `"text(`y_annot' 3 `"Avg. annual change in"' `"`national_label':"' `"`national_text'"', size(large))"'
+        local extra_text `"text(`y_annot' 3 `"Avg. annual change in"' `"`national_label':"' `"`national_text'"', size(medsmall))"'
     }
     twoway ///
         (rarea ci_upper ci_lower period if pre_period, fcolor(dkgreen%45) lcolor(dkgreen%45) lwidth(none)) ///
@@ -283,8 +291,11 @@ foreach outcome of global outcomes {
         `extra_text' ///
         legend(off) ///
         graphregion(color(white)) plotregion(color(white))
-    graph export "${figdir}/`prefix'-did_`short'_event.png", as(png) replace width(1200) height(800)
-    graph export "${latex_figdir}/`prefix'-did_`short'_event.png", as(png) replace width(1200) height(800)
+    local outfname = "${fname_`outcome'}"
+    graph export "${figdir}/`outfname'.png", as(png) replace width(1200) height(800)
+    graph export "${figdir}/`outfname'.pdf", replace
+    graph export "${latex_figdir}/`outfname'.png", as(png) replace width(1200) height(800)
+    graph export "${latex_figdir}/`outfname'.pdf", replace
     restore
     local ++plotnum
 }

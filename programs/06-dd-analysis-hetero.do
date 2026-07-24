@@ -57,14 +57,17 @@ di "Urban/Rural coding: 0 = Urban, 1 = Rural"
 * -------------------------------------------------------------------------
 * Outcomes and labels
 * -------------------------------------------------------------------------
-global outcomes "matched matched_per_100k quota_per_100k"
+* matched_per_100k dropped (fixed-2010 per-capita superseded by year-varying, script 24).
+global outcomes "matched quota_per_100k"
 global label_matched "Total Matched Residency Positions"
 global label_quota_per_100k "Residency Quota Positions per 100k Population"
-global label_matched_per_100k "Matched Residency Positions per 100k Population"
 
 global short_matched "matched"
 global short_quota_per_100k "quota_per_100k"
-global short_matched_per_100k "matched_per_100k"
+
+* Semantic output basenames.
+global fname_matched        "appx-levels-location"
+global fname_quota_per_100k "appx-quota-location"
 
 *===============================================================================
 * Heterogeneity Analysis - Urban vs Rural
@@ -106,94 +109,101 @@ foreach outcome of global outcomes {
     di "========================================================================="
     di ""
     
-    * Run did_imputation with heterogeneous effects by urban/rural (0 = urban, 1 = rural)
-    capture noisily did_imputation `outcome' program_numeric_id year year_expanded [aw=total_population_10], ///
-        horizons(0/5) pretrend(5) ///
-        cluster(state_id) ///
-        hetby(urban_rural) ///
-        fe(program_numeric_id year) ///
-        minn(0) autosample
-    
-    if (_rc != 0) {
-        di as error "did_imputation failed for outcome `outcome'. Error code `_rc'."
-        continue
-    }
-    
-    * =====================
-    * Post-treatment averages and p-value tests
-    * =====================
-    * Test pretrend assumption
-    test pre1 pre2 pre3 pre4 pre5
-    local pretrend_p = r(p)
+    * SPLIT-SAMPLE design: separate did_imputation regressions for urban and
+    * rural programs. Each subsample keeps the never-expansion programs of its
+    * own type as controls, so each group gets its own imputed counterfactual
+    * and its OWN pre-trend test. (Replaces the pooled hetby() interaction,
+    * which shared pre-trends across groups. The formal urban-rural difference
+    * test lives in the primary year-varying spec, script 24.)
+    matrix urban = J(11, 5, .)  // 5 pretrends + 6 treatment periods
+    matrix rural = J(11, 5, .)
+    matrix colnames urban = period coef se ci_upper ci_lower
+    matrix colnames rural = period coef se ci_upper ci_lower
 
-    * Calculate average effects for both groups
-    local avg_urban = (_b[tau0_0] + _b[tau1_0] + _b[tau2_0] + _b[tau3_0] + _b[tau4_0] + _b[tau5_0])/6
-    local avg_rural = (_b[tau0_1] + _b[tau1_1] + _b[tau2_1] + _b[tau3_1] + _b[tau4_1] + _b[tau5_1])/6
-    local avg_diff = `avg_rural' - `avg_urban'
-
-    * Test difference in post averages and get p-value
-    testnl ((_b[tau0_1] + _b[tau1_1] + _b[tau2_1] + _b[tau3_1] + _b[tau4_1] + _b[tau5_1])/6) - ((_b[tau0_0] + _b[tau1_0] + _b[tau2_0] + _b[tau3_0] + _b[tau4_0] + _b[tau5_0])/6) = 0
-    local avg_diff_p = r(p)
-
-    * Joint test of heterogeneity across all periods
-    test (tau0_0 = tau0_1) (tau1_0 = tau1_1) (tau2_0 = tau2_1) (tau3_0 = tau3_1) (tau4_0 = tau4_1) (tau5_0 = tau5_1)
-    local joint_het_p = r(p)
-
-    * Test individual group significance (joint test for post-treatment effects)
-    test tau0_0 tau1_0 tau2_0 tau3_0 tau4_0 tau5_0
-    local urban_p = r(p)
-    test tau0_1 tau1_1 tau2_1 tau3_1 tau4_1 tau5_1
-    local rural_p = r(p)
-
-    * Calculate baseline means (pre-treatment observations in estimation sample)
-    quietly summarize `outcome' if urban_rural == 0 & year < year_expanded & e(sample) [aw=total_population_10]
-    local baseline_urban = r(mean)
-    if missing(`baseline_urban') | `baseline_urban' == 0 {
-        local baseline_urban = 1
-    }
-    
-    quietly summarize `outcome' if urban_rural == 1 & year < year_expanded & e(sample) [aw=total_population_10]
-    local baseline_rural = r(mean)
-    if missing(`baseline_rural') | `baseline_rural' == 0 {
-        local baseline_rural = 1
-    }
-    
-    local pct_urban = (`avg_urban' / `baseline_urban') * 100
-    local pct_rural = (`avg_rural' / `baseline_rural') * 100
-    if `pct_urban' < -100 local pct_urban = -100
-    if `pct_rural' < -100 local pct_rural = -100
-
-    * Compute national/total annual impact for each group.
-    * matched (raw): avg * N treated programs in subset.
-    * per_100k:      avg * sum(state_pop across treated programs in subset) / 100k.
-    local urban_national = .
-    local rural_national = .
+    local est_failed = 0
     local has_national = 0
-    if "`outcome'" == "matched" {
-        quietly levelsof program_numeric_id if treated_state == 1 & urban_rural == 0 & !missing(`outcome'), local(_uprogs)
-        local n_uprogs : word count `_uprogs'
-        quietly levelsof program_numeric_id if treated_state == 1 & urban_rural == 1 & !missing(`outcome'), local(_rprogs)
-        local n_rprogs : word count `_rprogs'
-        local urban_national = `avg_urban' * `n_uprogs'
-        local rural_national = `avg_rural' * `n_rprogs'
-        local has_national = 1
+    foreach g in 0 1 {
+        local gname = cond(`g'==0, "urban", "rural")
+        preserve
+        keep if urban_rural == `g'
+        quietly count if treated_state == 1 & !missing(`outcome')
+        local n_tr = r(N)
+        quietly count if treated_state == 0 & !missing(`outcome')
+        local n_co = r(N)
+        di as text "`gname' subsample (`outcome'): treated obs = `n_tr', control obs = `n_co'"
+
+        capture noisily did_imputation `outcome' program_numeric_id year year_expanded [aw=total_population_10], ///
+            horizons(0/5) pretrend(5) ///
+            cluster(state_id) ///
+            fe(program_numeric_id year) ///
+            minn(0) autosample
+
+        if (_rc != 0) {
+            di as error "did_imputation failed for outcome `outcome', group `gname'. Error code `_rc'."
+            local est_failed = 1
+            restore
+            continue
+        }
+
+        * Group-specific pre-trend test, average post effect, joint post p
+        local pretrend_`gname' = .
+        capture test pre1 pre2 pre3 pre4 pre5
+        if _rc == 0 local pretrend_`gname' = r(p)
+        local avg_`gname' = (_b[tau0] + _b[tau1] + _b[tau2] + _b[tau3] + _b[tau4] + _b[tau5])/6
+        local p_`gname' = .
+        capture test tau0 tau1 tau2 tau3 tau4 tau5
+        if _rc == 0 local p_`gname' = r(p)
+
+        * Baseline mean (pre-treatment observations in estimation sample)
+        quietly summarize `outcome' if year < year_expanded & e(sample) [aw=total_population_10]
+        local baseline_`gname' = r(mean)
+        if missing(`baseline_`gname'') | `baseline_`gname'' == 0 {
+            local baseline_`gname' = 1
+        }
+        local pct_`gname' = (`avg_`gname'' / `baseline_`gname'') * 100
+        if `pct_`gname'' < -100 local pct_`gname' = -100
+
+        * National/total annual impact for this group.
+        * matched (raw): avg * N treated programs in subset.
+        * per_100k:      avg * sum(state_pop across treated programs in subset) / 100k.
+        local `gname'_national = .
+        if "`outcome'" == "matched" {
+            quietly levelsof program_numeric_id if treated_state == 1 & !missing(`outcome'), local(_progs)
+            local n_progs : word count `_progs'
+            local `gname'_national = `avg_`gname'' * `n_progs'
+            local has_national = 1
+        }
+        else if strpos("`outcome'", "_per_100k") > 0 {
+            tempvar ptag
+            quietly egen byte `ptag' = tag(program_numeric_id) if treated_state == 1 & !missing(`outcome')
+            quietly summarize total_population_10 if `ptag' == 1
+            local `gname'_national = `avg_`gname'' * r(sum) / 100000
+            local has_national = 1
+        }
+
+        * Event-study matrix for this group (own pre-trend path)
+        local row = 1
+        forval h = 5(-1)1 {
+            matrix `gname'[`row',1] = -`h'
+            capture matrix `gname'[`row',2] = _b[pre`h']
+            capture matrix `gname'[`row',3] = _se[pre`h']
+            capture matrix `gname'[`row',4] = _b[pre`h'] + 1.96*_se[pre`h']
+            capture matrix `gname'[`row',5] = _b[pre`h'] - 1.96*_se[pre`h']
+            local ++row
+        }
+        forval h = 0/5 {
+            matrix `gname'[`row',1] = `h'
+            capture matrix `gname'[`row',2] = _b[tau`h']
+            capture matrix `gname'[`row',3] = _se[tau`h']
+            capture matrix `gname'[`row',4] = _b[tau`h'] + 1.96*_se[tau`h']
+            capture matrix `gname'[`row',5] = _b[tau`h'] - 1.96*_se[tau`h']
+            local ++row
+        }
+        restore
     }
-    else if strpos("`outcome'", "_per_100k") > 0 {
-        preserve
-        keep if treated_state == 1 & urban_rural == 0 & !missing(`outcome')
-        collapse (mean) total_population_10, by(program_numeric_id)
-        quietly summarize total_population_10
-        local sum_urban_pop = r(sum)
-        restore
-        preserve
-        keep if treated_state == 1 & urban_rural == 1 & !missing(`outcome')
-        collapse (mean) total_population_10, by(program_numeric_id)
-        quietly summarize total_population_10
-        local sum_rural_pop = r(sum)
-        restore
-        local urban_national = `avg_urban' * `sum_urban_pop' / 100000
-        local rural_national = `avg_rural' * `sum_rural_pop' / 100000
-        local has_national = 1
+    if (`est_failed') {
+        di as error "Skipping outcome `outcome': at least one group failed to estimate."
+        continue
     }
     local urban_national_text = cond(`has_national', string(`urban_national', "%9.0fc"), "NA")
     local rural_national_text = cond(`has_national', string(`rural_national', "%9.0fc"), "NA")
@@ -201,21 +211,19 @@ foreach outcome of global outcomes {
     * Store values in locals for annotation
     local text_urban = string(`avg_urban', "%9.2f")
     local text_rural = string(`avg_rural', "%9.2f")
-    local text_urban_p = string(`urban_p', "%9.2f")
-    local text_rural_p = string(`rural_p', "%9.2f")
-    local text_het = string(`joint_het_p', "%9.2f")
-    local text_avg_diff = string(`avg_diff', "%9.2f")
-    local text_avg_diff_p = string(`avg_diff_p', "%9.2f")
+    local text_urban_p = string(`p_urban', "%9.2f")
+    local text_rural_p = string(`p_rural', "%9.2f")
+    local text_urban_pre_p = cond(`pretrend_urban' < ., string(`pretrend_urban', "%9.2f"), "NA")
+    local text_rural_pre_p = cond(`pretrend_rural' < ., string(`pretrend_rural', "%9.2f"), "NA")
     local text_baseline_urban = string(`baseline_urban', "%9.2f")
     local text_baseline_rural = string(`baseline_rural', "%9.2f")
     local text_pct_urban = string(`pct_urban', "%9.1f")
     local text_pct_rural = string(`pct_rural', "%9.1f")
-    
-    di "Average urban effect: " %9.3f `avg_urban' " (p = " %9.3f `urban_p' ")"
-    di "Average rural effect: " %9.3f `avg_rural' " (p = " %9.3f `rural_p' ")"
-    di "Difference (rural - urban): " %9.3f `avg_diff' " (p = " %9.3f `avg_diff_p' ")"
-    di "Joint heterogeneity test p-value: " %9.3f `joint_het_p'
-    di "Pretrend joint p-value: " %9.3f `pretrend_p'
+
+    di "Average urban effect: " %9.3f `avg_urban' " (p = " %9.3f `p_urban' ", pre-trend p = " %9.3f `pretrend_urban' ")"
+    di "Average rural effect: " %9.3f `avg_rural' " (p = " %9.3f `p_rural' ", pre-trend p = " %9.3f `pretrend_rural' ")"
+    local avg_diff_ss = `avg_rural' - `avg_urban'
+    di "Difference (rural - urban, split samples): " %9.3f `avg_diff_ss'
     if (`has_national') {
         di "Avg. annual aggregate effect (urban): " %15.0fc `urban_national'
         di "Avg. annual aggregate effect (rural): " %15.0fc `rural_national'
@@ -224,52 +232,8 @@ foreach outcome of global outcomes {
     * =====================
     * Plotting with annotation
     * =====================
-    * Create matrices for both groups (0 = urban, 1 = rural)
-    matrix urban = J(11, 5, .)  // 5 pretrends + 6 treatment periods
-    matrix rural = J(11, 5, .)
-    matrix colnames urban = period coef se ci_upper ci_lower
-    matrix colnames rural = period coef se ci_upper ci_lower
-    
-    local row = 1
-    
-    * Pretrend coefficients (same for both groups)
-    forval h = 5(-1)1 {
-        * Urban counties
-        matrix urban[`row',1] = -`h'
-        matrix urban[`row',2] = _b[pre`h']
-        matrix urban[`row',3] = _se[pre`h']
-        matrix urban[`row',4] = _b[pre`h'] + 1.96*_se[pre`h']
-        matrix urban[`row',5] = _b[pre`h'] - 1.96*_se[pre`h']
-        
-        * Rural counties (same pretrends)
-        matrix rural[`row',1] = -`h'
-        matrix rural[`row',2] = _b[pre`h']
-        matrix rural[`row',3] = _se[pre`h']  
-        matrix rural[`row',4] = _b[pre`h'] + 1.96*_se[pre`h']
-        matrix rural[`row',5] = _b[pre`h'] - 1.96*_se[pre`h']
-        
-        local ++row
-    }
-    
-    * Treatment coefficients - separate by group
-    forval h = 0/5 {
-        * Urban (tau_0)
-        matrix urban[`row',1] = `h'
-        matrix urban[`row',2] = _b[tau`h'_0]
-        matrix urban[`row',3] = _se[tau`h'_0]
-        matrix urban[`row',4] = _b[tau`h'_0] + 1.96*_se[tau`h'_0]
-        matrix urban[`row',5] = _b[tau`h'_0] - 1.96*_se[tau`h'_0]
-        
-        * Rural (tau_1)
-        matrix rural[`row',1] = `h'
-        matrix rural[`row',2] = _b[tau`h'_1]
-        matrix rural[`row',3] = _se[tau`h'_1]
-        matrix rural[`row',4] = _b[tau`h'_1] + 1.96*_se[tau`h'_1]
-        matrix rural[`row',5] = _b[tau`h'_1] - 1.96*_se[tau`h'_1]
-        
-        local ++row
-    }
-    
+    * Matrices `urban' and `rural' were filled inside the split-sample loop
+    * (each carries its own pre-trend path).
     * Convert matrices to variables for plotting
     preserve
     clear
@@ -325,7 +289,7 @@ foreach outcome of global outcomes {
     * Main annotation (left): urban/rural averages and difference.
     * Extra annotation at x = 3, same y-level: national/total impact split by urban/rural
     * (residency positions for raw matched; additional doctors nationally for per-100k).
-    local main_text `"text(`y_annot' `x_annot' `"Urban Avg: `text_urban' (p=`text_urban_p')"' `"Rural Avg: `text_rural' (p=`text_rural_p')"' `"Difference: `text_avg_diff' (p=`text_avg_diff_p')"', size(large))"'
+    local main_text `"text(`y_annot' `x_annot' `"Urban Avg: `text_urban' (p=`text_urban_p', pre p=`text_urban_pre_p')"' `"Rural Avg: `text_rural' (p=`text_rural_p', pre p=`text_rural_pre_p')"', size(medsmall))"'
     local extra_text ""
     if ("`outcome'" == "matched") {
         local extra_text `"text(`y_annot' 3 `"Avg. annual change in"' `"residency positions:"' `"Urban: `urban_national_text'"' `"Rural: `rural_national_text'"', size(medium))"'
@@ -360,8 +324,11 @@ foreach outcome of global outcomes {
            `extra_text' ///
            graphregion(color(white)) plotregion(color(white))
     
-    graph export "${figdir}/`prefix'-hetero_urbanrural_`short'_event.png", as(png) replace width(1200) height(800)
-    graph export "${latex_figdir}/`prefix'-hetero_urbanrural_`short'_event.png", as(png) replace width(1200) height(800)
+    local outfname = "${fname_`outcome'}"
+    graph export "${figdir}/`outfname'.png", as(png) replace width(1200) height(800)
+    graph export "${figdir}/`outfname'.pdf", replace
+    graph export "${latex_figdir}/`outfname'.png", as(png) replace width(1200) height(800)
+    graph export "${latex_figdir}/`outfname'.pdf", replace
     
     restore
     local ++plotnum
@@ -370,9 +337,9 @@ foreach outcome of global outcomes {
 di ""
 di "========================================================================="
 di "HETEROGENEITY ANALYSIS BY URBAN/RURAL CLASSIFICATION COMPLETED"
-di "Event study plots saved to:"
-di "  - ${figdir}/50-hetero_urbanrural_*_event.png"
-di "  - ${latex_figdir}/50-hetero_urbanrural_*_event.png"
+di "Split-sample event study plots saved to:"
+di "  - ${figdir}/appx-levels-location.png, appx-quota-location.png"
+di "  - ${latex_figdir}/appx-levels-location.png, appx-quota-location.png"
 di "========================================================================="
 
 log close

@@ -92,7 +92,8 @@ label var asinh_dgme      "Direct GME (DGME) Payment (asinh $)"
 label var asinh_ime       "Indirect Medical Ed. (IME) Payment (asinh $)"
 label var total_gme_mil   "Total GME Payment ($ millions)"
 
-global outcomes "asinh_total_gme asinh_dgme asinh_ime total_gme_mil"
+* Only DGME and IME are used in the paper; total-GME figures dropped.
+global outcomes "asinh_dgme asinh_ime"
 
 global label_asinh_total_gme "Total GME Payment (asinh dollars)"
 global label_asinh_dgme      "Direct GME (DGME) Payment (asinh dollars)"
@@ -103,6 +104,10 @@ global short_asinh_total_gme "asinh_total_gme"
 global short_asinh_dgme      "asinh_dgme"
 global short_asinh_ime       "asinh_ime"
 global short_total_gme_mil   "total_gme_mil"
+
+* Semantic output basenames (first-stage GME funding, main text).
+global fname_asinh_dgme "main-firststage-dgme"
+global fname_asinh_ime  "main-firststage-ime"
 
 * -------------------------------------------------------------------------
 * Store event-study estimates
@@ -251,7 +256,8 @@ foreach outcome of global outcomes {
     local y_annot = r(max) * 0.9
     local x_annot = -3
 
-    local main_text `"text(`y_annot' `x_annot' `"Baseline Mean: `base_text'"' `"Post avg = `avg_text' (`pct_text'%)"' `"Joint p-value = `treat_text'"', size(large))"'
+    local pretrend_text = cond(`pretrend_p' < ., string(`pretrend_p', "%9.2f"), "NA")
+    local main_text `"text(`y_annot' `x_annot' `"Baseline Mean: `base_text'"' `"Post avg = `avg_text' (`pct_text'%)"' `"Treatment p = `treat_text'"' `"Pre-trend p = `pretrend_text'"', size(medsmall))"'
 
     twoway ///
         (rarea ci_upper ci_lower period if pre_period,  fcolor(dkgreen%45) lcolor(dkgreen%45) lwidth(none)) ///
@@ -272,8 +278,11 @@ foreach outcome of global outcomes {
         legend(off) ///
         graphregion(color(white)) plotregion(color(white))
 
-    graph export "${figdir}/`prefix'-did_`short'_event.png", as(png) replace width(1200) height(800)
-    graph export "${latex_figdir}/`prefix'-did_`short'_event.png", as(png) replace width(1200) height(800)
+    local outfname = "${fname_`outcome'}"
+    graph export "${figdir}/`outfname'.png", as(png) replace width(1200) height(800)
+    graph export "${figdir}/`outfname'.pdf", replace
+    graph export "${latex_figdir}/`outfname'.png", as(png) replace width(1200) height(800)
+    graph export "${latex_figdir}/`outfname'.pdf", replace
     restore
     local ++plotnum
 }

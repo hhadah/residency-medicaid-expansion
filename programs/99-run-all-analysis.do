@@ -77,7 +77,7 @@ di ""
 capture noisily do "${progdir}/07-did-analysis-byspeciality.do"
 if (_rc != 0) {
     di as error "ERROR: Script 07 failed with code " _rc
-    di as error "Check ${outputdir}/06-did-analysis-byspeciality.log for details"
+    di as error "Check ${outputdir}/07-did-analysis-byspeciality.log for details"
 }
 else {
     di as result "COMPLETED: Script 07"
@@ -119,23 +119,6 @@ else {
 di ""
 
 * =========================================================================
-* SCRIPT 13: Mechanism Test (Medicaid GME Formula: Volume-Responsive vs Not)
-* =========================================================================
-di ""
-di ">>> Running Script 13: Mechanism Test (Medicaid GME Formula)"
-di "    File: 13-mechanism-gme-formula.do"
-di ""
-capture noisily do "${progdir}/13-mechanism-gme-formula.do"
-if (_rc != 0) {
-    di as error "ERROR: Script 13 failed with code " _rc
-    di as error "Check ${outputdir}/13-mechanism-gme-formula.log for details"
-}
-else {
-    di as result "COMPLETED: Script 13"
-}
-di ""
-
-* =========================================================================
 * SCRIPT 16: Mechanism Test (Medicaid GME Funding)
 * =========================================================================
 di ""
@@ -152,6 +135,49 @@ else {
 }
 di ""
 
+* =========================================================================
+* ADDED ROBUSTNESS / SENSITIVITY SCRIPTS (referee-requested)
+* -------------------------------------------------------------------------
+* Prerequisites run OUTSIDE Stata:
+*   - programs/04b-state-year-population.R  builds data/datasets/state_year_population.dta
+*     (needed by scripts 24/25/26); run with Rscript before this master do-file.
+*   - programs/22-multiple-testing-qvalues.py builds the FDR q-value table + forest plot
+*     from the summary CSVs; run with python3 AFTER scripts 24/25 have produced their
+*     yearvarying-*-summary.csv tables.
+* Note: script 18 (randomization inference) defaults to 1,000 permutations and is slow
+*   (~20-30 min). Pass a smaller count for a quick check: do 18-...do 200.
+*   Script 18d (extended RI: urban/rural/quota/notyet/primary/nonprimary) runs
+*   6 x REPS did_imputation calls (default 500) and is the slowest script;
+*   smoke test with: do 18d-ri-extended.do 20.
+*   - programs/27-balance-table.R builds the GME-formula balance table
+*     (my_paper/tables/balance_gme_formula.tex); run with Rscript, any time.
+* The year-varying per-capita suite (24/25/26) is the paper's primary specification;
+* scripts 13/19/21/23 were superseded by it and moved to programs/archive/.
+* =========================================================================
+foreach s in ///
+    "18-randomization-inference" ///
+    "18c-ri-yearvarying" ///
+    "18d-ri-extended" ///
+    "18e-label-permutation" ///
+    "20-gme-firststage-byformula" ///
+    "24-yearvarying-suite" ///
+    "25-yearvarying-specialty" ///
+    "26-yearvarying-robustness" ///
+    "28-leave-one-out" ///
+    "29-effective-clusters" {
+    di ""
+    di ">>> Running Script: `s'.do"
+    capture noisily do "${progdir}/`s'.do"
+    if (_rc != 0) {
+        di as error "ERROR: Script `s' failed with code " _rc
+        di as error "Check ${outputdir}/`s'.log for details"
+    }
+    else {
+        di as result "COMPLETED: Script `s'"
+    }
+}
+di ""
+
 
 * =========================================================================
 * SUMMARY
@@ -163,14 +189,15 @@ di "========================================================================="
 di "End time: " c(current_date) " " c(current_time)
 di ""
 di "Log files created in: ${outputdir}/"
-di "  - 99-master-analysis.log (this file)"
-di "  - 05-dd-analysis.log"
+di "  - 99-master-analysis.log (this file; script 05 logs here)"
 di "  - 06-dd-analysis-hetero.log"
-di "  - 06-did-analysis-byspeciality.log"
+di "  - 07-did-analysis-byspeciality.log"
 di "  - 11-dd-methods-comparison.log"
 di "  - 12-dd-analysis-popcnt.log"
-di "  - 13-mechanism-gme-formula.log"
 di "  - 16-gme-funding-event-study.log"
+di "  - 18-randomization-inference.log, 18c-ri-yearvarying.log, 18d-ri-extended.log"
+di "  - 20-gme-firststage-byformula.log"
+di "  - 24-yearvarying-suite.log, 25-yearvarying-specialty.log, 26-yearvarying-robustness.log"
 di ""
 di "Output figures and tables created in: ${outputdir}/figures/ and ${outputdir}/tables/"
 di "========================================================================="

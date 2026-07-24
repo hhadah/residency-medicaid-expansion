@@ -6,7 +6,7 @@
 * Event-study plotting follows prior scheme (pre/post shading + bands)
 * =============================================================================
 
-cls
+capture cls   // 'cls' is interactive-only; guard so the script runs in batch mode
 clear all
 set more off
 
@@ -21,7 +21,7 @@ global tabdir "${topdir}/output/tables"
 global latex_figdir "${topdir}/my_paper/figures"
 
 * Open log file
-log using "${topdir}/output/06-did-analysis-byspeciality.log", replace
+log using "${topdir}/output/07-did-analysis-byspeciality.log", replace
 
 cap mkdir "${figdir}"
 cap mkdir "${tabdir}"
@@ -105,7 +105,8 @@ encode state, gen(state_id)
 * -------------------------------------------------------------------------
 * Outcomes and labels
 * -------------------------------------------------------------------------
-global outcomes "matched matched_per_100k quota_per_100k"
+* matched_per_100k dropped (fixed-2010 per-capita superseded by year-varying, script 25).
+global outcomes "matched quota_per_100k"
 global label_matched "Total Matched Residency Positions"
 global label_quota_per_100k "Residency Quota Positions per 100k Population"
 global label_matched_per_100k "Matched Residency Positions per 100k Population"
@@ -300,13 +301,14 @@ foreach spec of local spec_groups {
         * Main annotation (left): baseline mean, post avg, p-value.
         * Extra annotation at x = 3, same y-level: national/total impact (residency positions
         * for raw matched; additional doctors nationally for per-100k).
-        local main_text `"text(`y_annot' `x_annot' `"Baseline Mean: `baseline_text'"' `"Post avg = `avg_text' (`pct_text'%)"' `"p-value = `treat_text'"', size(large))"'
+        local pretrend_text = cond(`pretrend_p' < ., string(`pretrend_p', "%9.2f"), "NA")
+        local main_text `"text(`y_annot' `x_annot' `"Baseline Mean: `baseline_text'"' `"Post avg = `avg_text' (`pct_text'%)"' `"Treatment p = `treat_text'"' `"Pre-trend p = `pretrend_text'"', size(medsmall))"'
         local extra_text ""
         if ("`outcome'" == "matched") {
-            local extra_text `"text(`y_annot' 3 `"Avg. annual change in"' `"residency positions:"' `"`national_text'"', size(large))"'
+            local extra_text `"text(`y_annot' 3 `"Avg. annual change in"' `"residency positions:"' `"`national_text'"', size(medsmall))"'
         }
         else if (strpos("`short'", "_100k") > 0) {
-            local extra_text `"text(`y_annot' 3 `"Avg. annual change in"' `"doctors nationally:"' `"`national_text'"', size(large))"'
+            local extra_text `"text(`y_annot' 3 `"Avg. annual change in"' `"doctors nationally:"' `"`national_text'"', size(medsmall))"'
         }
         twoway ///
             (rarea ci_upper ci_lower period if pre_period, fcolor(dkgreen%45) lcolor(dkgreen%45) lwidth(none)) ///
@@ -328,12 +330,16 @@ foreach spec of local spec_groups {
             legend(off) ///
             graphregion(color(white)) plotregion(color(white))
         
-        * Clean specialty name for filename
-        local spec_clean = subinstr("`spec_name'", " ", "_", .)
-        local spec_clean = subinstr("`spec_clean'", "/", "_", .)
-        
-        graph export "${figdir}/`prefix'-did_`short'_`spec_clean'_event.png", as(png) replace width(1200) height(800)
-        graph export "${latex_figdir}/`prefix'-did_`short'_`spec_clean'_event.png", as(png) replace width(1200) height(800)
+        * Semantic filename: appx-{levels|quota}-specialty-{primary|nonprimary}
+        local sbase = cond("`outcome'"=="matched","levels","quota")
+        local sspec = cond("`spec_name'"=="Primary Care","primary","nonprimary")
+        local outfname = "appx-`sbase'-specialty-`sspec'"
+
+        graph export "${figdir}/`outfname'.png", as(png) replace width(1200) height(800)
+
+        graph export "${figdir}/`outfname'.pdf", replace
+        graph export "${latex_figdir}/`outfname'.png", as(png) replace width(1200) height(800)
+        graph export "${latex_figdir}/`outfname'.pdf", replace
         restore
         local ++plotnum
     }

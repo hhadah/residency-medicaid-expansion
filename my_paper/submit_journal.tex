@@ -11,17 +11,20 @@
 \newcommand{\rrxspc}{1.5}
 
 \begin{document}
+% Allow modest extra interword stretch to avoid overfull lines from unbreakable
+% content (URLs, email addresses, LARGE cover lines).
+\emergencystretch=3em
 
 % SUBMISSION COVER
 \thispagestyle{empty}
 \begingroup
   \doublespacing
   \centering
-  \LARGE ACCEPTED SUBMISSION\\[0.25em]
-  \LARGE EX \\[0.25em]
-  \LARGE MANUSCRIPT: EX \\[1.0em]
+  \LARGE JOURNAL SUBMISSION\\[0.25em]
+  \LARGE More Residents, Better Care? \\[0.25em]
+  \LARGE Evidence from Medicaid Expansion \\[1.0em]
 \endgroup
-This document and the associated contents in the accepted version of manuscript:EX for the EXY Journal. I include:
+This document contains the submission version of the manuscript ``More Residents, Better Care? Evidence from Medicaid Expansion'' for [JOURNAL NAME]. It includes:
 \begin{enumerate}
     \item Title page information
     \begin{itemize}
@@ -37,7 +40,7 @@ This document and the associated contents in the accepted version of manuscript:
         \item Main manuscript figures
         \item Main manuscript tables
     \end{itemize}  
-    \item The online appendix, which is separately paged. It includes an online appendix title page, appendix A, appendix B, appendix C, and references for citations in the appendix.
+    \item The online appendix, which is separately paged. It includes an online appendix title page, appendices A (tables) and B (figures), and references for citations in the appendix.
 \end{enumerate}
 \clearpage
 
@@ -55,7 +58,7 @@ This document and the associated contents in the accepted version of manuscript:
 \subsection*{TITLE AND RUNNING HEAD}
 \begin{itemize}[label={}, leftmargin=*]
     \item Title: \textbf{\PAPERTITLE}
-    \item Running Head:  \textbf{RUNNING HEAD}
+    \item Running Head:  \textbf{\PAPERRUNNINGHEAD}
 \end{itemize}
 % Part I.a.2 Author info
 \subsection*{AUTHORS}
@@ -63,6 +66,7 @@ This document and the associated contents in the accepted version of manuscript:
     \item List of authors:
     \begin{enumerate}
         \item \AUTHORHADAHINFO
+        \item \AUTHORANGINFO
     \end{enumerate}
     \item Corresponding author:
     \begin{itemize}
@@ -84,9 +88,9 @@ This document and the associated contents in the accepted version of manuscript:
 % Part I.b Abstract
 \doublespacing
 \section*{ABSTRACT}
-\begin{myRaggedRight}
+% \begin{myRaggedRight}
 \PAPERABSTRACT
-\end{myRaggedRight}
+% \end{myRaggedRight}
 \clearpage 
 
 % Part I.c Keywords
@@ -98,9 +102,9 @@ This document and the associated contents in the accepted version of manuscript:
 % Part IV.d Acknowledgements
 \doublespacing
 \section*{ACKNOWLEDGMENT}
-\begin{myRaggedRight}
+% \begin{myRaggedRight}
 \ACKNOWLEDGMENTS
-\end{myRaggedRight}
+% \end{myRaggedRight}
 \clearpage 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -114,9 +118,9 @@ This document and the associated contents in the accepted version of manuscript:
   \Large MANUSCRIPT TEXT\\[1em]
 \endgroup
 % Manuscript main text
-\begin{myRaggedRight}
+% \begin{myRaggedRight}
 \input{manuscript_main}
-\end{myRaggedRight}
+% \end{myRaggedRight}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Part III. Bibliography
@@ -195,7 +199,7 @@ This document and the associated contents in the accepted version of manuscript:
 \Large ONLINE APPENDIX \\[1.5em]
 \LARGE \PAPERTITLE \\[0.75em]
 \large
-\AUTHORHADAH\footnote[1]{\AUTHORHADAHINFO}\\[1.0em]
+\AUTHORHADAH\footnote[1]{\AUTHORHADAHINFO} \quad \AUTHORANG\footnote[2]{\AUTHORANGINFO}\\[1.0em]
 \endgroup
 \clearpage
 

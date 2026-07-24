@@ -53,6 +53,11 @@ global short_matched_100k "matched_100k"
 global short_quota_per_100k "quota_per_100k"
 global short_matched_per_100k "matched_per_100k"
 
+* Semantic output basenames (population-count robustness).
+global fname_matched         "appx-popcount-levels"
+global fname_matched_per_100k "appx-popcount-percapita"
+global fname_quota_per_100k  "appx-popcount-quota"
+
 * -------------------------------------------------------------------------
 * Pre-compute aggregate annual change in residency positions from the raw
 * count regressions (matched, quota). These are reused for the per-100k
@@ -259,10 +264,11 @@ foreach outcome of global outcomes {
     if ("`outcome'" == "matched") {
         local ytitle_str "Treatment Effect (number of residency positions)"
     }
-    local main_text `"text(`y_annot' `x_annot' `"Baseline Mean: `baseline_text'"' `"Post avg = `avg_text' (`pct_text'%)"' `"p-value = `treat_text'"', size(large))"'
+    local pretrend_text = cond(`pretrend_p' < ., string(`pretrend_p', "%9.2f"), "NA")
+    local main_text `"text(`y_annot' `x_annot' `"Baseline Mean: `baseline_text'"' `"Post avg = `avg_text' (`pct_text'%)"' `"Treatment p = `treat_text'"' `"Pre-trend p = `pretrend_text'"', size(medsmall))"'
     local extra_text ""
     if (`has_national') {
-        local extra_text `"text(`y_annot' 3 `"Avg. annual change in"' `"`national_label':"' `"`national_text'"', size(large))"'
+        local extra_text `"text(`y_annot' 3 `"Avg. annual change in"' `"`national_label':"' `"`national_text'"', size(medsmall))"'
     }
     twoway ///
         (rarea ci_upper ci_lower period if pre_period, fcolor(dkgreen%45) lcolor(dkgreen%45) lwidth(none)) ///
@@ -283,8 +289,11 @@ foreach outcome of global outcomes {
         `extra_text' ///
         legend(off) ///
         graphregion(color(white)) plotregion(color(white))
-    graph export "${figdir}/`prefix'-did_`short'_popcnt_event.png", as(png) replace width(1200) height(800)
-    graph export "${latex_figdir}/`prefix'-did_`short'_popcnt_event.png", as(png) replace width(1200) height(800)
+    local outfname = "${fname_`outcome'}"
+    graph export "${figdir}/`outfname'.png", as(png) replace width(1200) height(800)
+    graph export "${figdir}/`outfname'.pdf", replace
+    graph export "${latex_figdir}/`outfname'.png", as(png) replace width(1200) height(800)
+    graph export "${latex_figdir}/`outfname'.pdf", replace
     restore
     local ++plotnum
 }

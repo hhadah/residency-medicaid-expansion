@@ -3,7 +3,7 @@
        log:  /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/13-
 > mechanism-gme-formula.log
   log type:  text
- opened on:  13 Jul 2026, 18:06:14
+ opened on:  23 Jul 2026, 13:58:27
 
 . 
 . * -------------------------------------------------------------------------
@@ -40,7 +40,7 @@ Panel variable: program_numeric_id (strongly balanced)
 .     tempfile gme
 
 .     save `gme'
-file /var/folders/yk/l30p1rcd2fsfx74wfvs62cmh0000gn/T//St51373.000002 saved
+file /var/folders/yk/l30p1rcd2fsfx74wfvs62cmh0000gn/T//St22187.000002 saved
     as .dta format
 
 . restore
@@ -120,7 +120,7 @@ Expansion states by volume-responsiveness (1 = volume-responsive):
 . postfile `mech' str20 group double att_post pval_treat baseline pct n_treat_p
 > rogs ///
 >     using "`mech_file'", replace
-(file /var/folders/yk/l30p1rcd2fsfx74wfvs62cmh0000gn/T//St51373.000003 not
+(file /var/folders/yk/l30p1rcd2fsfx74wfvs62cmh0000gn/T//St22187.000003 not
     found)
 
 . 
@@ -365,5 +365,5 @@ Summary: /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/tables/
        log:  /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/13-
 > mechanism-gme-formula.log
   log type:  text
- closed on:  13 Jul 2026, 18:06:16
+ closed on:  23 Jul 2026, 13:58:29
 -------------------------------------------------------------------------------

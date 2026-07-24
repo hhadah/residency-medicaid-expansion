@@ -1,20 +1,24 @@
--------------------------------------------------------------------------------
+---------------------------------------------------------------------------
       name:  <unnamed>
-       log:  /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/12-
-> dd-analysis-popcnt.log
+       log:  /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output
+> /12-dd-analysis-popcnt.log
   log type:  text
- opened on:  13 Jul 2026, 18:06:08
+ opened on:  24 Jul 2026, 08:21:02
 
 . 
-. * -------------------------------------------------------------------------
+. * -----------------------------------------------------------------------
+> --
 . * Load cleaned data (produced by 02-data-cleaning.R)
-. * -------------------------------------------------------------------------
+. * -----------------------------------------------------------------------
+> --
 . use "${datadir}/cleaned_program_residency_medicaid.dta", clear
 
 . 
-. * -------------------------------------------------------------------------
+. * -----------------------------------------------------------------------
+> --
 . * Panel identifiers
-. * -------------------------------------------------------------------------
+. * -----------------------------------------------------------------------
+> --
 . egen program_numeric_id = group(state institution_code)
 
 . encode state, gen(state_id)
@@ -27,21 +31,25 @@ Panel variable: program_numeric_id (strongly balanced)
          Delta: 1 unit
 
 . 
-. * -------------------------------------------------------------------------
+. * -----------------------------------------------------------------------
+> --
 . * Outcomes and labels
-. * -------------------------------------------------------------------------
+. * -----------------------------------------------------------------------
+> --
 . global outcomes "matched matched_per_100k quota_per_100k"
 
 . global label_matched "Total Matched Residency Positions"
 
 . global label_quota_100k "Residency Quota Positions per 100k Population"
 
-. global label_matched_100k "Matched Residency Positions per 100k Population"
-
-. global label_quota_per_100k "Residency Quota Positions per 100k Population"
-
-. global label_matched_per_100k "Matched Residency Positions per 100k Populatio
+. global label_matched_100k "Matched Residency Positions per 100k Populatio
 > n"
+
+. global label_quota_per_100k "Residency Quota Positions per 100k Populatio
+> n"
+
+. global label_matched_per_100k "Matched Residency Positions per 100k Popul
+> ation"
 
 . 
 . global short_matched "matched"
@@ -55,7 +63,16 @@ Panel variable: program_numeric_id (strongly balanced)
 . global short_matched_per_100k "matched_per_100k"
 
 . 
-. * -------------------------------------------------------------------------
+. * Semantic output basenames (population-count robustness).
+. global fname_matched         "appx-popcount-levels"
+
+. global fname_matched_per_100k "appx-popcount-percapita"
+
+. global fname_quota_per_100k  "appx-popcount-quota"
+
+. 
+. * -----------------------------------------------------------------------
+> --
 . * Pre-compute aggregate annual change in residency positions from the raw
 . * count regressions (matched, quota). These are reused for the per-100k
 . * annotations so the "Avg. annual change" number is consistent across
@@ -63,7 +80,8 @@ Panel variable: program_numeric_id (strongly balanced)
 . * NOTE: total_population_10 is a 2010 census state-level value that is
 . * time-invariant within program. With program FE it is collinear and gets
 . * absorbed by did_imputation; it is included to satisfy the spec request.
-. * -------------------------------------------------------------------------
+. * -----------------------------------------------------------------------
+> --
 . global agg_matched ""
 
 . global agg_quota ""
@@ -77,10 +95,10 @@ Panel variable: program_numeric_id (strongly balanced)
   6.     quietly count if treated_state == 0 & !missing(`raw_outcome')
   7.     if (r(N) == 0) continue
   8. 
-.     di "Pre-computing aggregate effect for `raw_outcome' (unweighted, pop con
-> trol)..."
-  9.     capture noisily did_imputation `raw_outcome' program_numeric_id year y
-> ear_expanded, ///
+.     di "Pre-computing aggregate effect for `raw_outcome' (unweighted, pop
+>  control)..."
+  9.     capture noisily did_imputation `raw_outcome' program_numeric_id ye
+> ar year_expanded, ///
 >         horizons(0/5) pretrend(5) fe(program_numeric_id year) ///
 >         controls(total_population_10) cluster(state_id) minn(0)
  10.     if (_rc != 0) continue
@@ -96,69 +114,103 @@ Panel variable: program_numeric_id (strongly balanced)
  19.     }
  20.     if (`_n' > 0) {
  21.         local _avg = `_sum' / `_n'
- 22.         quietly levelsof program_numeric_id if treated_state == 1 & !missi
-> ng(`raw_outcome'), local(_tprogs)
+ 22.         quietly levelsof program_numeric_id if treated_state == 1 & !m
+> issing(`raw_outcome'), local(_tprogs)
  23.         local _ntreated : word count `_tprogs'
  24.         global agg_`raw_outcome' = `_avg' * `_ntreated'
- 25.         di as result "  Aggregate annual change in `raw_outcome' positions
-> : " %15.0fc ${agg_`raw_outcome'}
+ 25.         di as result "  Aggregate annual change in `raw_outcome' posit
+> ions: " %15.0fc ${agg_`raw_outcome'}
  26.     }
  27. }
 Pre-computing aggregate effect for matched (unweighted, pop control)...
 
-                                                         Number of obs = 8,590
-------------------------------------------------------------------------------
-     matched | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
--------------+----------------------------------------------------------------
-        tau0 |  -.3861629   .5346908    -0.72   0.470    -1.434138    .6618119
-        tau1 |  -1.499994   .6955364    -2.16   0.031     -2.86322   -.1367675
-        tau2 |  -2.063877   .9814655    -2.10   0.035    -3.987514   -.1402401
-        tau3 |  -3.170151   1.248239    -2.54   0.011    -5.616654   -.7236466
-        tau4 |  -3.789569   1.707623    -2.22   0.026    -7.136448   -.4426895
-        tau5 |  -4.023312   2.201714    -1.83   0.068    -8.338593    .2919691
-        pre1 |  -1.617017   1.191531    -1.36   0.175    -3.952374    .7183396
-        pre2 |  -1.704595   1.107403    -1.54   0.124    -3.875064    .4658743
-        pre3 |  -1.725946   1.102119    -1.57   0.117    -3.886061    .4341679
-        pre4 |  -1.577067   1.048066    -1.50   0.132     -3.63124    .4771051
-        pre5 |  -.6726721   .9691947    -0.69   0.488    -2.572259    1.226915
+                                                         Number of obs = 8,
+> 590
+---------------------------------------------------------------------------
+> ---
+     matched | Coefficient  Std. err.      z    P>|z|     [95% conf. interv
+> al]
+-------------+-------------------------------------------------------------
+> ---
+        tau0 |  -.3861629   .5346908    -0.72   0.470    -1.434138    .6618
+> 119
+        tau1 |  -1.499994   .6955364    -2.16   0.031     -2.86322   -.1367
+> 675
+        tau2 |  -2.063877   .9814655    -2.10   0.035    -3.987514   -.1402
+> 401
+        tau3 |  -3.170151   1.248239    -2.54   0.011    -5.616654   -.7236
+> 466
+        tau4 |  -3.789569   1.707623    -2.22   0.026    -7.136448   -.4426
+> 895
+        tau5 |  -4.023312   2.201714    -1.83   0.068    -8.338593    .2919
+> 691
+        pre1 |  -1.617017   1.191531    -1.36   0.175    -3.952374    .7183
+> 396
+        pre2 |  -1.704595   1.107403    -1.54   0.124    -3.875064    .4658
+> 743
+        pre3 |  -1.725946   1.102119    -1.57   0.117    -3.886061    .4341
+> 679
+        pre4 |  -1.577067   1.048066    -1.50   0.132     -3.63124    .4771
+> 051
+        pre5 |  -.6726721   .9691947    -0.69   0.488    -2.572259    1.226
+> 915
 total_pop~10 |          0  (omitted)
-------------------------------------------------------------------------------
+---------------------------------------------------------------------------
+> ---
   Aggregate annual change in matched positions:          -1,610
 Pre-computing aggregate effect for quota (unweighted, pop control)...
 
-                                                         Number of obs = 8,590
-------------------------------------------------------------------------------
-       quota | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
--------------+----------------------------------------------------------------
-        tau0 |  -.3893793   .5326906    -0.73   0.465    -1.433434    .6546751
-        tau1 |  -1.405202   .7337254    -1.92   0.055    -2.843277    .0328734
-        tau2 |  -2.330839   .9839708    -2.37   0.018    -4.259386   -.4022917
-        tau3 |  -3.464957   1.330166    -2.60   0.009    -6.072035   -.8578793
-        tau4 |  -4.130168    1.99719    -2.07   0.039    -8.044588   -.2157471
-        tau5 |   -5.09947   2.720102    -1.87   0.061    -10.43077    .2318321
-        pre1 |  -1.986266   1.194167    -1.66   0.096     -4.32679    .3542585
-        pre2 |  -2.005226   1.076898    -1.86   0.063    -4.115908    .1054563
-        pre3 |  -1.995462   1.064341    -1.87   0.061    -4.081532    .0906069
-        pre4 |  -1.605157   1.027996    -1.56   0.118    -3.619993    .4096783
-        pre5 |  -.8607648   .7974871    -1.08   0.280    -2.423811    .7022812
+                                                         Number of obs = 8,
+> 590
+---------------------------------------------------------------------------
+> ---
+       quota | Coefficient  Std. err.      z    P>|z|     [95% conf. interv
+> al]
+-------------+-------------------------------------------------------------
+> ---
+        tau0 |  -.3893793   .5326906    -0.73   0.465    -1.433434    .6546
+> 751
+        tau1 |  -1.405202   .7337254    -1.92   0.055    -2.843277    .0328
+> 734
+        tau2 |  -2.330839   .9839708    -2.37   0.018    -4.259386   -.4022
+> 917
+        tau3 |  -3.464957   1.330166    -2.60   0.009    -6.072035   -.8578
+> 793
+        tau4 |  -4.130168    1.99719    -2.07   0.039    -8.044588   -.2157
+> 471
+        tau5 |   -5.09947   2.720102    -1.87   0.061    -10.43077    .2318
+> 321
+        pre1 |  -1.986266   1.194167    -1.66   0.096     -4.32679    .3542
+> 585
+        pre2 |  -2.005226   1.076898    -1.86   0.063    -4.115908    .1054
+> 563
+        pre3 |  -1.995462   1.064341    -1.87   0.061    -4.081532    .0906
+> 069
+        pre4 |  -1.605157   1.027996    -1.56   0.118    -3.619993    .4096
+> 783
+        pre5 |  -.8607648   .7974871    -1.08   0.280    -2.423811    .7022
+> 812
 total_pop~10 |          0  (omitted)
-------------------------------------------------------------------------------
+---------------------------------------------------------------------------
+> ---
   Aggregate annual change in quota positions:          -1,814
 
 . 
-. * -------------------------------------------------------------------------
+. * -----------------------------------------------------------------------
+> --
 . * Store DID estimates
-. * -------------------------------------------------------------------------
+. * -----------------------------------------------------------------------
+> --
 . tempname did_results
 
 . tempfile did_results_file
 
-. postfile `did_results' str20 outcome double coef se tstat pvalue avg_treat //
-> /
->     pretrend_p treat_p n_programs n_states using "`did_results_file'", replac
-> e
-(file /var/folders/yk/l30p1rcd2fsfx74wfvs62cmh0000gn/T//St51373.000001 not
-    found)
+. postfile `did_results' str20 outcome double coef se tstat pvalue avg_trea
+> t ///
+>     pretrend_p treat_p n_programs n_states using "`did_results_file'", re
+> place
+(file /var/folders/yk/l30p1rcd2fsfx74wfvs62cmh0000gn/T//S_88759.000001
+    not found)
 
 . 
 . 
@@ -172,31 +224,31 @@ total_pop~10 |          0  (omitted)
   6.     }
   7.     quietly count if treated_state == 1 & !missing(`outcome')
   8.     if (r(N) == 0) {
-  9.         di as error "Outcome `outcome': no treated observations with data.
-> "
+  9.         di as error "Outcome `outcome': no treated observations with d
+> ata."
  10.         continue
  11.     }
  12.     quietly count if treated_state == 0 & !missing(`outcome')
  13.     if (r(N) == 0) {
- 14.         di as error "Outcome `outcome': no control observations with data.
-> "
+ 14.         di as error "Outcome `outcome': no control observations with d
+> ata."
  15.         continue
  16.     }
  17.     di ""
- 18.     di "==================================================================
-> ======="
+ 18.     di "==============================================================
+> ==========="
  19.     di "DID ANALYSIS (unweighted, pop control): ${label_`outcome'}"
  20.     di "Outcome variable: `outcome'"
- 21.     di "==================================================================
-> ======="
+ 21.     di "==============================================================
+> ==========="
  22.     di ""
- 23.     capture noisily did_imputation `outcome' program_numeric_id year year_
-> expanded, ///
+ 23.     capture noisily did_imputation `outcome' program_numeric_id year y
+> ear_expanded, ///
 >         horizons(0/5) pretrend(5) fe(program_numeric_id year) ///
 >         controls(total_population_10) cluster(state_id) minn(0)
  24.     if (_rc != 0) {
- 25.         di as error "did_imputation failed for outcome `outcome'. Error co
-> de `_rc'."
+ 25.         di as error "did_imputation failed for outcome `outcome'. Erro
+> r code `_rc'."
  26.         continue
  27.     }
  28.     local coef = _b[tau0]
@@ -224,9 +276,10 @@ total_pop~10 |          0  (omitted)
  50.     if (_rc == 0) {
  51.         local treat_p = r(p)
  52.     }
- 53.     * Calculate baseline mean (pre-treatment observations in treated state
-> s, unweighted)
-.     quietly summarize `outcome' if treated_state == 1 & year < year_expanded
+ 53.     * Calculate baseline mean (pre-treatment observations in treated s
+> tates, unweighted)
+.     quietly summarize `outcome' if treated_state == 1 & year < year_expan
+> ded
  54.     local baseline_mean = r(mean)
  55.     if missing(`baseline_mean') | `baseline_mean' == 0 {
  56.         local baseline_mean = 1
@@ -237,17 +290,19 @@ total_pop~10 |          0  (omitted)
  61.     }
  62.     local n_programs = .
  63.     local n_states = .
- 64.     capture levelsof program_numeric_id if !missing(`outcome'), local(acti
-> ve_programs)
+ 64.     capture levelsof program_numeric_id if !missing(`outcome'), local(
+> active_programs)
  65.     if (_rc == 0) {
  66.         local n_programs : word count `active_programs'
  67.     }
- 68.     capture levelsof state_id if !missing(`outcome'), local(active_states)
+ 68.     capture levelsof state_id if !missing(`outcome'), local(active_sta
+> tes)
  69.     if (_rc == 0) {
  70.         local n_states : word count `active_states'
  71.     }
  72. 
-.     * National impact for annotation. Use the raw count aggregate computed
+.     * National impact for annotation. Use the raw count aggregate compute
+> d
 .     * pre-loop so per-100k and raw-count figures show the same number.
 .     local national_effect = .
  73.     local has_national = 0
@@ -265,19 +320,21 @@ total_pop~10 |          0  (omitted)
  85.             local national_label "quota positions"
  86.         }
  87.     }
- 88.     local national_text = cond(`has_national', string(`national_effect', "
-> %9.0fc"), "NA")
+ 88.     local national_text = cond(`has_national', string(`national_effect
+> ', "%9.0fc"), "NA")
  89. 
 .     post `did_results' ("`outcome'") ///
 >         (`coef') (`se') (`tstat') (`pvalue') (`avg_treat') ///
 >         (`pretrend_p') (`treat_p') (`n_programs') (`n_states')
- 90.     di "ATT (tau0): " %9.3f `coef' "  SE: " %9.3f `se' "  p = " %9.3f `pva
-> lue'
+ 90.     di "ATT (tau0): " %9.3f `coef' "  SE: " %9.3f `se' "  p = " %9.3f 
+> `pvalue'
  91.     di "Average post-treatment effect: " %9.3f `avg_treat'
- 92.     if (`has_national') di "Avg. annual aggregate effect: " %15.0fc `natio
-> nal_effect'
- 93.     if (`pretrend_p' < .) di "Pretrend joint p-value: " %9.3f `pretrend_p'
- 94.     if (`treat_p' < .)   di "Treatment joint p-value: " %9.3f `treat_p'
+ 92.     if (`has_national') di "Avg. annual aggregate effect: " %15.0fc `n
+> ational_effect'
+ 93.     if (`pretrend_p' < .) di "Pretrend joint p-value: " %9.3f `pretren
+> d_p'
+ 94.     if (`treat_p' < .)   di "Treatment joint p-value: " %9.3f `treat_p
+> '
  95.     matrix plot_coef = J(11, 3, .)
  96.     matrix colnames plot_coef = period coef se
  97.     local row = 1
@@ -301,16 +358,16 @@ total_pop~10 |          0  (omitted)
 115.     gen ci_lower = coef - 1.96*se
 116.     gen byte pre_period = (period < 0)
 117.     gen byte post_period = (period >= 0)
-118.     local avg_text = cond(`avg_treat' < ., string(`avg_treat', "%9.2f"), "
-> NA")
-119.     local treat_text = cond(`treat_p' < ., string(`treat_p', "%9.2f"), "NA
-> ")
+118.     local avg_text = cond(`avg_treat' < ., string(`avg_treat', "%9.2f"
+> ), "NA")
+119.     local treat_text = cond(`treat_p' < ., string(`treat_p', "%9.2f"),
+>  "NA")
 120.     local baseline_text = string(`baseline_mean', "%9.2f")
 121.     local pct_text = string(`pct_effect', "%9.1f")
 122.     local post_line ""
 123.     if (`avg_treat' < .) {
-124.         local post_line "(scatteri `avg_treat' 0 `avg_treat' 5, recast(lin
-> e) lpattern(dash) lcolor(red) lwidth(medium))"
+124.         local post_line "(scatteri `avg_treat' 0 `avg_treat' 5, recast
+> (line) lpattern(dash) lcolor(red) lwidth(medium))"
 125.     }
 126.     local short = "${short_`outcome'}"
 127.     local label = "${label_`outcome'}"
@@ -328,28 +385,32 @@ total_pop~10 |          0  (omitted)
 139.         local x_annot = -3
 140.     }
 141.     if ("`outcome'" == "matched") {
-142.         local ytitle_str "Treatment Effect (number of residency positions)
-> "
+142.         local ytitle_str "Treatment Effect (number of residency positi
+> ons)"
 143.     }
-144.     local main_text `"text(`y_annot' `x_annot' `"Baseline Mean: `baseline_
-> text'"' `"Post avg = `avg_text' (`pct_text'%)"' `"p-value = `treat_text'"', s
-> ize(large))"'
-145.     local extra_text ""
-146.     if (`has_national') {
-147.         local extra_text `"text(`y_annot' 3 `"Avg. annual change in"' `"`n
-> ational_label':"' `"`national_text'"', size(large))"'
-148.     }
-149.     twoway ///
->         (rarea ci_upper ci_lower period if pre_period, fcolor(dkgreen%45) lco
-> lor(dkgreen%45) lwidth(none)) ///
->         (rarea ci_upper ci_lower period if post_period, fcolor(maroon%45) lco
-> lor(maroon%45) lwidth(none)) ///
->         (line coef period if pre_period, lcolor(dkgreen) lwidth(medium)) ///
->         (line coef period if post_period, lcolor(maroon) lwidth(medium)) ///
->         (scatter coef period if pre_period, mcolor(dkgreen) msymbol(circle) m
-> size(medlarge)) ///
->         (scatter coef period if post_period, mcolor(maroon) msymbol(circle) m
-> size(medlarge)) ///
+144.     local pretrend_text = cond(`pretrend_p' < ., string(`pretrend_p', 
+> "%9.2f"), "NA")
+145.     local main_text `"text(`y_annot' `x_annot' `"Baseline Mean: `basel
+> ine_text'"' `"Post avg = `avg_text' (`pct_text'%)"' `"Treatment p = `trea
+> t_text'"' `"Pre-trend p = `pretrend_text'"', size(medsmall))"'
+146.     local extra_text ""
+147.     if (`has_national') {
+148.         local extra_text `"text(`y_annot' 3 `"Avg. annual change in"' 
+> `"`national_label':"' `"`national_text'"', size(medsmall))"'
+149.     }
+150.     twoway ///
+>         (rarea ci_upper ci_lower period if pre_period, fcolor(dkgreen%45)
+>  lcolor(dkgreen%45) lwidth(none)) ///
+>         (rarea ci_upper ci_lower period if post_period, fcolor(maroon%45)
+>  lcolor(maroon%45) lwidth(none)) ///
+>         (line coef period if pre_period, lcolor(dkgreen) lwidth(medium)) 
+> ///
+>         (line coef period if post_period, lcolor(maroon) lwidth(medium)) 
+> ///
+>         (scatter coef period if pre_period, mcolor(dkgreen) msymbol(circl
+> e) msize(medlarge)) ///
+>         (scatter coef period if post_period, mcolor(maroon) msymbol(circl
+> e) msize(medlarge)) ///
 >         `post_line' ///
 >         , ///
 >         xline(-0.5, lcolor(black) lpattern(solid) lwidth(thin)) ///
@@ -362,13 +423,16 @@ total_pop~10 |          0  (omitted)
 >         `extra_text' ///
 >         legend(off) ///
 >         graphregion(color(white)) plotregion(color(white))
-150.     graph export "${figdir}/`prefix'-did_`short'_popcnt_event.png", as(png
-> ) replace width(1200) height(800)
-151.     graph export "${latex_figdir}/`prefix'-did_`short'_popcnt_event.png", 
-> as(png) replace width(1200) height(800)
-152.     restore
-153.     local ++plotnum
-154. }
+151.     local outfname = "${fname_`outcome'}"
+152.     graph export "${figdir}/`outfname'.png", as(png) replace width(120
+> 0) height(800)
+153.     graph export "${figdir}/`outfname'.pdf", replace
+154.     graph export "${latex_figdir}/`outfname'.png", as(png) replace wid
+> th(1200) height(800)
+155.     graph export "${latex_figdir}/`outfname'.pdf", replace
+156.     restore
+157.     local ++plotnum
+158. }
 
 =========================================================================
 DID ANALYSIS (unweighted, pop control): Total Matched Residency Positions
@@ -376,23 +440,39 @@ Outcome variable: matched
 =========================================================================
 
 
-                                                         Number of obs = 8,590
-------------------------------------------------------------------------------
-     matched | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
--------------+----------------------------------------------------------------
-        tau0 |  -.3861629   .5346908    -0.72   0.470    -1.434138    .6618119
-        tau1 |  -1.499994   .6955364    -2.16   0.031     -2.86322   -.1367675
-        tau2 |  -2.063877   .9814655    -2.10   0.035    -3.987514   -.1402401
-        tau3 |  -3.170151   1.248239    -2.54   0.011    -5.616654   -.7236466
-        tau4 |  -3.789569   1.707623    -2.22   0.026    -7.136448   -.4426895
-        tau5 |  -4.023312   2.201714    -1.83   0.068    -8.338593    .2919691
-        pre1 |  -1.617017   1.191531    -1.36   0.175    -3.952374    .7183396
-        pre2 |  -1.704595   1.107403    -1.54   0.124    -3.875064    .4658743
-        pre3 |  -1.725946   1.102119    -1.57   0.117    -3.886061    .4341679
-        pre4 |  -1.577067   1.048066    -1.50   0.132     -3.63124    .4771051
-        pre5 |  -.6726721   .9691947    -0.69   0.488    -2.572259    1.226915
+                                                         Number of obs = 8,
+> 590
+---------------------------------------------------------------------------
+> ---
+     matched | Coefficient  Std. err.      z    P>|z|     [95% conf. interv
+> al]
+-------------+-------------------------------------------------------------
+> ---
+        tau0 |  -.3861629   .5346908    -0.72   0.470    -1.434138    .6618
+> 119
+        tau1 |  -1.499994   .6955364    -2.16   0.031     -2.86322   -.1367
+> 675
+        tau2 |  -2.063877   .9814655    -2.10   0.035    -3.987514   -.1402
+> 401
+        tau3 |  -3.170151   1.248239    -2.54   0.011    -5.616654   -.7236
+> 466
+        tau4 |  -3.789569   1.707623    -2.22   0.026    -7.136448   -.4426
+> 895
+        tau5 |  -4.023312   2.201714    -1.83   0.068    -8.338593    .2919
+> 691
+        pre1 |  -1.617017   1.191531    -1.36   0.175    -3.952374    .7183
+> 396
+        pre2 |  -1.704595   1.107403    -1.54   0.124    -3.875064    .4658
+> 743
+        pre3 |  -1.725946   1.102119    -1.57   0.117    -3.886061    .4341
+> 679
+        pre4 |  -1.577067   1.048066    -1.50   0.132     -3.63124    .4771
+> 051
+        pre5 |  -.6726721   .9691947    -0.69   0.488    -2.572259    1.226
+> 915
 total_pop~10 |          0  (omitted)
-------------------------------------------------------------------------------
+---------------------------------------------------------------------------
+> ---
 
  ( 1)  pre1 = 0
  ( 2)  pre2 = 0
@@ -421,35 +501,59 @@ number of observations will be reset to 11
 Press any key to continue, or Break to abort
 Number of observations (_N) was 0, now 11.
 (0 observations deleted)
-file /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/figures/22-
-> did_matched_popcnt_event.png written in PNG format
-file /Users/hhadah/Projects/GiT/residency-medicaid-expansion/my_paper/figures/2
-> 2-did_matched_popcnt_event.png written in PNG format
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/figure
+    > s/appx-popcount-levels.png saved as PNG format
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/figure
+    > s/appx-popcount-levels.pdf saved as PDF format
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expansion/my_paper/figu
+    > res/appx-popcount-levels.png saved as PNG format
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expansion/my_paper/figu
+    > res/appx-popcount-levels.pdf saved as PDF format
 
 =========================================================================
-DID ANALYSIS (unweighted, pop control): Matched Residency Positions per 100k Po
-> pulation
+DID ANALYSIS (unweighted, pop control): Matched Residency Positions per 100
+> k Population
 Outcome variable: matched_per_100k
 =========================================================================
 
 
-                                                         Number of obs = 8,590
-------------------------------------------------------------------------------
-matched~100k | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
--------------+----------------------------------------------------------------
-        tau0 |   .0024923   .0167454     0.15   0.882     -.030328    .0353126
-        tau1 |  -.0139117   .0194531    -0.72   0.475     -.052039    .0242156
-        tau2 |  -.0180141   .0164052    -1.10   0.272    -.0501678    .0141395
-        tau3 |  -.0251801   .0199723    -1.26   0.207     -.064325    .0139649
-        tau4 |  -.0341101   .0259437    -1.31   0.189    -.0849589    .0167387
-        tau5 |  -.0259536     .03079    -0.84   0.399    -.0863008    .0343937
-        pre1 |   .0123768   .0363285     0.34   0.733    -.0588258    .0835794
-        pre2 |    .005588   .0319922     0.17   0.861    -.0571156    .0682916
-        pre3 |   .0028418   .0278254     0.10   0.919     -.051695    .0573785
-        pre4 |    .002042    .022791     0.09   0.929    -.0426276    .0467116
-        pre5 |   .0076984   .0242483     0.32   0.751    -.0398275    .0552243
+                                                         Number of obs = 8,
+> 590
+---------------------------------------------------------------------------
+> ---
+matched~100k | Coefficient  Std. err.      z    P>|z|     [95% conf. interv
+> al]
+-------------+-------------------------------------------------------------
+> ---
+        tau0 |   .0024923   .0167454     0.15   0.882     -.030328    .0353
+> 126
+        tau1 |  -.0139117   .0194531    -0.72   0.475     -.052039    .0242
+> 156
+        tau2 |  -.0180141   .0164052    -1.10   0.272    -.0501678    .0141
+> 395
+        tau3 |    -.02518   .0199723    -1.26   0.207     -.064325     .013
+> 965
+        tau4 |  -.0341101   .0259437    -1.31   0.189    -.0849589    .0167
+> 387
+        tau5 |  -.0259535     .03079    -0.84   0.399    -.0863008    .0343
+> 937
+        pre1 |   .0123768   .0363285     0.34   0.733    -.0588258    .0835
+> 794
+        pre2 |    .005588   .0319922     0.17   0.861    -.0571156    .0682
+> 916
+        pre3 |   .0028418   .0278254     0.10   0.919     -.051695    .0573
+> 785
+        pre4 |    .002042    .022791     0.09   0.929    -.0426276    .0467
+> 116
+        pre5 |   .0076984   .0242483     0.32   0.751    -.0398275    .0552
+> 243
 total_pop~10 |          0  (omitted)
-------------------------------------------------------------------------------
+---------------------------------------------------------------------------
+> ---
 
  ( 1)  pre1 = 0
  ( 2)  pre2 = 0
@@ -478,35 +582,59 @@ number of observations will be reset to 11
 Press any key to continue, or Break to abort
 Number of observations (_N) was 0, now 11.
 (0 observations deleted)
-file /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/figures/23-
-> did_matched_per_100k_popcnt_event.png written in PNG format
-file /Users/hhadah/Projects/GiT/residency-medicaid-expansion/my_paper/figures/2
-> 3-did_matched_per_100k_popcnt_event.png written in PNG format
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/figure
+    > s/appx-popcount-percapita.png saved as PNG format
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/figure
+    > s/appx-popcount-percapita.pdf saved as PDF format
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expansion/my_paper/figu
+    > res/appx-popcount-percapita.png saved as PNG format
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expansion/my_paper/figu
+    > res/appx-popcount-percapita.pdf saved as PDF format
 
 =========================================================================
-DID ANALYSIS (unweighted, pop control): Residency Quota Positions per 100k Popu
-> lation
+DID ANALYSIS (unweighted, pop control): Residency Quota Positions per 100k 
+> Population
 Outcome variable: quota_per_100k
 =========================================================================
 
 
-                                                         Number of obs = 8,590
-------------------------------------------------------------------------------
-quota_p~100k | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
--------------+----------------------------------------------------------------
-        tau0 |   .0037085   .0172998     0.21   0.830    -.0301986    .0376156
-        tau1 |  -.0117459   .0178397    -0.66   0.510    -.0467112    .0232193
-        tau2 |  -.0202451   .0162388    -1.25   0.213    -.0520726    .0115823
-        tau3 |  -.0247033   .0193993    -1.27   0.203    -.0627254    .0133187
-        tau4 |  -.0319826   .0248273    -1.29   0.198    -.0806431     .016678
-        tau5 |  -.0333826   .0324528    -1.03   0.304     -.096989    .0302238
-        pre1 |   .0125232   .0342293     0.37   0.714     -.054565    .0796113
-        pre2 |   .0069244    .030444     0.23   0.820    -.0527448    .0665935
-        pre3 |   .0053973   .0266899     0.20   0.840    -.0469139    .0577085
-        pre4 |   .0062401   .0223245     0.28   0.780    -.0375152    .0499954
-        pre5 |   .0181198   .0212669     0.85   0.394    -.0235626    .0598021
+                                                         Number of obs = 8,
+> 590
+---------------------------------------------------------------------------
+> ---
+quota_p~100k | Coefficient  Std. err.      z    P>|z|     [95% conf. interv
+> al]
+-------------+-------------------------------------------------------------
+> ---
+        tau0 |   .0037085   .0172998     0.21   0.830    -.0301986    .0376
+> 155
+        tau1 |   -.011746   .0178397    -0.66   0.510    -.0467112    .0232
+> 193
+        tau2 |  -.0202451   .0162388    -1.25   0.213    -.0520726    .0115
+> 823
+        tau3 |  -.0247034   .0193994    -1.27   0.203    -.0627254    .0133
+> 187
+        tau4 |  -.0319826   .0248273    -1.29   0.198    -.0806431    .0166
+> 779
+        tau5 |  -.0333826   .0324528    -1.03   0.304     -.096989    .0302
+> 238
+        pre1 |   .0125232   .0342293     0.37   0.714     -.054565    .0796
+> 113
+        pre2 |   .0069244    .030444     0.23   0.820    -.0527448    .0665
+> 935
+        pre3 |   .0053973   .0266899     0.20   0.840    -.0469139    .0577
+> 085
+        pre4 |   .0062401   .0223245     0.28   0.780    -.0375152    .0499
+> 954
+        pre5 |   .0181198   .0212669     0.85   0.394    -.0235626    .0598
+> 021
 total_pop~10 |          0  (omitted)
-------------------------------------------------------------------------------
+---------------------------------------------------------------------------
+> ---
 
  ( 1)  pre1 = 0
  ( 2)  pre2 = 0
@@ -535,10 +663,18 @@ number of observations will be reset to 11
 Press any key to continue, or Break to abort
 Number of observations (_N) was 0, now 11.
 (0 observations deleted)
-file /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/figures/24-
-> did_quota_per_100k_popcnt_event.png written in PNG format
-file /Users/hhadah/Projects/GiT/residency-medicaid-expansion/my_paper/figures/2
-> 4-did_quota_per_100k_popcnt_event.png written in PNG format
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/figure
+    > s/appx-popcount-quota.png saved as PNG format
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/figure
+    > s/appx-popcount-quota.pdf saved as PDF format
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expansion/my_paper/figu
+    > res/appx-popcount-quota.png saved as PNG format
+file
+    /Users/hhadah/Projects/GiT/residency-medicaid-expansion/my_paper/figu
+    > res/appx-popcount-quota.pdf saved as PDF format
 
 . 
 . postclose `did_results'
@@ -546,17 +682,18 @@ file /Users/hhadah/Projects/GiT/residency-medicaid-expansion/my_paper/figures/2
 . 
 . use "`did_results_file'", clear
 
-. order outcome coef se tstat pvalue avg_treat pretrend_p treat_p n_programs n_
-> states
+. order outcome coef se tstat pvalue avg_treat pretrend_p treat_p n_program
+> s n_states
 
 . save "${tabdir}/did_summary_residency_popcnt.dta", replace
 file
-    /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/tables/did
-    > _summary_residency_popcnt.dta saved
+    /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/tables
+    > /did_summary_residency_popcnt.dta saved
 
-. export delimited using "${tabdir}/did_summary_residency_popcnt.csv", replace
-file /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/tables/did_
-> summary_residency_popcnt.csv saved
+. export delimited using "${tabdir}/did_summary_residency_popcnt.csv", repl
+> ace
+file /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/tables/
+> did_summary_residency_popcnt.csv saved
 
 . 
 . di ""
@@ -572,19 +709,19 @@ Difference-in-differences (unweighted, pop control) completed.
 Summary table:
 
 . di "  - ${tabdir}/did_summary_residency_popcnt.dta"
-  - /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/tables/did_s
-> ummary_residency_popcnt.dta
+  - /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/tables/d
+> id_summary_residency_popcnt.dta
 
 . di "  - ${tabdir}/did_summary_residency_popcnt.csv"
-  - /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/tables/did_s
-> ummary_residency_popcnt.csv
+  - /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/tables/d
+> id_summary_residency_popcnt.csv
 
 . di "Figures:"
 Figures:
 
 . di "  - ${figdir}/{22..}-did_*_popcnt_event.png (and LaTeX copies)"
-  - /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/figures/{22.
-> .}-did_*_popcnt_event.png (and LaTeX copies)
+  - /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/figures/
+> {22..}-did_*_popcnt_event.png (and LaTeX copies)
 
 . di "=================================================================="
 ==================================================================
@@ -592,8 +729,8 @@ Figures:
 . 
 . log close
       name:  <unnamed>
-       log:  /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output/12-
-> dd-analysis-popcnt.log
+       log:  /Users/hhadah/Projects/GiT/residency-medicaid-expansion/output
+> /12-dd-analysis-popcnt.log
   log type:  text
- closed on:  13 Jul 2026, 18:06:14
--------------------------------------------------------------------------------
+ closed on:  24 Jul 2026, 08:21:09
+---------------------------------------------------------------------------

@@ -4,7 +4,9 @@
 
 # date: June 28th, 2022
 
-if (!require("pacman")) install.packages("pacman")
+if (!requireNamespace("pacman", quietly = TRUE)) {
+  stop("Package 'pacman' is required. Install it once interactively: install.packages(\"pacman\")")
+}
 pacman::p_load(tictoc, parallel, pbapply, future, 
                future.apply, furrr, RhpcBLASctl, memoise, 
                here, foreign, mfx, tidyverse, hrbrthemes, 
