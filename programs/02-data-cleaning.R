@@ -46,7 +46,11 @@ site_lookup <- hospitals_lookup |>
 #-----------------------------------------
 # 2. Geocode using Mapbox (forward geocoding)
 #-----------------------------------------
-Sys.setenv(MAPBOX_API_KEY = "pk.eyJ1IjoiaGhhZGFoIiwiYSI6ImNtaDd1N2NkYzBueGcya29kOWpzMTRqY3oifQ.zpRnaAfLGm06Kz8rs6RuFA")
+# MAPBOX_API_KEY must be set in ~/.Renviron (same convention as
+# CENSUS_API_KEY in 03-state-year-population.R). Never hardcode it here.
+if (Sys.getenv("MAPBOX_API_KEY") == "") {
+  stop("MAPBOX_API_KEY is not set. Add it to ~/.Renviron and restart R.")
+}
 
 site_geo_mapbox <- site_lookup |>
   geocode(
