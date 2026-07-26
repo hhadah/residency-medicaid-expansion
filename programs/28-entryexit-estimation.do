@@ -2,7 +2,7 @@
 * ENTRY/EXIT ESTIMATION: the headline with the extensive margin handled right
 * ---------------------------------------------------------------------------
 * Referee response (editorial decision 2026-07-24, MUST-7 / cluster F6).
-* Uses program_panel_entry_exit.dta (script 09): institution-years outside an
+* Uses panel_2000_2019_estimation.dta (script 06): institution-years outside an
 * institution's [first_appears, last_active] window are missing, not zero.
 *
 * Specifications:
@@ -23,25 +23,38 @@
 clear all
 set more off
 
-global topdir "/Users/hhadah/Projects/GiT/residency-medicaid-expansion"
+* Replication-friendly path handling: run from the repository root, or set
+* global topdir before running.
+if "${topdir}" == "" global topdir "`c(pwd)'"
+capture confirm file "${topdir}/programs/00-README-pipeline.md"
+if _rc {
+    di as error "Cannot find the repository root. Run from the repo root or set global topdir."
+    exit 601
+}
 global datadir "${topdir}/data/datasets"
 global tabdir  "${topdir}/output/tables"
+global figdir  "${topdir}/output/figures"
+global latex_figdir "${topdir}/my_paper/figures"
 cap mkdir "${tabdir}"
+cap mkdir "${figdir}"
+cap mkdir "${latex_figdir}"
 
 log using "${topdir}/output/28-entryexit-estimation.log", replace
 
-use "${datadir}/program_panel_entry_exit.dta", clear
-replace state = strtrim(upper(state))
+* FULL 2000-2019 PANEL (script 06): activity-window and zero-filled variants
+* plus balanced_full and sas_window_entrant flags are all built in.
+use "${datadir}/panel_2000_2019_estimation.dta", clear
 egen program_numeric_id = group(state institution_code)
-merge m:1 state year using "${datadir}/state_year_population.dta", keep(master match) nogen
 quietly count if missing(pop_yr)
 assert r(N) == 0
-gen double matched_per_100k_yr    = matched    / pop_yr * 100000
+gen double matched_per_100k_yr    = matched_zf / pop_yr * 100000
 gen double matched_na_per_100k_yr = matched_na / pop_yr * 100000
 encode state, gen(state_id)
 xtset program_numeric_id year
 tempfile master
 save `master'
+
+do "${topdir}/programs/_esplot-helpers.do"
 
 tempname res
 tempfile resfile
@@ -50,11 +63,11 @@ postfile `res' str24 spec double avg_treat avg_se treat_p pretrend_p baseline pc
 
 capture program drop _eerun
 program define _eerun
-    args outcome tag resh idvar
+    args outcome tag resh idvar fname yti
     if ("`idvar'" == "") local idvar program_numeric_id
     di _n "==================== `tag' ===================="
     capture noisily did_imputation `outcome' `idvar' year year_expanded ///
-        [aw=total_population_10], horizons(0/5) pretrend(5) ///
+        [aw=total_population_10], horizons(0/5) pretrend(10) ///
         fe(`idvar' year) cluster(state_id) minn(0) autosample
     if (_rc != 0) {
         di as error "`tag' failed (rc=" _rc ")"
@@ -65,7 +78,7 @@ program define _eerun
     local a   = cond(_rc==0, r(estimate), .)
     local ase = cond(_rc==0, r(se), .)
     local pt = .
-    capture test pre1 pre2 pre3 pre4 pre5
+    capture test pre1 pre2 pre3 pre4 pre5 pre6 pre7 pre8 pre9 pre10 pre6 pre7 pre8 pre9 pre10
     if _rc == 0 local pt = r(p)
     local tp = .
     capture test tau0 tau1 tau2 tau3 tau4 tau5
@@ -76,6 +89,10 @@ program define _eerun
     post `resh' ("`tag'") (`a') (`ase') (`tp') (`pt') (`b') (`pct')
     di as result "`tag': avg=" %10.6f `a' " se=" %10.6f `ase' " pct=" %5.1f `pct' ///
         " treat_p=" %6.3f `tp' " pretrend_p=" %6.3f `pt'
+    if ("`fname'" != "") {
+        _fillcoef
+        _esplot "`fname'" "`yti'" "" `a' `b' `pct' `tp' `pt'
+    }
 end
 
 * 1) entering/exiting institution-years coded missing
@@ -94,18 +111,18 @@ _eerun matched_per_100k_yr "no_sas_entrants" `res'
 
 * 3) state totals INCLUDING entrants
 use "`master'", clear
-collapse (sum) matched (first) pop_yr total_population_10 year_expanded treated_state, ///
+collapse (sum) matched_zf (first) pop_yr total_population_10 year_expanded treated_state, ///
     by(state state_id year)
-gen double state_total_per_100k = matched / pop_yr * 100000
+gen double state_total_per_100k = matched_zf / pop_yr * 100000
 xtset state_id year
-_eerun state_total_per_100k "state_total_all" `res' state_id
+_eerun state_total_per_100k "state_total_all" `res' state_id "appx-statetotal" "Treatment Effect (state total per 100,000)"
 
 * 4) state totals from always-active institutions only
 use "`master'", clear
 keep if balanced_full == 1
-collapse (sum) matched (first) pop_yr total_population_10 year_expanded treated_state, ///
+collapse (sum) matched_zf (first) pop_yr total_population_10 year_expanded treated_state, ///
     by(state state_id year)
-gen double state_total_per_100k = matched / pop_yr * 100000
+gen double state_total_per_100k = matched_zf / pop_yr * 100000
 xtset state_id year
 _eerun state_total_per_100k "state_total_balanced" `res' state_id
 

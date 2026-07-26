@@ -26,7 +26,14 @@ set more off
 * -------------------------------------------------------------------------
 * Define paths
 * -------------------------------------------------------------------------
-global topdir "/Users/hhadah/Projects/GiT/residency-medicaid-expansion"
+* Replication-friendly path handling: run from the repository root, or set
+* global topdir before running.
+if "${topdir}" == "" global topdir "`c(pwd)'"
+capture confirm file "${topdir}/programs/00-README-pipeline.md"
+if _rc {
+    di as error "Cannot find the repository root. Run from the repo root or set global topdir."
+    exit 601
+}
 global datadir "${topdir}/data/datasets"
 global figdir "${topdir}/output/figures"
 global tabdir "${topdir}/output/tables"
@@ -59,10 +66,20 @@ egen provider_numeric_id = group(state provider_ccn)
 
 collapse (sum)  dgme_payment ime_payment total_gme_payment ///
                 primary_care_fte non_primary_care_fte dgme_ftes ime_ftes ///
+                months_covered ///
         (mean) primary_care_pra non_primary_care_pra ///
                 dgme_resident_cap ime_resident_cap num_beds ///
         (first) state year_expanded expanded_ever, ///
         by(provider_numeric_id fiscal_year)
+* Annualize by months covered (referee response, methods Minor 8): summed
+* cost-report segments can cover more or fewer than 12 months; scaling by
+* 12/months_covered puts every provider-year on an annual basis (as in the
+* linked-sample reconciliation, script 24).
+foreach v in dgme_payment ime_payment total_gme_payment ///
+    primary_care_fte non_primary_care_fte dgme_ftes ime_ftes {
+    replace `v' = `v' * 12 / months_covered if months_covered > 0 & !missing(months_covered)
+}
+
 
 * -------------------------------------------------------------------------
 * Panel identifiers
@@ -146,7 +163,7 @@ foreach outcome of global outcomes {
     * autosample drops the (few) hospital-years whose FE cannot be imputed
     * -- e.g. hospitals observed in a single period -- rather than erroring.
     capture noisily did_imputation `outcome' provider_numeric_id fiscal_year year_expanded, ///
-        horizons(0/5) pretrend(5) fe(provider_numeric_id fiscal_year) ///
+        horizons(0/5) pretrend(10) fe(provider_numeric_id fiscal_year) ///
         cluster(state_id) minn(0) autosample
     if (_rc != 0) {
         di as error "did_imputation failed for outcome `outcome'. Error code `_rc'."
@@ -176,7 +193,7 @@ foreach outcome of global outcomes {
     * Joint tests: pre-trends and post-treatment effects
     local pretrend_p = .
     local treat_p = .
-    capture noisily test pre1 pre2 pre3 pre4 pre5
+    capture noisily test pre1 pre2 pre3 pre4 pre5 pre6 pre7 pre8 pre9 pre10 pre6 pre7 pre8 pre9 pre10
     if (_rc == 0) local pretrend_p = r(p)
     capture noisily test tau0 tau1 tau2 tau3 tau4 tau5
     if (_rc == 0) local treat_p = r(p)
@@ -210,10 +227,10 @@ foreach outcome of global outcomes {
     * ---------------------------------------------------------------------
     * Collect coefficients for the event-study plot (-5 .. +5)
     * ---------------------------------------------------------------------
-    matrix plot_coef = J(11, 3, .)
+    matrix plot_coef = J(16, 3, .)
     matrix colnames plot_coef = period coef se
     local row = 1
-    forval h = 5(-1)1 {
+    forval h = 10(-1)1 {
         matrix plot_coef[`row',1] = -`h'
         capture matrix plot_coef[`row',2] = _b[pre`h']
         capture matrix plot_coef[`row',3] = _se[pre`h']
@@ -254,7 +271,7 @@ foreach outcome of global outcomes {
     * Annotation position
     quietly summarize ci_upper
     local y_annot = r(max) * 0.9
-    local x_annot = -3
+    local x_annot = -7
 
     local pretrend_text = cond(`pretrend_p' < ., string(`pretrend_p', "%9.2f"), "NA")
     local main_text `"text(`y_annot' `x_annot' `"Baseline Mean: `base_text'"' `"Post avg = `avg_text' (`pct_text'%)"' `"Treatment p = `treat_text'"' `"Pre-trend p = `pretrend_text'"', size(medsmall))"'
@@ -270,7 +287,7 @@ foreach outcome of global outcomes {
         , ///
         xline(-0.5, lcolor(black) lpattern(solid) lwidth(thin)) ///
         yline(0, lcolor(black) lpattern(solid) lwidth(thin)) ///
-        xlabel(-5(1)5, labsize(small)) ///
+        xlabel(-10(1)5, labsize(small)) ///
         ylabel(#8, labsize(small) format(%9.2f)) ///
         xtitle("Years relative to Medicaid expansion", size(small)) ///
         ytitle("Treatment Effect: `label'", size(small)) ///

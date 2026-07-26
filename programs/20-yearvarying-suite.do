@@ -15,7 +15,14 @@
 clear all
 set more off
 
-global topdir "/Users/hhadah/Projects/GiT/residency-medicaid-expansion"
+* Replication-friendly path handling: run from the repository root, or set
+* global topdir before running.
+if "${topdir}" == "" global topdir "`c(pwd)'"
+capture confirm file "${topdir}/programs/00-README-pipeline.md"
+if _rc {
+    di as error "Cannot find the repository root. Run from the repo root or set global topdir."
+    exit 601
+}
 global datadir "${topdir}/data/datasets"
 global rawdir  "${topdir}/data/raw"
 global figdir  "${topdir}/output/figures"
@@ -27,12 +34,18 @@ cap mkdir "${latex_figdir}"
 
 log using "${topdir}/output/20-yearvarying-suite.log", replace
 
-use "${datadir}/cleaned_program_residency_medicaid.dta", clear
+* FULL 2000-2019 PANEL (activity-window coding is primary; see script 06)
+use "${datadir}/panel_2000_2019_estimation.dta", clear
+replace matched = matched_na
+replace quota   = quota_na
+gen double matched_per_100k = matched / total_population_10 * 100000
+gen double quota_per_100k   = quota   / total_population_10 * 100000
+gen double unmatched        = quota - matched
 egen program_numeric_id = group(state institution_code)
 replace state = strtrim(upper(state))
 
 * Year-varying ACS population -> per-capita outcomes
-merge m:1 state year using "${datadir}/state_year_population.dta", keep(master match) nogen
+* pop_yr already in the panel (2000-2019 series from script 03)
 quietly count if missing(pop_yr)
 di as text "pop_yr merge: " r(N) " unmatched master rows (missing pop_yr)"
 assert r(N) == 0
@@ -72,13 +85,13 @@ do "${topdir}/programs/_esplot-helpers.do"
 * ------------------------------------------------------------------ 1) HEADLINE
 di _n "==================== HEADLINE (matched_per_100k_yr) ===================="
 did_imputation matched_per_100k_yr program_numeric_id year year_expanded ///
-    [aw=total_population_10], horizons(0/5) pretrend(5) ///
-    fe(program_numeric_id year) cluster(state_id) minn(0)
+    [aw=total_population_10], horizons(0/5) pretrend(10) ///
+    fe(program_numeric_id year) cluster(state_id) minn(0) autosample
 lincom (tau0+tau1+tau2+tau3+tau4+tau5)/6
 local a  = r(estimate)
 local ase = r(se)
 local pt = .
-capture test pre1 pre2 pre3 pre4 pre5
+capture test pre1 pre2 pre3 pre4 pre5 pre6 pre7 pre8 pre9 pre10 pre6 pre7 pre8 pre9 pre10
 if _rc == 0 local pt = r(p)
 local tp = .
 capture test tau0 tau1 tau2 tau3 tau4 tau5
@@ -100,8 +113,8 @@ _esplot "main-headline" "Treatment Effect (per 100,000, year-varying pop.)" "" `
 * urban-rural difference in average post effects (that model shares pre-trends
 * across groups, so the split-sample estimates are primary).
 di _n "==================== URBAN/RURAL (matched_per_100k_yr), split samples ===================="
-matrix U = J(11,3,.)
-matrix R = J(11,3,.)
+matrix U = J(16,3,.)
+matrix R = J(16,3,.)
 matrix colnames U = period coef se
 matrix colnames R = period coef se
 foreach g in 0 1 {
@@ -118,7 +131,7 @@ foreach g in 0 1 {
     local ns_co = r(r)
     di as text "`gname' subsample: treated obs=`n_tr' (`ns_tr' states), control obs=`n_co' (`ns_co' states)"
     did_imputation matched_per_100k_yr program_numeric_id year year_expanded ///
-        [aw=total_population_10], horizons(0/5) pretrend(5) cluster(state_id) ///
+        [aw=total_population_10], horizons(0/5) pretrend(10) cluster(state_id) ///
         fe(program_numeric_id year) minn(0) autosample
     lincom (tau0+tau1+tau2+tau3+tau4+tau5)/6
     local a_`gname'  = r(estimate)
@@ -127,7 +140,7 @@ foreach g in 0 1 {
     capture test tau0 tau1 tau2 tau3 tau4 tau5
     if _rc == 0 local tp_`gname' = r(p)
     local pt_`gname' = .
-    capture test pre1 pre2 pre3 pre4 pre5
+    capture test pre1 pre2 pre3 pre4 pre5 pre6 pre7 pre8 pre9 pre10 pre6 pre7 pre8 pre9 pre10
     if _rc == 0 local pt_`gname' = r(p)
     quietly summarize matched_per_100k_yr if treated_state==1 & year<year_expanded [aw=total_population_10]
     local b_`gname' = r(mean)
@@ -143,7 +156,7 @@ foreach g in 0 1 {
 * Pooled interacted model: formal urban-rural difference test ONLY (delta method
 * on the difference in average post effects). Shares pre-trends across groups.
 quietly did_imputation matched_per_100k_yr program_numeric_id year year_expanded ///
-    [aw=total_population_10], horizons(0/5) pretrend(5) cluster(state_id) ///
+    [aw=total_population_10], horizons(0/5) pretrend(10) cluster(state_id) ///
     hetby(urban_rural) fe(program_numeric_id year) minn(0) autosample
 local dd  = .
 local dse = .
@@ -189,7 +202,7 @@ local rp_t  = cond(`tp_rural' < ., string(`tp_rural', "%4.2f"), "NA")
 local upt_t = cond(`pt_urban' < ., string(`pt_urban', "%4.2f"), "NA")
 local rpt_t = cond(`pt_rural' < ., string(`pt_rural', "%4.2f"), "NA")
 local dp_t  = cond(`dp' < ., string(`dp', "%4.2f"), "NA")
-local annot `"text(`y_annot' -4.5 `"Urban avg = `au_t' (p=`up_t', pre-trend p=`upt_t')"' `"Rural avg = `ar_t' (p=`rp_t', pre-trend p=`rpt_t')"' `"Difference p = `dp_t' (pooled model)"', placement(e) size(medsmall) justification(left))"'
+local annot `"text(`y_annot' -9.5 `"Urban avg = `au_t' (p=`up_t', pre-trend p=`upt_t')"' `"Rural avg = `ar_t' (p=`rp_t', pre-trend p=`rpt_t')"' `"Difference p = `dp_t' (pooled model)"', placement(e) size(medsmall) justification(left))"'
 twoway ///
     (rarea u_hi u_lo period, fcolor(navy%25) lcolor(navy%0)) ///
     (rarea r_hi r_lo period, fcolor(orange%25) lcolor(orange%0)) ///
@@ -198,7 +211,7 @@ twoway ///
     (scatter u_coef period, mcolor(navy) msymbol(circle)) ///
     (scatter r_coef period, mcolor(orange) msymbol(triangle)) ///
     , xline(-0.5, lcolor(black) lwidth(thin)) yline(0, lcolor(black) lwidth(thin)) ///
-    xlabel(-5(1)5, labsize(small)) ylabel(#8, labsize(small) format(%9.3f)) ///
+    xlabel(-10(1)5, labsize(small)) ylabel(#8, labsize(small) format(%9.3f)) ///
     xtitle("Years relative to Medicaid expansion", size(small)) ///
     ytitle("Treatment Effect (per 100,000, year-varying pop.)", size(small)) ///
     `annot' ///
@@ -217,13 +230,13 @@ foreach grp in volume notvolume {
     if "`grp'"=="notvolume" keep if treated_state==0 | (treated_state==1 & gme_notvol==1)
     di _n "==================== MECHANISM `grp' (matched_per_100k_yr) ===================="
     did_imputation matched_per_100k_yr program_numeric_id year year_expanded ///
-        [aw=total_population_10], horizons(0/5) pretrend(5) ///
-        fe(program_numeric_id year) cluster(state_id) minn(0)
+        [aw=total_population_10], horizons(0/5) pretrend(10) ///
+        fe(program_numeric_id year) cluster(state_id) minn(0) autosample
     lincom (tau0+tau1+tau2+tau3+tau4+tau5)/6
     local a = r(estimate)
     local ase = r(se)
     local pt = .
-    capture test pre1 pre2 pre3 pre4 pre5
+    capture test pre1 pre2 pre3 pre4 pre5 pre6 pre7 pre8 pre9 pre10 pre6 pre7 pre8 pre9 pre10
     if _rc == 0 local pt = r(p)
     local tp = .
     capture test tau0 tau1 tau2 tau3 tau4 tau5
@@ -248,7 +261,7 @@ foreach grp in volume notvolume {
 preserve
 keep if treated_state == 0 | gme_vol == 1 | gme_notvol == 1
 quietly did_imputation matched_per_100k_yr program_numeric_id year year_expanded ///
-    [aw=total_population_10], horizons(0/5) pretrend(5) cluster(state_id) ///
+    [aw=total_population_10], horizons(0/5) pretrend(10) cluster(state_id) ///
     hetby(gme_vol) fe(program_numeric_id year) minn(0) autosample
 local mdd  = .
 local mdse = .
@@ -272,13 +285,13 @@ capture confirm variable quota_per_100k_yr
 if _rc == 0 {
     di _n "==================== QUOTA (quota_per_100k_yr) [FDR family, no figure] ===================="
     did_imputation quota_per_100k_yr program_numeric_id year year_expanded ///
-        [aw=total_population_10], horizons(0/5) pretrend(5) ///
-        fe(program_numeric_id year) cluster(state_id) minn(0)
+        [aw=total_population_10], horizons(0/5) pretrend(10) ///
+        fe(program_numeric_id year) cluster(state_id) minn(0) autosample
     lincom (tau0+tau1+tau2+tau3+tau4+tau5)/6
     local a = r(estimate)
     local ase = r(se)
     local pt = .
-    capture test pre1 pre2 pre3 pre4 pre5
+    capture test pre1 pre2 pre3 pre4 pre5 pre6 pre7 pre8 pre9 pre10 pre6 pre7 pre8 pre9 pre10
     if _rc == 0 local pt = r(p)
     local tp = .
     capture test tau0 tau1 tau2 tau3 tau4 tau5
@@ -288,7 +301,27 @@ if _rc == 0 {
     local pct = cond(`b' < . & `b' != 0, 100*`a'/`b', .)
     post `res' ("quota") (`a') (`ase') (`tp') (`pt') (`b') (`pct')
     di as result "quota: avg=" %8.4f `a' " pct=" %5.1f `pct' " treat_p=" %6.3f `tp' " pretrend_p=" %6.3f `pt'
+    * figure for the interference-robust offered-positions margin (referee
+    * request: the year-varying quota estimate previously had no figure)
+    _fillcoef
+    _esplot "main-quota" "Treatment Effect (offered positions per 100,000)" "" `a' `b' `pct' `tp' `pt'
 }
+
+* --------------------------------------------------- 5) PPML count robustness
+* Chen-Roth-robust check on the count outcome: PPML in levels (matched
+* positions), unit + year FE, same clusters, static treated-post design.
+preserve
+gen byte tp = treated_state == 1 & year >= year_expanded
+capture noisily ppmlhdfe matched tp [pw=total_population_10], ///
+    absorb(program_numeric_id year) vce(cluster state_id)
+if (_rc == 0) {
+    local b = _b[tp]
+    local se = _se[tp]
+    local p = 2*normal(-abs(`b'/`se'))
+    post `res' ("ppml_matched_static") (`b') (`se') (`p') (.) (.) (.)
+    di as result "PPML matched (static): b=" %8.4f `b' " (se=" %8.4f `se' ", p=" %6.3f `p' ")"
+}
+restore
 
 postclose `res'
 use "`resfile'", clear

@@ -12,7 +12,14 @@ set more off
 * -------------------------------------------------------------------------
 * Define paths
 * -------------------------------------------------------------------------
-global topdir "/Users/hhadah/Projects/GiT/residency-medicaid-expansion"
+* Replication-friendly path handling: run from the repository root, or set
+* global topdir before running.
+if "${topdir}" == "" global topdir "`c(pwd)'"
+capture confirm file "${topdir}/programs/00-README-pipeline.md"
+if _rc {
+    di as error "Cannot find the repository root. Run from the repo root or set global topdir."
+    exit 601
+}
 global datadir "${topdir}/data/datasets"
 global figdir "${topdir}/output/figures"
 global tabdir "${topdir}/output/tables"
@@ -28,7 +35,13 @@ cap mkdir "${latex_figdir}"
 * -------------------------------------------------------------------------
 * Load cleaned data (produced by 02-data-cleaning.R)
 * -------------------------------------------------------------------------
-use "${datadir}/cleaned_program_residency_medicaid.dta", clear
+* FULL 2000-2019 PANEL (activity-window coding is primary; see script 06)
+use "${datadir}/panel_2000_2019_estimation.dta", clear
+replace matched = matched_na
+replace quota   = quota_na
+gen double matched_per_100k = matched / total_population_10 * 100000
+gen double quota_per_100k   = quota   / total_population_10 * 100000
+gen double unmatched        = quota - matched
 
 *===============================================================================
 * Data Setup
@@ -115,8 +128,8 @@ foreach outcome of global outcomes {
     * and its OWN pre-trend test. (Replaces the pooled hetby() interaction,
     * which shared pre-trends across groups. The formal urban-rural difference
     * test lives in the primary year-varying spec, script 20.)
-    matrix urban = J(11, 5, .)  // 5 pretrends + 6 treatment periods
-    matrix rural = J(11, 5, .)
+    matrix urban = J(16, 5, .)  // 10 pretrends + 6 treatment periods
+    matrix rural = J(16, 5, .)
     matrix colnames urban = period coef se ci_upper ci_lower
     matrix colnames rural = period coef se ci_upper ci_lower
 
@@ -133,7 +146,7 @@ foreach outcome of global outcomes {
         di as text "`gname' subsample (`outcome'): treated obs = `n_tr', control obs = `n_co'"
 
         capture noisily did_imputation `outcome' program_numeric_id year year_expanded [aw=total_population_10], ///
-            horizons(0/5) pretrend(5) ///
+            horizons(0/5) pretrend(10) ///
             cluster(state_id) ///
             fe(program_numeric_id year) ///
             minn(0) autosample
@@ -147,7 +160,7 @@ foreach outcome of global outcomes {
 
         * Group-specific pre-trend test, average post effect, joint post p
         local pretrend_`gname' = .
-        capture test pre1 pre2 pre3 pre4 pre5
+        capture test pre1 pre2 pre3 pre4 pre5 pre6 pre7 pre8 pre9 pre10 pre6 pre7 pre8 pre9 pre10
         if _rc == 0 local pretrend_`gname' = r(p)
         local avg_`gname' = (_b[tau0] + _b[tau1] + _b[tau2] + _b[tau3] + _b[tau4] + _b[tau5])/6
         local p_`gname' = .
@@ -183,7 +196,7 @@ foreach outcome of global outcomes {
 
         * Event-study matrix for this group (own pre-trend path)
         local row = 1
-        forval h = 5(-1)1 {
+        forval h = 10(-1)1 {
             matrix `gname'[`row',1] = -`h'
             capture matrix `gname'[`row',2] = _b[pre`h']
             capture matrix `gname'[`row',3] = _se[pre`h']
@@ -265,7 +278,7 @@ foreach outcome of global outcomes {
     quietly summarize rur_ci_upper
     local max2 = r(max) 
     local y_annot = max(`max1', `max2') * 0.9
-    local x_annot = -2
+    local x_annot = -7
     
     local short = "${short_`outcome'}"
     local label = "${label_`outcome'}"
@@ -279,7 +292,7 @@ foreach outcome of global outcomes {
     * Adjust for per 100k outcomes
     if (strpos("`short'", "_100k") > 0) {
         local ytitle_str "Treatment Effect (per 100,000 population)"
-        local x_annot = -2
+        local x_annot = -7
     }
     if ("`outcome'" == "matched") {
         local ytitle_str "Treatment Effect (number of residency positions)"
@@ -314,7 +327,7 @@ foreach outcome of global outcomes {
            , ///
            xline(-0.5, lcolor(black) lpattern(solid) lwidth(thin)) ///
            yline(0, lcolor(black) lpattern(solid) lwidth(thin)) ///
-           xlabel(-5(1)5, labsize(small)) ///
+           xlabel(-10(1)5, labsize(small)) ///
            ylabel(#10, labsize(small) format(%9.2f)) ///
            xtitle("Years relative to Medicaid expansion", size(small)) ///
            ytitle("`ytitle_str'", size(small)) ///

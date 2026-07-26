@@ -9,7 +9,7 @@
 * intake rises 3% -- is measured on non-comparable objects.
 *
 * This script estimates BOTH outcomes on the IDENTICAL sample:
-*   - program_residency_gme_funding.dta (script 08 NRMP->CCN crosswalk),
+*   - panel_2000_2019_estimation.dta + CCN crosswalk (scripts 06/10),
 *     restricted to institution-years where matched AND dgme_ftes are both
 *     observed -- same rows, same weights [aw=total_population_10], same
 *     program+year FE, same clustering, same year convention (funding merged
@@ -31,7 +31,14 @@
 clear all
 set more off
 
-global topdir "/Users/hhadah/Projects/GiT/residency-medicaid-expansion"
+* Replication-friendly path handling: run from the repository root, or set
+* global topdir before running.
+if "${topdir}" == "" global topdir "`c(pwd)'"
+capture confirm file "${topdir}/programs/00-README-pipeline.md"
+if _rc {
+    di as error "Cannot find the repository root. Run from the repo root or set global topdir."
+    exit 601
+}
 global datadir "${topdir}/data/datasets"
 global rawdir  "${topdir}/data/raw"
 global figdir  "${topdir}/output/figures"
@@ -43,8 +50,20 @@ cap mkdir "${latex_figdir}"
 
 log using "${topdir}/output/24-linked-sample-reconciliation.log", replace
 
-use "${datadir}/program_residency_gme_funding.dta", clear
-replace state = strtrim(upper(state))
+* FULL 2000-2019 PANEL + in-script funding merge (funding data span 2000-2023,
+* so the linked comparison now covers the full panel window).
+preserve
+    use "${datadir}/gme_funding_expansion.dta", clear
+    collapse (sum) dgme_payment ime_payment dgme_ftes months_covered ///
+             (mean) dgme_resident_cap, by(provider_ccn fiscal_year)
+    rename fiscal_year year
+    tempfile funding_year
+    save `funding_year'
+restore
+use "${datadir}/panel_2000_2019_estimation.dta", clear
+replace matched = matched_na
+replace quota   = quota_na
+merge m:1 provider_ccn year using `funding_year', keep(master match) nogen
 egen program_numeric_id = group(state institution_code)
 encode state, gen(state_id)
 
@@ -70,8 +89,8 @@ restore
 * ---------------------------------------------------------------------------
 * Annualize cost-report FTEs by months covered (methods Minor 8)
 * ---------------------------------------------------------------------------
-* months_covered was summed across cost-report segments within a fiscal year
-* in script 08, so scaling by 12/months_covered annualizes both short-period
+* months_covered is summed across cost-report segments within a fiscal year
+* in the collapse above, so scaling by 12/months_covered annualizes both short-period
 * reports and double-counted overlapping segments.
 gen double dgme_ftes_ann = dgme_ftes * 12 / months_covered ///
     if !missing(dgme_ftes) & months_covered > 0 & !missing(months_covered)
@@ -139,7 +158,7 @@ foreach outcome in matched dgme_ftes_ann asinh_matched asinh_ftes {
 
         di _n "==================== LINKED `outcome' / `grp' ===================="
         capture noisily did_imputation `outcome' program_numeric_id year year_expanded ///
-            [aw=total_population_10], horizons(0/5) pretrend(5) ///
+            [aw=total_population_10], horizons(0/5) pretrend(10) ///
             fe(program_numeric_id year) cluster(state_id) minn(0) autosample
         if (_rc != 0) {
             di as error "did_imputation failed for `outcome' / `grp' (rc=" _rc ") -- skipping."
@@ -151,7 +170,7 @@ foreach outcome in matched dgme_ftes_ann asinh_matched asinh_ftes {
         local a   = cond(_rc == 0, r(estimate), .)
         local ase = cond(_rc == 0, r(se), .)
         local pt = .
-        capture test pre1 pre2 pre3 pre4 pre5
+        capture test pre1 pre2 pre3 pre4 pre5 pre6 pre7 pre8 pre9 pre10 pre6 pre7 pre8 pre9 pre10
         if _rc == 0 local pt = r(p)
         local tp = .
         capture test tau0 tau1 tau2 tau3 tau4 tau5

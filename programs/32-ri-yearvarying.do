@@ -23,7 +23,14 @@ clear all
 set more off
 set seed 20260723
 
-global topdir "/Users/hhadah/Projects/GiT/residency-medicaid-expansion"
+* Replication-friendly path handling: run from the repository root, or set
+* global topdir before running.
+if "${topdir}" == "" global topdir "`c(pwd)'"
+capture confirm file "${topdir}/programs/00-README-pipeline.md"
+if _rc {
+    di as error "Cannot find the repository root. Run from the repo root or set global topdir."
+    exit 601
+}
 global datadir "${topdir}/data/datasets"
 global rawdir  "${topdir}/data/raw"
 global tabdir  "${topdir}/output/tables"
@@ -37,9 +44,15 @@ if "`1'" != "" local REPS = `1'   // optional override: do 18-....do 20 (smoke t
 * -------------------------------------------------------------------------
 * Load and set up the program panel (identical to 05/13)
 * -------------------------------------------------------------------------
-use "${datadir}/cleaned_program_residency_medicaid.dta", clear
+* FULL 2000-2019 PANEL (activity-window coding is primary; see script 06)
+use "${datadir}/panel_2000_2019_estimation.dta", clear
+replace matched = matched_na
+replace quota   = quota_na
+gen double matched_per_100k = matched / total_population_10 * 100000
+gen double quota_per_100k   = quota   / total_population_10 * 100000
+gen double unmatched        = quota - matched
     replace state = strtrim(upper(state))
-    merge m:1 state year using "${datadir}/state_year_population.dta", keep(master match) nogen
+    * pop_yr already in the panel (2000-2019 series from script 03)
     gen double matched_per_100k_yr = matched / pop_yr * 100000
 egen program_numeric_id = group(state institution_code)
 encode state, gen(state_id)
@@ -63,30 +76,17 @@ tempfile master
 save `master'
 
 * -------------------------------------------------------------------------
-* _avgatt: mean of tau0..tau5 from did_imputation on the CURRENT data, using
-* cohort variable `1' as the event-time (year_expanded) argument. r(att).
+* Shared RI estimation helper (_avgatt2): returns r(att), r(se), r(t) so the
+* permutation test can be run on the coefficient AND studentized (MUST-9).
 * -------------------------------------------------------------------------
+do "${topdir}/programs/_ri-avgatt.do"
 capture program drop _avgatt
 program define _avgatt, rclass
     args cohortvar
-    capture noisily did_imputation matched_per_100k_yr program_numeric_id year `cohortvar' ///
-        [aw=total_population_10], horizons(0/5) pretrend(5) ///
-        fe(program_numeric_id year) cluster(state_id) minn(0)
-    if (_rc != 0) {
-        return scalar att = .
-        exit
-    }
-    local s = 0
-    local n = 0
-    forval h = 0/5 {
-        capture scalar __b = _b[tau`h']
-        if (_rc == 0) {
-            local s = `s' + __b
-            local n = `n' + 1
-        }
-    }
-    capture scalar drop __b
-    return scalar att = cond(`n' > 0, `s'/`n', .)
+    _avgatt2 `cohortvar' matched_per_100k_yr 5 "autosample"
+    return scalar att = r(att)
+    return scalar se  = r(se)
+    return scalar t   = r(t)
 end
 
 * -------------------------------------------------------------------------
@@ -94,7 +94,7 @@ end
 * -------------------------------------------------------------------------
 tempname ri
 tempfile ri_file
-postfile `ri' str24 spec double obs_att ri_p reps n_states n_treated_states ///
+postfile `ri' str24 spec double obs_att ri_p ri_p_student reps n_states n_treated_states ///
     using "`ri_file'", replace
 
 * -------------------------------------------------------------------------
@@ -108,9 +108,10 @@ program define _rispec
     use "`master'", clear
     keep if $RI_SAMPLEIF
 
-    * ---- observed statistic ----
+    * ---- observed statistic (coefficient AND studentized) ----
     _avgatt year_expanded
-    local obs = r(att)
+    local obs   = r(att)
+    local obs_t = r(t)
 
     * ---- state-level cohort pool (one row per state), stored once ----
     preserve
@@ -133,7 +134,9 @@ program define _rispec
     * silently became never-treated. We now pair the cohort list with the
     * sample's own state_ids in random order (a uniform permutation).
     local ge = 0
+    local ge_t = 0
     local valid = 0
+    local valid_t = 0
     forval r = 1/`reps' {
         preserve
             use `states0', clear
@@ -157,20 +160,27 @@ program define _rispec
         merge m:1 state_id using `assign', keep(master match) nogen
 
         _avgatt ye_perm
-        local perm = r(att)
+        local perm   = r(att)
+        local perm_t = r(t)
         capture drop ye_perm
         if (`perm' < .) {
             local valid = `valid' + 1
             if (abs(`perm') >= abs(`obs') - 1e-12) local ge = `ge' + 1
         }
+        if (`perm_t' < . & `obs_t' < .) {
+            local valid_t = `valid_t' + 1
+            if (abs(`perm_t') >= abs(`obs_t') - 1e-12) local ge_t = `ge_t' + 1
+        }
     }
     * exact-test convention: the observed assignment counts as one permutation
-    local rip = cond(`valid' > 0, (`ge' + 1)/(`valid' + 1), .)
+    local rip   = cond(`valid' > 0, (`ge' + 1)/(`valid' + 1), .)
+    local rip_t = cond(`valid_t' > 0, (`ge_t' + 1)/(`valid_t' + 1), .)
     di as result "RI [`specname']: obs ATT = " %7.4f `obs' ///
         "  RI p = " %6.4f `rip' "  (valid " `valid' " of `reps'" ///
         ", states `Ns', treated `Ntr')"
     global RIG_obs = `obs'
     global RIG_rip = `rip'
+    global RIG_ript = `rip_t'
     global RIG_Ns  = `Ns'
     global RIG_Ntr = `Ntr'
 end
@@ -180,15 +190,15 @@ end
 * -------------------------------------------------------------------------
 global RI_SAMPLEIF "1"
 _rispec "headline_matched100k" "`master'" `REPS'
-post `ri' ("headline_matched100k") (${RIG_obs}) (${RIG_rip}) (`REPS') (${RIG_Ns}) (${RIG_Ntr})
+post `ri' ("headline_matched100k") (${RIG_obs}) (${RIG_rip}) (${RIG_ript}) (`REPS') (${RIG_Ns}) (${RIG_Ntr})
 
 global RI_SAMPLEIF "treated_state==0 | (treated_state==1 & gme_vol==1)"
 _rispec "mech_volume" "`master'" `REPS'
-post `ri' ("mech_volume") (${RIG_obs}) (${RIG_rip}) (`REPS') (${RIG_Ns}) (${RIG_Ntr})
+post `ri' ("mech_volume") (${RIG_obs}) (${RIG_rip}) (${RIG_ript}) (`REPS') (${RIG_Ns}) (${RIG_Ntr})
 
 global RI_SAMPLEIF "treated_state==0 | (treated_state==1 & gme_notvol==1)"
 _rispec "mech_nonresponsive" "`master'" `REPS'
-post `ri' ("mech_nonresponsive") (${RIG_obs}) (${RIG_rip}) (`REPS') (${RIG_Ns}) (${RIG_Ntr})
+post `ri' ("mech_nonresponsive") (${RIG_obs}) (${RIG_rip}) (${RIG_ript}) (`REPS') (${RIG_Ns}) (${RIG_Ntr})
 
 postclose `ri'
 

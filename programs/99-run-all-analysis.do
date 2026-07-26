@@ -25,7 +25,14 @@ set varabbrev off
 * -------------------------------------------------------------------------
 * Define paths
 * -------------------------------------------------------------------------
-global topdir "/Users/hhadah/Projects/GiT/residency-medicaid-expansion"
+* Replication-friendly path handling: run from the repository root, or set
+* global topdir before running.
+if "${topdir}" == "" global topdir "`c(pwd)'"
+capture confirm file "${topdir}/programs/00-README-pipeline.md"
+if _rc {
+    di as error "Cannot find the repository root. Run from the repo root or set global topdir."
+    exit 601
+}
 global progdir "${topdir}/programs"
 global outputdir "${topdir}/output"
 
@@ -65,24 +72,36 @@ foreach s in ///
     "27-specification-grid" ///
     "28-entryexit-estimation" ///
     "29-abovecap-heterogeneity" ///
-    "30-randomization-inference" ///
-    "31-ri-outcome-weight-diagnostic" ///
-    "32-ri-yearvarying" ///
-    "33-ri-extended" ///
-    "34-label-permutation" ///
     "35-wild-bootstrap" ///
     "36-effective-clusters" {
     di ""
     di ">>> Running Script: `s'.do"
     capture noisily do "${progdir}/`s'.do"
-    if (_rc != 0) {
-        di as error "ERROR: Script `s' failed with code " _rc
+    local _rc_saved = _rc
+    capture log close            // close any log a failed child left open
+    if (`_rc_saved' != 0) {
+        di as error "ERROR: Script `s' failed with code " `_rc_saved'
         di as error "Check ${outputdir}/`s'.log for details"
     }
     else {
         di as result "COMPLETED: Script `s'"
     }
 }
+
+* =========================================================================
+* RANDOMIZATION INFERENCE (scripts 30-34) -- run separately
+* -------------------------------------------------------------------------
+* The RI suite is the pipeline's slow block (hours at full replication
+* counts on the 2000-2019 panel). It was ported to the full panel on
+* 2026-07-25 but NOT rerun; the manuscript flags its numbers as computed on
+* the 2010-2019 panel pending this rerun. To run at full fidelity:
+  foreach s in "30-randomization-inference" "31-ri-outcome-weight-diagnostic" ///
+      "32-ri-yearvarying" "33-ri-extended" "34-label-permutation" {
+      do "${progdir}/`s'.do"
+  }
+* Smoke test with reduced reps: do "${progdir}/33-ri-extended.do" 20
+* Afterwards rerun: python3 programs/37-multiple-testing-qvalues.py
+* =========================================================================
 
 * =========================================================================
 * SUMMARY

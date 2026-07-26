@@ -10,7 +10,14 @@
 
 clear all
 set more off
-global topdir "/Users/hhadah/Projects/GiT/residency-medicaid-expansion"
+* Replication-friendly path handling: run from the repository root, or set
+* global topdir before running.
+if "${topdir}" == "" global topdir "`c(pwd)'"
+capture confirm file "${topdir}/programs/00-README-pipeline.md"
+if _rc {
+    di as error "Cannot find the repository root. Run from the repo root or set global topdir."
+    exit 601
+}
 global datadir "${topdir}/data/datasets"
 global rawdir  "${topdir}/data/raw"
 global figdir  "${topdir}/output/figures"
@@ -21,10 +28,16 @@ cap mkdir "${tabdir}"
 cap mkdir "${latex_figdir}"
 log using "${topdir}/output/22-yearvarying-robustness.log", replace
 
-use "${datadir}/cleaned_program_residency_medicaid.dta", clear
+* FULL 2000-2019 PANEL (activity-window coding is primary; see script 06)
+use "${datadir}/panel_2000_2019_estimation.dta", clear
+replace matched = matched_na
+replace quota   = quota_na
+gen double matched_per_100k = matched / total_population_10 * 100000
+gen double quota_per_100k   = quota   / total_population_10 * 100000
+gen double unmatched        = quota - matched
 egen program_numeric_id = group(state institution_code)
 replace state = strtrim(upper(state))
-merge m:1 state year using "${datadir}/state_year_population.dta", keep(master match) nogen
+* pop_yr already in the panel (2000-2019 series from script 03)
 quietly count if missing(pop_yr)
 di as text "pop_yr merge: " r(N) " unmatched master rows (missing pop_yr)"
 assert r(N) == 0
@@ -58,13 +71,13 @@ use "`master'", clear
 keep if treated_state == 1
 di _n "=== NOT-YET-TREATED (year-varying), horizons 0/4 ==="
 did_imputation matched_per_100k_yr program_numeric_id year year_expanded ///
-    [aw=total_population_10], horizons(0/4) pretrend(5) ///
+    [aw=total_population_10], horizons(0/4) pretrend(10) ///
     fe(program_numeric_id year) cluster(state_id) minn(0) autosample
 lincom (tau0+tau1+tau2+tau3+tau4)/5
 local a  = r(estimate)
 local ase = r(se)
 local pt = .
-capture test pre1 pre2 pre3 pre4 pre5
+capture test pre1 pre2 pre3 pre4 pre5 pre6 pre7 pre8 pre9 pre10 pre6 pre7 pre8 pre9 pre10
 if _rc == 0 local pt = r(p)
 local tp = .
 capture test tau0 tau1 tau2 tau3 tau4
@@ -103,7 +116,7 @@ foreach v in 15 12 {
         if "`grp'"=="notvolume" keep if `nvlvar' == 1
         di _n "=== NOT-YET mech `grp' (c20`v'), horizons 0/4 ==="
         capture noisily did_imputation matched_per_100k_yr program_numeric_id year year_expanded ///
-            [aw=total_population_10], horizons(0/4) pretrend(5) ///
+            [aw=total_population_10], horizons(0/4) pretrend(10) ///
             fe(program_numeric_id year) cluster(state_id) minn(0) autosample
         if (_rc != 0) {
             di as error "notyet mech `grp' c20`v' failed (rc=" _rc ")"
@@ -114,7 +127,7 @@ foreach v in 15 12 {
         local a   = cond(_rc==0, r(estimate), .)
         local ase = cond(_rc==0, r(se), .)
         local pt = .
-        capture test pre1 pre2 pre3 pre4 pre5
+        capture test pre1 pre2 pre3 pre4 pre5 pre6 pre7 pre8 pre9 pre10 pre6 pre7 pre8 pre9 pre10
         if _rc == 0 local pt = r(p)
         local tp = .
         capture test tau0 tau1 tau2 tau3 tau4
@@ -138,7 +151,7 @@ foreach v in 15 12 {
     local mdse = .
     local mdp  = .
     capture did_imputation matched_per_100k_yr program_numeric_id year year_expanded ///
-        [aw=total_population_10], horizons(0/4) pretrend(5) cluster(state_id) ///
+        [aw=total_population_10], horizons(0/4) pretrend(10) cluster(state_id) ///
         hetby(`volvar') fe(program_numeric_id year) minn(0) autosample
     if (_rc == 0) {
         capture nlcom (_b[tau0_1]+_b[tau1_1]+_b[tau2_1]+_b[tau3_1]+_b[tau4_1])/5 ///
@@ -172,7 +185,7 @@ foreach st of local nystates {
     local mdd = .
     local mdse = .
     capture did_imputation matched_per_100k_yr program_numeric_id year year_expanded ///
-        [aw=total_population_10], horizons(0/4) pretrend(5) cluster(state_id) ///
+        [aw=total_population_10], horizons(0/4) pretrend(10) cluster(state_id) ///
         hetby(gme_vol15) fe(program_numeric_id year) minn(0) autosample
     if (_rc == 0) {
         capture nlcom (_b[tau0_1]+_b[tau1_1]+_b[tau2_1]+_b[tau3_1]+_b[tau4_1])/5 ///
@@ -202,13 +215,13 @@ use "`master'", clear
 keep if treated_state == 0 | year_expanded == 2014
 di _n "=== BALANCED COHORT (2014 adopters + never-expansion), horizons 0/5 ==="
 did_imputation matched_per_100k_yr program_numeric_id year year_expanded ///
-    [aw=total_population_10], horizons(0/5) pretrend(5) ///
+    [aw=total_population_10], horizons(0/5) pretrend(10) ///
     fe(program_numeric_id year) cluster(state_id) minn(0) autosample
 lincom (tau0+tau1+tau2+tau3+tau4+tau5)/6
 local a  = r(estimate)
 local ase = r(se)
 local pt = .
-capture test pre1 pre2 pre3 pre4 pre5
+capture test pre1 pre2 pre3 pre4 pre5 pre6 pre7 pre8 pre9 pre10 pre6 pre7 pre8 pre9 pre10
 if _rc == 0 local pt = r(p)
 local tp = .
 capture test tau0 tau1 tau2 tau3 tau4 tau5
@@ -234,33 +247,33 @@ capture program drop _honest_yv
 program define _honest_yv
     args fname tag
     did_imputation matched_per_100k_yr program_numeric_id year year_expanded ///
-        [aw=total_population_10], horizons(0/5) pretrend(5) ///
-        fe(program_numeric_id year) cluster(state_id) minn(0)
-    local order pre5 pre4 pre3 pre2 pre1 tau0 tau1 tau2 tau3 tau4 tau5
+        [aw=total_population_10], horizons(0/5) pretrend(10) ///
+        fe(program_numeric_id year) cluster(state_id) minn(0) autosample
+    local order pre10 pre9 pre8 pre7 pre6 pre5 pre4 pre3 pre2 pre1 tau0 tau1 tau2 tau3 tau4 tau5
     matrix b0 = e(b)
     matrix V0 = e(V)
-    matrix bb = J(1,11,.)
-    matrix VV = J(11,11,.)
-    forval i = 1/11 {
+    matrix bb = J(1,16,.)
+    matrix VV = J(16,16,.)
+    forval i = 1/16 {
         local ni : word `i' of `order'
         matrix bb[1,`i'] = b0[1, colnumb(b0,"`ni'")]
     }
-    forval i = 1/11 {
+    forval i = 1/16 {
         local ni : word `i' of `order'
         local ri = colnumb(V0,"`ni'")
-        forval j = 1/11 {
+        forval j = 1/16 {
             local nj : word `j' of `order'
             matrix VV[`i',`j'] = V0[`ri', colnumb(V0,"`nj'")]
         }
     }
-    local names t_m5 t_m4 t_m3 t_m2 t_m1 t0 t1 t2 t3 t4 t5
+    local names t_m10 t_m9 t_m8 t_m7 t_m6 t_m5 t_m4 t_m3 t_m2 t_m1 t0 t1 t2 t3 t4 t5
     matrix colnames bb = `names'
     matrix colnames VV = `names'
     matrix rownames VV = `names'
     matrix lvec = J(6,1,1/6)
     di _n "=== HONESTDID [`tag'] year-varying ==="
     * no in-graph title (INV-12): the LaTeX subcaption labels the panel
-    honestdid, b(bb) vcov(VV) pre(1/5) post(6/11) delta(rm) l_vec(lvec) ///
+    honestdid, b(bb) vcov(VV) pre(1/10) post(11/16) delta(rm) l_vec(lvec) ///
         mvec(0(0.1)2) coefplot ///
         ytitle("Average post ATT (per 100,000, year-varying)") ///
         graphregion(color(white)) plotregion(color(white))
@@ -281,5 +294,69 @@ use "`master'", clear
 keep if urban_rural == 0
 _honest_yv "appx-honestdid-urban" "urban"
 
-di _n "=== year-varying robustness complete: appx-notyet, appx-cohort2014, appx-honestdid-{headline,nonresp,urban} ==="
+
+* ---------------- 3) PRE-ACA PLACEBO (expansion shifted back 10 years) --------
+* Formerly the standalone long-panel placebo script. Each expansion state gets
+* a placebo expansion 10 years before its real one; estimation on 2000-2013
+* only (no real treatment in sample); never-expansion states as controls.
+* Figures: appx-placebo-preaca (institution), appx-placebo-statetotal (state).
+tempname plres
+tempfile plfile
+postfile `plres' str16 spec double avg_treat avg_se treat_p pretrend_p baseline pct ///
+    using "`plfile'", replace
+
+capture program drop _placebo_run
+program define _placebo_run
+    args outcome idvar tag resh fname yti
+    capture noisily did_imputation `outcome' `idvar' year year_expanded_pl ///
+        [aw=total_population_10], horizons(0/5) pretrend(4) ///
+        fe(`idvar' year) cluster(state_id) minn(0) autosample
+    if (_rc != 0) {
+        di as error "`tag' failed (rc=" _rc ")"
+        post `resh' ("`tag'") (.) (.) (.) (.) (.) (.)
+        exit
+    }
+    capture lincom (tau0+tau1+tau2+tau3+tau4+tau5)/6
+    local a   = cond(_rc==0, r(estimate), .)
+    local ase = cond(_rc==0, r(se), .)
+    local pt = .
+    capture test pre1 pre2 pre3 pre4
+    if _rc == 0 local pt = r(p)
+    local tp = .
+    capture test tau0 tau1 tau2 tau3 tau4 tau5
+    if _rc == 0 local tp = r(p)
+    quietly summarize `outcome' if !missing(year_expanded_pl) & year < year_expanded_pl [aw=total_population_10]
+    local b = r(mean)
+    local pct = cond(`b' < . & `b' != 0, 100*`a'/`b', .)
+    post `resh' ("`tag'") (`a') (`ase') (`tp') (`pt') (`b') (`pct')
+    di as result "`tag': avg=" %9.4f `a' " se=" %9.4f `ase' " pct=" %5.1f `pct' ///
+        " treat_p=" %6.3f `tp' " pretrend_p=" %6.3f `pt'
+    _fillcoef 5 4
+    _esplot "`fname'" "`yti'" "" `a' `b' `pct' `tp' `pt' 5 4
+end
+
+use "`master'", clear
+keep if year <= 2013
+gen year_expanded_pl = year_expanded - 10
+_placebo_run matched_per_100k_yr program_numeric_id "placebo_na" `plres' ///
+    "appx-placebo-preaca" "Placebo Effect (per 100,000, year-varying pop.)"
+
+use "`master'", clear
+collapse (sum) matched_zf (first) pop_yr total_population_10 year_expanded treated_state, ///
+    by(state state_id year)
+gen double state_total_per_100k = matched_zf / pop_yr * 100000
+keep if year <= 2013
+gen year_expanded_pl = year_expanded - 10
+xtset state_id year
+_placebo_run state_total_per_100k state_id "placebo_state" `plres' ///
+    "appx-placebo-statetotal" "Placebo Effect (state total per 100,000)"
+
+postclose `plres'
+preserve
+use "`plfile'", clear
+list, clean noobs
+export delimited using "${tabdir}/preaca-placebo-summary.csv", replace
+restore
+
+di _n "=== year-varying robustness complete: appx-notyet, appx-cohort2014, appx-honestdid-*, appx-placebo-* ==="
 log close

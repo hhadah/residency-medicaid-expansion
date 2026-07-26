@@ -22,7 +22,14 @@
 clear all
 set more off
 
-global topdir "/Users/hhadah/Projects/GiT/residency-medicaid-expansion"
+* Replication-friendly path handling: run from the repository root, or set
+* global topdir before running.
+if "${topdir}" == "" global topdir "`c(pwd)'"
+capture confirm file "${topdir}/programs/00-README-pipeline.md"
+if _rc {
+    di as error "Cannot find the repository root. Run from the repo root or set global topdir."
+    exit 601
+}
 global datadir "${topdir}/data/datasets"
 global rawdir  "${topdir}/data/raw"
 global figdir  "${topdir}/output/figures"
@@ -34,9 +41,15 @@ cap mkdir "${latex_figdir}"
 
 log using "${topdir}/output/23-leave-one-out.log", replace
 
-use "${datadir}/cleaned_program_residency_medicaid.dta", clear
+* FULL 2000-2019 PANEL (activity-window coding is primary; see script 06)
+use "${datadir}/panel_2000_2019_estimation.dta", clear
+replace matched = matched_na
+replace quota   = quota_na
+gen double matched_per_100k = matched / total_population_10 * 100000
+gen double quota_per_100k   = quota   / total_population_10 * 100000
+gen double unmatched        = quota - matched
 replace state = strtrim(upper(state))
-merge m:1 state year using "${datadir}/state_year_population.dta", keep(master match) nogen
+* pop_yr already in the panel (2000-2019 series from script 03)
 quietly count if missing(pop_yr)
 assert r(N) == 0
 gen double matched_per_100k_yr = matched / pop_yr * 100000
@@ -75,7 +88,7 @@ program define _avg_headline, rclass
     return scalar avg = .
     return scalar se  = .
     capture did_imputation matched_per_100k_yr program_numeric_id year year_expanded ///
-        [aw=total_population_10], horizons(0/5) pretrend(5) ///
+        [aw=total_population_10], horizons(0/5) pretrend(10) ///
         fe(program_numeric_id year) cluster(state_id) minn(0) autosample
     if (_rc != 0) exit
     capture lincom (tau0+tau1+tau2+tau3+tau4+tau5)/6
@@ -91,7 +104,7 @@ program define _avg_mechdiff, rclass
     return scalar avg = .
     return scalar se  = .
     capture did_imputation matched_per_100k_yr program_numeric_id year year_expanded ///
-        [aw=total_population_10], horizons(0/5) pretrend(5) cluster(state_id) ///
+        [aw=total_population_10], horizons(0/5) pretrend(10) cluster(state_id) ///
         hetby(`volvar') fe(program_numeric_id year) minn(0) autosample
     if (_rc != 0) exit
     capture nlcom (_b[tau0_1]+_b[tau1_1]+_b[tau2_1]+_b[tau3_1]+_b[tau4_1]+_b[tau5_1])/6 ///

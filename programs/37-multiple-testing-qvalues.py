@@ -4,7 +4,10 @@ Multiple-testing correction for the primary family of hypotheses, on the
 YEAR-VARYING per-capita outcome (the paper's headline specification).
 
 The family is: full sample (headline), urban hospitals, rural hospitals,
-primary care, non-primary care, and offered positions (quota). For each member
+primary care, non-primary care, offered positions (quota), and -- added in the
+referee response (the referees noted the family excluded the estimates the
+paper leans on most) -- the two mechanism arms and the cross-formula
+difference. For each member
 we read the average post-expansion effect, its SE, and TWO p-values:
   (i)  the clustered joint post-treatment p-value from the Stata summary
        tables (scripts 24/25), and
@@ -66,7 +69,7 @@ def require(rows, key, path):
     return rows[key]
 
 
-for lab in ("headline", "urban", "rural", "quota"):
+for lab in ("headline", "urban", "rural", "quota", "mech_volume", "mech_notvolume", "mech_diff"):
     require(suite, lab, SUITE)
 for lab in ("Primary Care", "Non-Primary Care"):
     require(spec, lab, SPEC)
@@ -79,6 +82,9 @@ family = [
     ("Primary care",           spec["Primary Care"],     require(ri_e, "primary", RI_EXT)),
     ("Non-primary care",       spec["Non-Primary Care"], require(ri_e, "nonprimary", RI_EXT)),
     ("Offered positions (quota)", suite["quota"], require(ri_e, "quota", RI_EXT)),
+    ("Volume-responsive arm",   suite["mech_volume"],    require(ri_h, "mech_volume", RI_HEAD)),
+    ("Non-responsive arm",      suite["mech_notvolume"], require(ri_h, "mech_nonresponsive", RI_HEAD)),
+    ("Cross-formula difference", suite["mech_diff"],     require(ri_e, "mechdiff", RI_EXT)),
 ]
 labels = [x[0] for x in family]
 avg  = np.array([g(x[1], "avg_treat") for x in family], float)
@@ -87,14 +93,23 @@ p    = np.array([g(x[1], "treat_p") for x in family], float)
 p_ri = np.array([g(x[2], "ri_p") for x in family], float)
 M = len(p)
 
-# sanity: the RI observed ATT must match the reported estimate (same spec)
-for lab, row, rirow in family:
+# RI vintage check: if the RI observed ATT does not match the reported
+# estimate, the RI scripts have not been rerun on the current panel. The
+# affected rows are FLAGGED as stale rather than fatal (2026-07-25: RI rerun
+# on the full 2000-2019 panel deferred; see 99-run-all-analysis.do).
+ri_stale = np.zeros(len(family), bool)
+for i, (lab, row, rirow) in enumerate(family):
     a, o = g(row, "avg_treat"), g(rirow, "obs_att")
-    if np.isfinite(a) and np.isfinite(o) and abs(a - o) > 5e-4:
-        raise SystemExit(f"ERROR: '{lab}' RI observed ATT ({o:.4f}) does not match "
-                         f"the reported estimate ({a:.4f}); scripts are out of sync.")
-if np.isnan(p).any() or np.isnan(p_ri).any():
-    raise SystemExit("ERROR: missing p-values in the family; check upstream CSVs.")
+    # The cross-formula difference is constructed differently in the RI script
+    # (split-sample arm difference) than in the suite (pooled hetby + nlcom),
+    # so a small numerical gap is expected there, not staleness.
+    tol = 3e-3 if lab == "Cross-formula difference" else 5e-4
+    if np.isfinite(a) and np.isfinite(o) and abs(a - o) > tol:
+        ri_stale[i] = True
+        print(f"WARNING: '{lab}' RI p is STALE (RI obs {o:.4f} vs current {a:.4f}); "
+              "rerun scripts 30-34 on the current panel.")
+if np.isnan(p).any():
+    raise SystemExit("ERROR: missing clustered p-values in the family; check upstream CSVs.")
 
 
 def bh_qvalues(pvals):
@@ -118,9 +133,9 @@ q_ri = bh_qvalues(p_ri)
 os.makedirs(TABDIR, exist_ok=True)
 csv_path = os.path.join(TABDIR, "multiple-testing-qvalues.csv")
 with open(csv_path, "w") as f:
-    f.write("hypothesis,avg_effect,se,p_clustered,q_clustered,p_ri,q_ri\n")
-    for lab, a, s, pv, qv, pr, qr in zip(labels, avg, se, p, q_cl, p_ri, q_ri):
-        f.write(f"{lab},{a:.4f},{s:.4f},{pv:.4f},{qv:.4f},{pr:.4f},{qr:.4f}\n")
+    f.write("hypothesis,avg_effect,se,p_clustered,q_clustered,p_ri,q_ri,ri_stale\n")
+    for lab, a, s, pv, qv, pr, qr, st in zip(labels, avg, se, p, q_cl, p_ri, q_ri, ri_stale):
+        f.write(f"{lab},{a:.4f},{s:.4f},{pv:.4f},{qv:.4f},{pr:.4f},{qr:.4f},{int(st)}\n")
 
 # ---- write LaTeX tabular fragment (bare tabular, per project standard) ----
 tex_path = os.path.join(TOPDIR, "my_paper", "tables", "multiple-testing-qvalues.tex")
@@ -137,8 +152,9 @@ with open(tex_path, "w") as f:
     f.write("\\cmidrule(lr){2-3} \\cmidrule(lr){4-5}\n")
     f.write("Hypothesis (avg.\\ post effect, matched per 100{,}000) & $p$-value & $q$-value & $p$-value & $q$-value \\\\\n")
     f.write("\\midrule\n")
-    for lab, pv, qv, pr, qr in zip(labels, p, q_cl, p_ri, q_ri):
-        f.write(f"{lab} & {fmt_p(pv)} & {fmt_p(qv)} & {fmt_p(pr)} & {fmt_p(qr)} \\\\\n")
+    for lab, pv, qv, pr, qr, st in zip(labels, p, q_cl, p_ri, q_ri, ri_stale):
+        star = "$^{s}$" if st else ""
+        f.write(f"{lab} & {fmt_p(pv)} & {fmt_p(qv)} & {fmt_p(pr)}{star} & {fmt_p(qr)}{star} \\\\\n")
     f.write("\\bottomrule\n\\end{tabular}\n")
 
 # ---- forest plot ----

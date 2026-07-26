@@ -26,7 +26,14 @@
 clear all
 set more off
 
-global topdir "/Users/hhadah/Projects/GiT/residency-medicaid-expansion"
+* Replication-friendly path handling: run from the repository root, or set
+* global topdir before running.
+if "${topdir}" == "" global topdir "`c(pwd)'"
+capture confirm file "${topdir}/programs/00-README-pipeline.md"
+if _rc {
+    di as error "Cannot find the repository root. Run from the repo root or set global topdir."
+    exit 601
+}
 global datadir "${topdir}/data/datasets"
 global figdir  "${topdir}/output/figures"
 global tabdir  "${topdir}/output/tables"
@@ -37,10 +44,16 @@ cap mkdir "${latex_figdir}"
 
 log using "${topdir}/output/26-deflator-robustness.log", replace
 
-use "${datadir}/cleaned_program_residency_medicaid.dta", clear
+* FULL 2000-2019 PANEL (activity-window coding is primary; see script 06)
+use "${datadir}/panel_2000_2019_estimation.dta", clear
+replace matched = matched_na
+replace quota   = quota_na
+gen double matched_per_100k = matched / total_population_10 * 100000
+gen double quota_per_100k   = quota   / total_population_10 * 100000
+gen double unmatched        = quota - matched
 replace state = strtrim(upper(state))
 egen program_numeric_id = group(state institution_code)
-merge m:1 state year using "${datadir}/state_year_population.dta", keep(master match) nogen
+* pop_yr already in the panel (2000-2019 series from script 03)
 quietly count if missing(pop_yr)
 assert r(N) == 0
 merge m:1 state year using "${datadir}/state_year_deflators.dta", keep(master match) nogen
@@ -70,14 +83,14 @@ program define _defrun
     if ("`ctrls'" != "") local copt "controls(`ctrls')"
     di _n "==================== `tag' ===================="
     capture noisily did_imputation `outcome' program_numeric_id year year_expanded ///
-        [aw=total_population_10], horizons(0/5) pretrend(5) `copt' ///
+        [aw=total_population_10], horizons(0/5) pretrend(10) `copt' ///
         fe(program_numeric_id year) cluster(state_id) minn(0) autosample
     if (_rc != 0) {
         * SE convergence can fail with a time-varying control (rc 430);
         * retry with nose for point estimates, posted without SEs.
         di as error "`tag' failed (rc=" _rc "), retrying with nose"
         capture noisily did_imputation `outcome' program_numeric_id year year_expanded ///
-            [aw=total_population_10], horizons(0/5) pretrend(5) `copt' ///
+            [aw=total_population_10], horizons(0/5) pretrend(10) `copt' ///
             fe(program_numeric_id year) cluster(state_id) minn(0) autosample nose
         if (_rc != 0) {
             di as error "`tag' failed with nose too (rc=" _rc ")"
@@ -106,7 +119,7 @@ program define _defrun
     local a   = cond(_rc==0, r(estimate), .)
     local ase = cond(_rc==0, r(se), .)
     local pt = .
-    capture test pre1 pre2 pre3 pre4 pre5
+    capture test pre1 pre2 pre3 pre4 pre5 pre6 pre7 pre8 pre9 pre10 pre6 pre7 pre8 pre9 pre10
     if _rc == 0 local pt = r(p)
     local tp = .
     capture test tau0 tau1 tau2 tau3 tau4 tau5

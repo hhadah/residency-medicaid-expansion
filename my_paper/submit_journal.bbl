@@ -631,6 +631,44 @@
       \field{pages}{1405\bibrangedash 1454}
       \range{pages}{50}
     \endentry
+    \entry{chen2024logs}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=7475daa1cb086edff0cd0691571a915d}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Jiafeng},
+           giveni={J\bibinitperiod}}}%
+        {{hash=73c1da3266b3c7728f6b1f38a73c7671}{%
+           family={Roth},
+           familyi={R\bibinitperiod},
+           given={Jonathan},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{52954c3e9bfdb77ae37811e905cee1fc}
+      \strng{fullhash}{52954c3e9bfdb77ae37811e905cee1fc}
+      \strng{fullhashraw}{52954c3e9bfdb77ae37811e905cee1fc}
+      \strng{bibnamehash}{52954c3e9bfdb77ae37811e905cee1fc}
+      \strng{authorbibnamehash}{52954c3e9bfdb77ae37811e905cee1fc}
+      \strng{authornamehash}{52954c3e9bfdb77ae37811e905cee1fc}
+      \strng{authorfullhash}{52954c3e9bfdb77ae37811e905cee1fc}
+      \strng{authorfullhashraw}{52954c3e9bfdb77ae37811e905cee1fc}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{author}
+      \field{journaltitle}{The Quarterly Journal of Economics}
+      \field{number}{2}
+      \field{title}{Logs with Zeros? {Some} Problems and Solutions}
+      \field{volume}{139}
+      \field{year}{2024}
+      \field{pages}{891\bibrangedash 936}
+      \range{pages}{46}
+      \verb{doi}
+      \verb 10.1093/qje/qjad054
+      \endverb
+    \endentry
     \entry{crs2022}{misc}{}{}
       \name{author}{1}{}{%
         {{hash=9747118b73f37941f9d4432d9008be34}{%

@@ -16,7 +16,14 @@
 clear all
 set more off
 
-global topdir "/Users/hhadah/Projects/GiT/residency-medicaid-expansion"
+* Replication-friendly path handling: run from the repository root, or set
+* global topdir before running.
+if "${topdir}" == "" global topdir "`c(pwd)'"
+capture confirm file "${topdir}/programs/00-README-pipeline.md"
+if _rc {
+    di as error "Cannot find the repository root. Run from the repo root or set global topdir."
+    exit 601
+}
 global datadir "${topdir}/data/datasets"
 global figdir "${topdir}/output/figures"
 global tabdir "${topdir}/output/tables"
@@ -31,9 +38,15 @@ log using "${topdir}/output/17-dd-methods-comparison.log", replace
 * -------------------------------------------------------------------------
 * Load cleaned data + year-varying ACS population (headline denominator)
 * -------------------------------------------------------------------------
-use "${datadir}/cleaned_program_residency_medicaid.dta", clear
+* FULL 2000-2019 PANEL (activity-window coding is primary; see script 06)
+use "${datadir}/panel_2000_2019_estimation.dta", clear
+replace matched = matched_na
+replace quota   = quota_na
+gen double matched_per_100k = matched / total_population_10 * 100000
+gen double quota_per_100k   = quota   / total_population_10 * 100000
+gen double unmatched        = quota - matched
 replace state = strtrim(upper(state))
-merge m:1 state year using "${datadir}/state_year_population.dta", keep(master match) nogen
+* pop_yr already in the panel (2000-2019 series from script 03)
 gen double matched_per_100k_yr = matched / pop_yr * 100000
 
 * -------------------------------------------------------------------------
@@ -113,11 +126,11 @@ foreach Y of global outcomes {
     di "--- Borusyak, Jaravel and Spiess (2024) ---"
     capture noisily did_imputation `Y' program_numeric_id year year_expanded ///
         [aw=total_population_10], horizons(0/`maxlag') pretrend(`maxlead') ///
-        fe(program_numeric_id year) cluster(state_id) minn(0)
+        fe(program_numeric_id year) cluster(state_id) minn(0) autosample
     if (_rc == 0) estimates store didimp
     * BJS pre-trend joint test, captured before other estimators overwrite e().
     local pretrend_p = .
-    capture test pre1 pre2 pre3 pre4 pre5
+    capture test pre1 pre2 pre3 pre4 pre5 pre6 pre7 pre8 pre9 pre10 pre6 pre7 pre8 pre9 pre10
     if (_rc == 0) local pretrend_p = r(p)
 
     ***********************
@@ -208,5 +221,51 @@ di "=================================================================="
 di "DiD methods comparison completed (csdid excluded)."
 di "  main-estimators.png, appx-estimators-levels.png, appx-estimators-quota.png"
 di "=================================================================="
+
+
+* -------------------------------------------------------------------------
+* Callaway-Sant'Anna (2021) via csdid (referee request: report the estimator
+* with the not-yet-treated control group, or the precise failure diagnostic).
+* csdid requires a group variable equal to 0 for never-treated units.
+* -------------------------------------------------------------------------
+* reload the panel fresh (the stacking section above reshapes the data)
+use "${datadir}/panel_2000_2019_estimation.dta", clear
+replace matched = matched_na
+egen program_numeric_id = group(state institution_code)
+encode state, gen(state_id_cs)
+* pop_yr is in the panel
+gen double matched_per_100k_yr = matched / pop_yr * 100000
+capture drop gvar_cs
+gen gvar_cs = cond(missing(year_expanded), 0, year_expanded)
+tempname cs
+tempfile csfile
+postfile `cs' str24 spec double att se p using "`csfile'", replace
+capture noisily csdid matched_per_100k_yr [iw=total_population_10], ///
+    ivar(program_numeric_id) time(year) gvar(gvar_cs) notyettreated agg(simple)
+if (_rc != 0) {
+    di as text "weighted csdid failed (rc=" _rc "); retrying unweighted"
+    capture noisily csdid matched_per_100k_yr, ///
+        ivar(program_numeric_id) time(year) gvar(gvar_cs) notyettreated agg(simple)
+}
+if (_rc == 0) {
+    matrix _b_cs = e(b)
+    matrix _V_cs = e(V)
+    local att = _b_cs[1,1]
+    local se  = sqrt(_V_cs[1,1])
+    local p   = 2*normal(-abs(`att'/`se'))
+    post `cs' ("csdid_notyet_simple") (`att') (`se') (`p')
+    di as result "csdid (notyettreated, simple): ATT = " %9.4f `att' ///
+        " (se " %9.4f `se' ", p = " %6.3f `p' ")"
+}
+else {
+    local rc_cs = _rc
+    di as error "csdid failed with rc=`rc_cs' -- record this diagnostic in the paper footnote."
+    post `cs' ("csdid_FAILED_rc`rc_cs'") (.) (.) (.)
+}
+postclose `cs'
+preserve
+use "`csfile'", clear
+export delimited using "${tabdir}/csdid-summary.csv", replace
+restore
 
 log close

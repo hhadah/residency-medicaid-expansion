@@ -10,7 +10,14 @@ clear all
 set more off
 set seed 20260723
 
-global topdir "/Users/hhadah/Projects/GiT/residency-medicaid-expansion"
+* Replication-friendly path handling: run from the repository root, or set
+* global topdir before running.
+if "${topdir}" == "" global topdir "`c(pwd)'"
+capture confirm file "${topdir}/programs/00-README-pipeline.md"
+if _rc {
+    di as error "Cannot find the repository root. Run from the repo root or set global topdir."
+    exit 601
+}
 global datadir "${topdir}/data/datasets"
 global tabdir  "${topdir}/output/tables"
 
@@ -19,7 +26,13 @@ log using "${topdir}/output/31-ri-outcome-weight-diagnostic.log", replace
 local REPS = 500
 if "`1'" != "" local REPS = `1'
 
-use "${datadir}/cleaned_program_residency_medicaid.dta", clear
+* FULL 2000-2019 PANEL (activity-window coding is primary; see script 06)
+use "${datadir}/panel_2000_2019_estimation.dta", clear
+replace matched = matched_na
+replace quota   = quota_na
+gen double matched_per_100k = matched / total_population_10 * 100000
+gen double quota_per_100k   = quota   / total_population_10 * 100000
+gen double unmatched        = quota - matched
 egen program_numeric_id = group(state institution_code)
 encode state, gen(state_id)
 xtset program_numeric_id year
@@ -31,8 +44,8 @@ capture program drop _avgatt
 program define _avgatt, rclass
     args cohortvar
     capture noisily did_imputation $RIO program_numeric_id year `cohortvar' ///
-        $RIW, horizons(0/5) pretrend(5) fe(program_numeric_id year) ///
-        cluster(state_id) minn(0)
+        $RIW, horizons(0/5) pretrend(10) fe(program_numeric_id year) ///
+        cluster(state_id) minn(0) autosample
     if (_rc != 0) {
         return scalar att = .
         exit

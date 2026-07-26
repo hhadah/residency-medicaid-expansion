@@ -33,7 +33,14 @@
 clear all
 set more off
 
-global topdir "/Users/hhadah/Projects/GiT/residency-medicaid-expansion"
+* Replication-friendly path handling: run from the repository root, or set
+* global topdir before running.
+if "${topdir}" == "" global topdir "`c(pwd)'"
+capture confirm file "${topdir}/programs/00-README-pipeline.md"
+if _rc {
+    di as error "Cannot find the repository root. Run from the repo root or set global topdir."
+    exit 601
+}
 global datadir "${topdir}/data/datasets"
 global rawdir  "${topdir}/data/raw"
 global figdir  "${topdir}/output/figures"
@@ -65,10 +72,16 @@ list state gme_formula gme_formula_2015 if vol12 != vol15, clean noobs
 * ---------------------------------------------------------------------------
 * NRMP panel prep (as in script 20)
 * ---------------------------------------------------------------------------
-use "${datadir}/cleaned_program_residency_medicaid.dta", clear
+* FULL 2000-2019 PANEL (activity-window coding is primary; see script 06)
+use "${datadir}/panel_2000_2019_estimation.dta", clear
+replace matched = matched_na
+replace quota   = quota_na
+gen double matched_per_100k = matched / total_population_10 * 100000
+gen double quota_per_100k   = quota   / total_population_10 * 100000
+gen double unmatched        = quota - matched
 egen program_numeric_id = group(state institution_code)
 replace state = strtrim(upper(state))
-merge m:1 state year using "${datadir}/state_year_population.dta", keep(master match) nogen
+* pop_yr already in the panel (2000-2019 series from script 03)
 quietly count if missing(pop_yr)
 assert r(N) == 0
 gen double matched_per_100k_yr = matched / pop_yr * 100000
@@ -119,7 +132,7 @@ program define _mechrun
         if "`grp'"=="volume"    keep if treated_state==0 | (treated_state==1 & `volvar'==1)
         if "`grp'"=="notvolume" keep if treated_state==0 | (treated_state==1 & `nvlvar'==1)
         capture noisily did_imputation matched_per_100k_yr program_numeric_id year year_expanded ///
-            [aw=total_population_10], horizons(0/5) pretrend(5) ///
+            [aw=total_population_10], horizons(0/5) pretrend(10) ///
             fe(program_numeric_id year) cluster(state_id) minn(0) autosample
         if (_rc != 0) {
             post `resh' ("`cls'") ("mech_`grp'") ("`flipped'") (.) (.) (.) (.) (.) (.)
@@ -130,7 +143,7 @@ program define _mechrun
         local a   = cond(_rc==0, r(estimate), .)
         local ase = cond(_rc==0, r(se), .)
         local pt = .
-        capture test pre1 pre2 pre3 pre4 pre5
+        capture test pre1 pre2 pre3 pre4 pre5 pre6 pre7 pre8 pre9 pre10 pre6 pre7 pre8 pre9 pre10
         if _rc == 0 local pt = r(p)
         local tp = .
         capture test tau0 tau1 tau2 tau3 tau4 tau5
@@ -152,7 +165,7 @@ program define _mechrun
     preserve
     keep if treated_state == 0 | `volvar' == 1 | `nvlvar' == 1
     quietly capture did_imputation matched_per_100k_yr program_numeric_id year year_expanded ///
-        [aw=total_population_10], horizons(0/5) pretrend(5) cluster(state_id) ///
+        [aw=total_population_10], horizons(0/5) pretrend(10) cluster(state_id) ///
         hetby(`volvar') fe(program_numeric_id year) minn(0) autosample
     local mdd  = .
     local mdse = .
@@ -211,9 +224,13 @@ export delimited using "${tabdir}/reclassification-sensitivity.csv", replace
 use "${datadir}/gme_funding_expansion.dta", clear
 drop if missing(expansion_state)
 egen provider_numeric_id = group(state provider_ccn)
-collapse (sum)  dgme_payment ime_payment dgme_ftes ///
+collapse (sum)  dgme_payment ime_payment dgme_ftes months_covered ///
         (first) state year_expanded expanded_ever, ///
         by(provider_numeric_id fiscal_year)
+* annualize by months covered (as in scripts 18/19/24)
+foreach v in dgme_payment ime_payment dgme_ftes {
+    replace `v' = `v' * 12 / months_covered if months_covered > 0 & !missing(months_covered)
+}
 encode state, gen(state_id)
 gen byte treated_state = expanded_ever
 xtset provider_numeric_id fiscal_year
@@ -239,7 +256,7 @@ foreach outcome in asinh_dgme asinh_ime asinh_dgme_ftes {
         if "`grp'"=="notvolume" keep if treated_state==0 | (treated_state==1 & nvl15==1)
         di _n "========== FIRST STAGE (2015 vintage): `outcome' / `grp' =========="
         capture noisily did_imputation `outcome' provider_numeric_id fiscal_year year_expanded, ///
-            horizons(0/5) pretrend(5) fe(provider_numeric_id fiscal_year) ///
+            horizons(0/5) pretrend(10) fe(provider_numeric_id fiscal_year) ///
             cluster(state_id) minn(0) autosample
         if (_rc != 0) {
             post `fs' ("`outcome'") ("`grp'") (.) (.) (.) (.) (.) (.)
@@ -249,7 +266,7 @@ foreach outcome in asinh_dgme asinh_ime asinh_dgme_ftes {
         local a   = cond(_rc==0, r(estimate), .)
         local ase = cond(_rc==0, r(se), .)
         local pt = .
-        capture test pre1 pre2 pre3 pre4 pre5
+        capture test pre1 pre2 pre3 pre4 pre5 pre6 pre7 pre8 pre9 pre10 pre6 pre7 pre8 pre9 pre10
         if _rc == 0 local pt = r(p)
         local tp = .
         capture test tau0 tau1 tau2 tau3 tau4 tau5
@@ -270,7 +287,7 @@ foreach outcome in asinh_dgme asinh_ime asinh_dgme_ftes {
     use "`fsmaster'", clear
     keep if treated_state == 0 | vol15 == 1 | nvl15 == 1
     capture did_imputation `outcome' provider_numeric_id fiscal_year year_expanded, ///
-        horizons(0/5) pretrend(5) fe(provider_numeric_id fiscal_year) ///
+        horizons(0/5) pretrend(10) fe(provider_numeric_id fiscal_year) ///
         cluster(state_id) minn(0) autosample hetby(vol15)
     local mdd  = .
     local mdse = .

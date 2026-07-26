@@ -12,7 +12,14 @@ set more off
 * -------------------------------------------------------------------------
 * Define paths
 * -------------------------------------------------------------------------
-global topdir "/Users/hhadah/Projects/GiT/residency-medicaid-expansion"
+* Replication-friendly path handling: run from the repository root, or set
+* global topdir before running.
+if "${topdir}" == "" global topdir "`c(pwd)'"
+capture confirm file "${topdir}/programs/00-README-pipeline.md"
+if _rc {
+    di as error "Cannot find the repository root. Run from the repo root or set global topdir."
+    exit 601
+}
 global datadir "${topdir}/data/datasets"
 global figdir "${topdir}/output/figures"
 global tabdir "${topdir}/output/tables"
@@ -27,7 +34,13 @@ log using "${topdir}/output/16-dd-analysis-popcnt.log", replace
 * -------------------------------------------------------------------------
 * Load cleaned data (produced by 02-data-cleaning.R)
 * -------------------------------------------------------------------------
-use "${datadir}/cleaned_program_residency_medicaid.dta", clear
+* FULL 2000-2019 PANEL (activity-window coding is primary; see script 06)
+use "${datadir}/panel_2000_2019_estimation.dta", clear
+replace matched = matched_na
+replace quota   = quota_na
+gen double matched_per_100k = matched / total_population_10 * 100000
+gen double quota_per_100k   = quota   / total_population_10 * 100000
+gen double unmatched        = quota - matched
 
 * -------------------------------------------------------------------------
 * Panel identifiers
@@ -80,8 +93,8 @@ foreach raw_outcome in matched quota {
 
     di "Pre-computing aggregate effect for `raw_outcome' (unweighted, pop control)..."
     capture noisily did_imputation `raw_outcome' program_numeric_id year year_expanded, ///
-        horizons(0/5) pretrend(5) fe(program_numeric_id year) ///
-        controls(total_population_10) cluster(state_id) minn(0)
+        horizons(0/5) pretrend(10) fe(program_numeric_id year) ///
+        controls(total_population_10) cluster(state_id) minn(0) autosample
     if (_rc != 0) continue
 
     local _sum = 0
@@ -135,8 +148,8 @@ foreach outcome of global outcomes {
     di "========================================================================="
     di ""
     capture noisily did_imputation `outcome' program_numeric_id year year_expanded, ///
-        horizons(0/5) pretrend(5) fe(program_numeric_id year) ///
-        controls(total_population_10) cluster(state_id) minn(0)
+        horizons(0/5) pretrend(10) fe(program_numeric_id year) ///
+        controls(total_population_10) cluster(state_id) minn(0) autosample
     if (_rc != 0) {
         di as error "did_imputation failed for outcome `outcome'. Error code `_rc'."
         continue
@@ -158,7 +171,7 @@ foreach outcome of global outcomes {
     else local avg_treat = .
     local pretrend_p = .
     local treat_p = .
-    capture noisily test pre1 pre2 pre3 pre4 pre5
+    capture noisily test pre1 pre2 pre3 pre4 pre5 pre6 pre7 pre8 pre9 pre10 pre6 pre7 pre8 pre9 pre10
     if (_rc == 0) {
         local pretrend_p = r(p)
     }
@@ -215,10 +228,10 @@ foreach outcome of global outcomes {
     if (`has_national') di "Avg. annual aggregate effect: " %15.0fc `national_effect'
     if (`pretrend_p' < .) di "Pretrend joint p-value: " %9.3f `pretrend_p'
     if (`treat_p' < .)   di "Treatment joint p-value: " %9.3f `treat_p'
-    matrix plot_coef = J(11, 3, .)
+    matrix plot_coef = J(16, 3, .)
     matrix colnames plot_coef = period coef se
     local row = 1
-    forval h = 5(-1)1 {
+    forval h = 10(-1)1 {
         matrix plot_coef[`row',1] = -`h'
         capture matrix plot_coef[`row',2] = _b[pre`h']
         capture matrix plot_coef[`row',3] = _se[pre`h']
@@ -256,10 +269,10 @@ foreach outcome of global outcomes {
     local plot_title "Event Study: `label'"
     quietly summarize ci_upper
     local y_annot = r(max) * 0.9
-    local x_annot = -3
+    local x_annot = -7
     if (strpos("`short'", "_100k") > 0) {
         local ytitle_str "Treatment Effect (per 100,000 population)"
-        local x_annot = -3
+        local x_annot = -7
     }
     if ("`outcome'" == "matched") {
         local ytitle_str "Treatment Effect (number of residency positions)"
@@ -281,7 +294,7 @@ foreach outcome of global outcomes {
         , ///
         xline(-0.5, lcolor(black) lpattern(solid) lwidth(thin)) ///
         yline(0, lcolor(black) lpattern(solid) lwidth(thin)) ///
-        xlabel(-5(1)5, labsize(small)) ///
+        xlabel(-10(1)5, labsize(small)) ///
         ylabel(#8, labsize(small) format(%9.2f)) ///
         xtitle("Years relative to Medicaid expansion", size(small)) ///
         ytitle("`ytitle_str'", size(small)) ///

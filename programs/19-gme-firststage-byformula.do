@@ -20,7 +20,14 @@
 clear all
 set more off
 
-global topdir "/Users/hhadah/Projects/GiT/residency-medicaid-expansion"
+* Replication-friendly path handling: run from the repository root, or set
+* global topdir before running.
+if "${topdir}" == "" global topdir "`c(pwd)'"
+capture confirm file "${topdir}/programs/00-README-pipeline.md"
+if _rc {
+    di as error "Cannot find the repository root. Run from the repo root or set global topdir."
+    exit 601
+}
 global datadir "${topdir}/data/datasets"
 global rawdir  "${topdir}/data/raw"
 global figdir  "${topdir}/output/figures"
@@ -40,10 +47,20 @@ drop if missing(expansion_state)
 egen provider_numeric_id = group(state provider_ccn)
 collapse (sum)  dgme_payment ime_payment total_gme_payment ///
                 primary_care_fte non_primary_care_fte dgme_ftes ime_ftes ///
+                months_covered ///
         (mean) primary_care_pra non_primary_care_pra ///
                 dgme_resident_cap ime_resident_cap num_beds ///
         (first) state year_expanded expanded_ever, ///
         by(provider_numeric_id fiscal_year)
+* Annualize by months covered (referee response, methods Minor 8): summed
+* cost-report segments can cover more or fewer than 12 months; scaling by
+* 12/months_covered puts every provider-year on an annual basis (as in the
+* linked-sample reconciliation, script 24).
+foreach v in dgme_payment ime_payment total_gme_payment ///
+    primary_care_fte non_primary_care_fte dgme_ftes ime_ftes {
+    replace `v' = `v' * 12 / months_covered if months_covered > 0 & !missing(months_covered)
+}
+
 
 encode state, gen(state_id)
 gen byte treated_state = expanded_ever
@@ -119,7 +136,7 @@ foreach outcome in asinh_dgme asinh_ime asinh_dgme_ftes asinh_dgme_perfte {
         di "========================================================================="
 
         capture noisily did_imputation `outcome' provider_numeric_id fiscal_year year_expanded, ///
-            horizons(0/5) pretrend(5) fe(provider_numeric_id fiscal_year) ///
+            horizons(0/5) pretrend(10) fe(provider_numeric_id fiscal_year) ///
             cluster(state_id) minn(0) autosample
         if (_rc != 0) {
             local rc = _rc
@@ -152,7 +169,7 @@ foreach outcome in asinh_dgme asinh_ime asinh_dgme_ftes asinh_dgme_perfte {
         }
         local pretrend_p = .
         local treat_p = .
-        capture test pre1 pre2 pre3 pre4 pre5
+        capture test pre1 pre2 pre3 pre4 pre5 pre6 pre7 pre8 pre9 pre10 pre6 pre7 pre8 pre9 pre10
         if (_rc == 0) local pretrend_p = r(p)
         capture test tau0 tau1 tau2 tau3 tau4 tau5
         if (_rc == 0) local treat_p = r(p)
@@ -194,7 +211,7 @@ foreach outcome in asinh_dgme asinh_ime asinh_dgme_ftes asinh_dgme_perfte {
     use "`master'", clear
     keep if treated_state == 0 | gme_vol == 1 | gme_notvol == 1
     capture noisily did_imputation `outcome' provider_numeric_id fiscal_year year_expanded, ///
-        horizons(0/5) pretrend(5) fe(provider_numeric_id fiscal_year) ///
+        horizons(0/5) pretrend(10) fe(provider_numeric_id fiscal_year) ///
         cluster(state_id) minn(0) autosample hetby(gme_vol)
     local mdd  = .
     local mdse = .
@@ -215,10 +232,70 @@ foreach outcome in asinh_dgme asinh_ime asinh_dgme_ftes asinh_dgme_perfte {
         " (se=" %7.3f `mdse' ", p=" %6.3f `mdp' ")"
 }
 
+
+* -------------------------------------------------------------------------
+* PPML robustness (referee response: Chen-Roth 2024). asinh coefficients on
+* dollar outcomes with mass at zero are not unit-invariant; PPML in LEVELS
+* with the same fixed effects and clustering is. Static treated-post design
+* (event-study PPML is not available for the imputation estimator); the
+* object of interest is the proportional post effect and the cross-arm
+* interaction, not dynamics.
+* -------------------------------------------------------------------------
+tempname pp
+tempfile pp_file
+postfile `pp' str20 outcome str12 spec double b_ppml se_ppml p_ppml ///
+    using "`pp_file'", replace
+
+use "`master'", clear
+gen byte tp = treated_state == 1 & fiscal_year >= year_expanded
+gen byte tp_vol = tp * gme_vol
+keep if treated_state == 0 | gme_vol == 1 | gme_notvol == 1
+* PPML requires non-negative outcomes; a small number of cost-report years
+* carry negative payment totals (accounting adjustments). Those years are
+* excluded from the PPML runs and the count is reported.
+foreach v in dgme_payment ime_payment {
+    quietly count if `v' < 0 & !missing(`v')
+    di as text "PPML: excluding " r(N) " hospital-years with negative `v'"
+    replace `v' = . if `v' < 0
+}
+
+foreach outcome in dgme_payment ime_payment {
+    di _n "========== PPML: `outcome' (pooled treated-post) =========="
+    capture noisily ppmlhdfe `outcome' tp, absorb(provider_numeric_id fiscal_year) ///
+        vce(cluster state_id)
+    if (_rc == 0) {
+        local b = _b[tp]
+        local se = _se[tp]
+        local p = 2*normal(-abs(`b'/`se'))
+        post `pp' ("`outcome'") ("pooled") (`b') (`se') (`p')
+        di as result "PPML `outcome' pooled: b=" %8.4f `b' " (se=" %8.4f `se' ", p=" %6.3f `p' ")"
+    }
+    else post `pp' ("`outcome'") ("pooled") (.) (.) (.)
+
+    di _n "========== PPML: `outcome' (cross-arm interaction) =========="
+    capture noisily ppmlhdfe `outcome' tp tp_vol, absorb(provider_numeric_id fiscal_year) ///
+        vce(cluster state_id)
+    if (_rc == 0) {
+        local b = _b[tp_vol]
+        local se = _se[tp_vol]
+        local p = 2*normal(-abs(`b'/`se'))
+        post `pp' ("`outcome'") ("vol_diff") (`b') (`se') (`p')
+        di as result "PPML `outcome' vol-diff: b=" %8.4f `b' " (se=" %8.4f `se' ", p=" %6.3f `p' ")"
+    }
+    else post `pp' ("`outcome'") ("vol_diff") (.) (.) (.)
+}
+
+postclose `pp'
+preserve
+use "`pp_file'", clear
+list, clean noobs
+export delimited using "${tabdir}/ppml-payments-summary.csv", replace
+restore
+
 postclose `fs'
 
 use "`fs_file'", clear
-order outcome group avg_treat pct treat_p pretrend_p baseline n_hospitals n_states
+order outcome group avg_treat avg_se pct_effect treat_p pretrend_p baseline n_hospitals n_states
 list, clean noobs
 export delimited using "${tabdir}/gme-firststage-byformula-summary.csv", replace
 

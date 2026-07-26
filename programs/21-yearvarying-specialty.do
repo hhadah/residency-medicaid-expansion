@@ -23,7 +23,14 @@
 clear all
 set more off
 
-global topdir "/Users/hhadah/Projects/GiT/residency-medicaid-expansion"
+* Replication-friendly path handling: run from the repository root, or set
+* global topdir before running.
+if "${topdir}" == "" global topdir "`c(pwd)'"
+capture confirm file "${topdir}/programs/00-README-pipeline.md"
+if _rc {
+    di as error "Cannot find the repository root. Run from the repo root or set global topdir."
+    exit 601
+}
 global datadir "${topdir}/data/datasets"
 global figdir  "${topdir}/output/figures"
 global tabdir  "${topdir}/output/tables"
@@ -34,20 +41,23 @@ cap mkdir "${latex_figdir}"
 
 log using "${topdir}/output/21-yearvarying-specialty.log", replace
 
-use "${datadir}/cleaned_residency_medicaid.dta", clear
-replace state = strtrim(upper(state))
-capture confirm variable treated_state
-if _rc gen byte treated_state = !missing(year_expanded)
+* FULL 2000-2019 SPECIALTY PANEL (institution x specialty-group x year,
+* activity-window coding; see script 06)
+use "${datadir}/panel_2000_2019_specialty.dta", clear
+replace matched = matched_na
 gen byte primary_care = inlist(gen_specialty_alt, "FM", "IM", "Peds")
 gen byte specialty_group = 2 if primary_care == 1
 replace specialty_group = 1 if primary_care == 0
 
 * Aggregate to hospital x specialty-group x year (referee fix: two rows per
-* hospital-year, each with its own unit fixed effect)
-collapse (sum) matched (first) total_population_10 year_expanded treated_state, ///
+* hospital-year, each with its own unit fixed effect); sum() of all-missing
+* group cells returns missing via the min(count) guard below
+collapse (sum) matched (count) n_obs = matched ///
+    (first) total_population_10 year_expanded treated_state pop_yr, ///
     by(state institution_code specialty_group year)
+replace matched = . if n_obs == 0
+drop n_obs
 
-merge m:1 state year using "${datadir}/state_year_population.dta", keep(master match) nogen
 quietly count if missing(pop_yr)
 di as text "pop_yr merge: " r(N) " unmatched master rows (missing pop_yr)"
 assert r(N) == 0
@@ -74,7 +84,7 @@ foreach spec in 1 2 {
     keep if specialty_group == `spec'
     di _n "==================== SPECIALTY group `spec' (hospital x group panel) ===================="
     capture noisily did_imputation matched_per_100k_yr unit_id year year_expanded ///
-        [aw=total_population_10], horizons(0/5) pretrend(5) ///
+        [aw=total_population_10], horizons(0/5) pretrend(10) ///
         fe(unit_id year) cluster(state_id) minn(0) autosample
     if (_rc != 0) {
         local rc = _rc
@@ -86,7 +96,7 @@ foreach spec in 1 2 {
     local ase = r(se)
     local sum_avg = `sum_avg' + `a'
     local pt = .
-    capture test pre1 pre2 pre3 pre4 pre5
+    capture test pre1 pre2 pre3 pre4 pre5 pre6 pre7 pre8 pre9 pre10 pre6 pre7 pre8 pre9 pre10
     if _rc == 0 local pt = r(p)
     local tp = .
     capture test tau0 tau1 tau2 tau3 tau4 tau5
@@ -116,7 +126,7 @@ gen double matched_per_100k_yr = matched / pop_yr * 100000
 encode state, gen(state_id2)
 xtset program_numeric_id year
 did_imputation matched_per_100k_yr program_numeric_id year year_expanded ///
-    [aw=total_population_10], horizons(0/5) pretrend(5) ///
+    [aw=total_population_10], horizons(0/5) pretrend(10) ///
     fe(program_numeric_id year) cluster(state_id2) minn(0) autosample
 lincom (tau0+tau1+tau2+tau3+tau4+tau5)/6
 local tot = r(estimate)

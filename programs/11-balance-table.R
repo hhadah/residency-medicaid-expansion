@@ -1,8 +1,10 @@
 # ==============================================================================
-# 10-balance-table.R
+# 11-balance-table.R
 # Baseline (2010) summary statistics and balance tables from ONE variable
-# registry, so the summary-statistics table (main text) and the GME-formula
-# balance table (appendix) report the same characteristics.
+# registry, computed on the FULL 2000-2019 panel (institutions active in 2010,
+# activity-window coding), so the summary-statistics table (main text) and the
+# GME-formula balance table (appendix) report the same characteristics as the
+# estimation sample.
 #
 # Table 1 (sumstats): All / Expansion / Never-expansion state means, plus a
 #   Welch t-test of the expansion-vs-never difference (state as the unit).
@@ -10,9 +12,10 @@
 #   Welch t-test of the volume-vs-fixed/none difference (state as the unit),
 #   and the population-weighted program-level baseline row.
 #
-# Inputs:  data/datasets/cleaned_program_residency_medicaid.dta
-#          data/datasets/cleaned_residency_medicaid.dta (specialty panel, for
-#            the primary-care share)
+# Inputs:  data/datasets/panel_2000_2019_estimation.dta   (script 06)
+#          data/datasets/2000_2019_residency_programs.dta (script 05; for the
+#            specialty-program-level fill share)
+#          data/raw/program_simplified.dta                (specialty map)
 #          data/raw/gme_formula_classification.csv
 # Outputs: my_paper/tables/sumstats_main.tex        (bare tabular, INV-13)
 #          my_paper/tables/balance_gme_formula.tex  (bare tabular, INV-13)
@@ -26,20 +29,27 @@ library(dplyr)
 library(readr)
 library(tidyr)
 
-panel <- read_dta(here("data", "datasets", "cleaned_program_residency_medicaid.dta")) |>
+panel <- read_dta(here("data", "datasets", "panel_2000_2019_estimation.dta")) |>
   mutate(state = toupper(trimws(state)))
 
-spec_panel <- read_dta(here("data", "datasets", "cleaned_residency_medicaid.dta")) |>
+wide <- read_dta(here("data", "datasets", "2000_2019_residency_programs.dta")) |>
   mutate(state = toupper(trimws(state)))
+
+spec_map <- read_dta(here("data", "raw", "program_simplified.dta")) |>
+  distinct(specialty_code, gen_specialty_alt)
 
 gme <- read_csv(here("data", "raw", "gme_formula_classification.csv"),
                 show_col_types = FALSE) |>
   mutate(state = toupper(trimws(state))) |>
   select(state, gme_formula)
 
-# --- primary-care share of matched positions by state, 2010 ------------------
-pc_share <- spec_panel |>
-  filter(year == 2010) |>
+# --- specialty-program-level 2010 slice (fill share + primary-care share) ----
+spec10 <- wide |>
+  transmute(state, institution_code, specialty_code,
+            quota = quota_2010, matched = matched_2010) |>
+  left_join(spec_map, by = "specialty_code")
+
+pc_share <- spec10 |>
   group_by(state) |>
   summarise(
     pc_share = sum(matched[gen_specialty_alt %in% c("FM", "IM", "Peds")],
@@ -47,25 +57,23 @@ pc_share <- spec_panel |>
     .groups = "drop"
   )
 
-# --- fill share by state, 2010: measured at the SPECIALTY-PROGRAM level ------
-# (the NRMP program unit the manuscript's "~86 percent fill every position"
-# claim refers to; the institution-level analogue is much lower because an
-# institution "fills" only if every one of its specialty programs fills)
-fill_state <- spec_panel |>
-  filter(year == 2010, quota > 0) |>
+# fill share measured at the NRMP specialty-program level (the unit the
+# manuscript's "82 percent fill every position" claim refers to)
+fill_state <- spec10 |>
+  filter(quota > 0) |>
   group_by(state) |>
   summarise(fill_share = mean(matched == quota, na.rm = TRUE), .groups = "drop")
 
-# --- state-level 2010 registry -----------------------------------------------
+# --- state-level 2010 registry (institutions active in 2010) -----------------
 base10 <- panel |>
-  filter(year == 2010) |>
+  filter(year == 2010, in_window == 1) |>
   group_by(state) |>
   summarise(
     n_programs        = n(),
-    matched_total     = sum(matched, na.rm = TRUE),
-    matched_per_prog  = mean(matched, na.rm = TRUE),
-    quota_total       = sum(quota, na.rm = TRUE),
-    quota_per_prog    = mean(quota, na.rm = TRUE),
+    matched_total     = sum(matched_na, na.rm = TRUE),
+    matched_per_prog  = mean(matched_na, na.rm = TRUE),
+    quota_total       = sum(quota_na, na.rm = TRUE),
+    quota_per_prog    = mean(quota_na, na.rm = TRUE),
     pop_2010          = first(total_population_10),
     rural_share       = mean(rural_urban_2010 > 3, na.rm = TRUE),
     treated_state     = first(treated_state),
@@ -151,7 +159,8 @@ sum_rows <- sum_rows |>
 n_exp <- sum(base10$exp_group == "expansion")
 n_nev <- sum(base10$exp_group == "never")
 n_prog_2010 <- sum(base10$n_programs)
-n_obs_panel <- nrow(panel)
+n_inst <- dplyr::n_distinct(panel$institution_code)
+n_obs_panel <- sum(!is.na(panel$matched_na))
 
 write_csv(sum_rows |> select(-fmt) |>
             rename(variable = label) |> select(-var),
@@ -175,8 +184,9 @@ for (i in seq_len(nrow(sum_rows))) {
 lines <- c(lines,
   "\\midrule",
   paste0("Number of states & ", n_exp + n_nev, " & ", n_exp, " & ", n_nev, " & & \\\\"),
-  paste0("Number of programs & ", n_prog_2010, " & & & & \\\\"),
-  paste0("Hospital-year observations (2010--2019) & ",
+  paste0("Number of institutions active in 2010 & ", n_prog_2010, " & & & & \\\\"),
+  paste0("Institutions in panel (2000--2019) & ", n_inst, " & & & & \\\\"),
+  paste0("Active institution-year observations (2000--2019) & ",
          format(n_obs_panel, big.mark = "{,}"), " & & & & \\\\"),
   "\\bottomrule",
   "\\end{tabular}")
@@ -189,11 +199,12 @@ bal <- base10 |> filter(!is.na(gme_group))
 
 # program-level, population-weighted baseline per-capita outcome (balance only)
 wtd10 <- panel |>
-  filter(year == 2010) |>
+  filter(year == 2010, in_window == 1) |>
+  mutate(matched_per_100k_10 = matched_na / total_population_10 * 100000) |>
   left_join(base10 |> select(state, gme_group), by = "state") |>
   filter(!is.na(gme_group)) |>
   group_by(gme_group) |>
-  summarise(w_mp100k = weighted.mean(matched_per_100k, total_population_10,
+  summarise(w_mp100k = weighted.mean(matched_per_100k_10, total_population_10,
                                      na.rm = TRUE), .groups = "drop")
 w_get <- function(g) {
   x <- wtd10$w_mp100k[wtd10$gme_group == g]

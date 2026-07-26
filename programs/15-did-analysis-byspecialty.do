@@ -13,7 +13,14 @@ set more off
 * -------------------------------------------------------------------------
 * Define paths
 * -------------------------------------------------------------------------
-global topdir "/Users/hhadah/Projects/GiT/residency-medicaid-expansion"
+* Replication-friendly path handling: run from the repository root, or set
+* global topdir before running.
+if "${topdir}" == "" global topdir "`c(pwd)'"
+capture confirm file "${topdir}/programs/00-README-pipeline.md"
+if _rc {
+    di as error "Cannot find the repository root. Run from the repo root or set global topdir."
+    exit 601
+}
 global datadir "${topdir}/data/datasets"
 global raw "${topdir}/data/raw"
 global figdir "${topdir}/output/figures"
@@ -30,7 +37,11 @@ cap mkdir "${latex_figdir}"
 * -------------------------------------------------------------------------
 * Load cleaned data
 * -------------------------------------------------------------------------
-use "${datadir}/cleaned_residency_medicaid.dta", clear
+* FULL 2000-2019 SPECIALTY PANEL (activity-window coding; see script 06)
+use "${datadir}/panel_2000_2019_specialty.dta", clear
+replace matched = matched_na
+replace quota   = quota_na
+gen double quota_per_100k = quota / total_population_10 * 100000
 
 * -------------------------------------------------------------------------
 * Use gen_specialty_alt for specialty grouping
@@ -160,8 +171,8 @@ foreach spec of local spec_groups {
         
         capture noisily did_imputation `outcome' program_numeric_id year year_expanded ///
             [aw=total_population_10] if specialty_group == `spec', ///
-            horizons(0/5) pretrend(5) fe(program_numeric_id year) ///
-            cluster(state_id) minn(0)
+            horizons(0/5) pretrend(10) fe(program_numeric_id year) ///
+            cluster(state_id) minn(0) autosample
         
         if (_rc != 0) {
             di as error "did_imputation failed. Error code `_rc'."
@@ -187,7 +198,7 @@ foreach spec of local spec_groups {
         
         local pretrend_p = .
         local treat_p = .
-        capture noisily test pre1 pre2 pre3 pre4 pre5
+        capture noisily test pre1 pre2 pre3 pre4 pre5 pre6 pre7 pre8 pre9 pre10 pre6 pre7 pre8 pre9 pre10
         if (_rc == 0) local pretrend_p = r(p)
         
         capture noisily test tau0 tau1 tau2 tau3 tau4 tau5
@@ -246,10 +257,10 @@ foreach spec of local spec_groups {
         * =====================================================================
         * Event study plot
         * =====================================================================
-        matrix plot_coef = J(11, 3, .)
+        matrix plot_coef = J(16, 3, .)
         matrix colnames plot_coef = period coef se
         local row = 1
-        forval h = 5(-1)1 {
+        forval h = 10(-1)1 {
             matrix plot_coef[`row',1] = -`h'
             capture matrix plot_coef[`row',2] = _b[pre`h']
             capture matrix plot_coef[`row',3] = _se[pre`h']
@@ -288,11 +299,11 @@ foreach spec of local spec_groups {
         * Calculate annotation position dynamically
         quietly summarize ci_upper
         local y_annot = r(max) * 0.9
-        local x_annot = -2
+        local x_annot = -7
         * Adjust for per 100k outcomes
         if (strpos("`short'", "_100k") > 0) {
             local ytitle_str "Treatment Effect (per 100,000 population)"
-            local x_annot = -2
+            local x_annot = -7
         }
         if ("`outcome'" == "matched") {
             local ytitle_str "Treatment Effect (number of residency positions)"
@@ -321,7 +332,7 @@ foreach spec of local spec_groups {
             , ///
             xline(-0.5, lcolor(black) lpattern(solid) lwidth(thin)) ///
             yline(0, lcolor(black) lpattern(solid) lwidth(thin)) ///
-            xlabel(-5(1)5, labsize(small)) ///
+            xlabel(-10(1)5, labsize(small)) ///
             ylabel(#10, labsize(small) format(%9.3f)) ///
             xtitle("Years relative to Medicaid expansion", size(small)) ///
             ytitle("`ytitle_str'", size(small)) ///

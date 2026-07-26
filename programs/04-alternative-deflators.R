@@ -25,7 +25,7 @@ suppressMessages({
   library(haven)
 })
 
-topdir   <- "/Users/hhadah/Projects/GiT/residency-medicaid-expansion"
+topdir   <- here::here()
 datasets <- file.path(topdir, "data", "datasets")
 
 years <- 2010:2019

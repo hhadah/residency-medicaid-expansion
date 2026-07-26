@@ -1,63 +1,78 @@
-# Pipeline README — script order and 2026-07-25 renumbering
+# Pipeline README — script order
 
 Scripts are numbered in **execution order**: if script 01 must run before
 script 03, it is named 01. Run the R data build first (`95-make-all.R`,
 scripts 01–12), then the Stata analysis (`99-run-all-analysis.do`, scripts
-13–36), then `python3 37-multiple-testing-qvalues.py`.
+13–29 + 35–36; the RI block 30–34 is run separately — see the commented
+block in 99), then `python3 37-multiple-testing-qvalues.py`.
+
+**As of 2026-07-25 all analysis runs on the FULL 2000–2019 panel**
+(`panel_2000_2019_estimation.dta`, built by scripts 05–06: 1,234 NRMP
+institutions, activity-window missing-not-zero coding, ten pre-periods by
+default in every event study).
 
 ## Pipeline
 
 | # | Script | Purpose |
 |---|--------|---------|
 | 01 | packages-wds.R | packages + path globals |
-| 02 | data-cleaning.R | clean NRMP panel, geocode (needs `MAPBOX_API_KEY` in `~/.Renviron`) |
-| 03 | state-year-population.R | ACS year-varying state population |
-| 04 | alternative-deflators.R | ACS 18–64 and <150% FPL deflators |
-| 05 | append-gme-funding.R | append CMS GME funding spreadsheets |
-| 06 | merge-gme-expansion.R | GME funding panel + expansion status |
-| 07 | merge-residency-cms.R | residency↔CMS crosswalk (fallback layer for 08) |
-| 08 | merge-residency-gme-funding.R | NRMP→CCN crosswalk + linked funding panel |
-| 09 | entry-exit-panel.R | entry/exit-corrected panel |
-| 10 | balance-table.R | sumstats + formula balance tables |
-| 11 | heat-map.R | descriptive timing/cohort figures |
-| 12 | population-residents.R | descriptive physician-growth figure |
+| 02 | data-cleaning.R | clean 2010-2019 NRMP data + geocode (needs `MAPBOX_API_KEY`); source of RUCA/expansion/crosswalk inputs |
+| 03 | state-year-population.R | state population series: 2010–2019 ACS + 2000–2019 (decennial 2000, interpolation 2001–04, ACS 2005–19) |
+| 04 | alternative-deflators.R | ACS 18–64 and <150% FPL deflators (2010–2019) |
+| 05 | make-2000-2019-residency-panel.R | standardize the 2000–2009 OCR extraction into the 2000–2019 wide file |
+| 06 | make-2000-2019-estimation-panels.R | **PRIMARY PANELS**: institution×year + institution×specialty-group×year, entry/exit table |
+| 07 | append-gme-funding.R | append CMS GME funding spreadsheets |
+| 08 | merge-gme-expansion.R | GME funding panel + expansion status |
+| 09 | merge-residency-cms.R | residency↔CMS crosswalk (fallback layer for 10) |
+| 10 | merge-residency-gme-funding.R | NRMP→CCN crosswalk (rerun 06 once after first build so provider_ccn attaches) |
+| 11 | balance-table.R | sumstats + formula balance tables (full panel, 2010 baseline) |
+| 12 | descriptive-figures.R | desc-timing + cohort figures (full panel) + desc-physician-growth (IPUMS) |
 | 13 | dd-analysis.do | levels DiD (weighted) |
 | 14 | dd-analysis-hetero.do | urban/rural levels + quota |
 | 15 | did-analysis-byspecialty.do | specialty levels + quota |
 | 16 | dd-analysis-popcnt.do | unweighted / population-control specs |
 | 17 | dd-methods-comparison.do | estimator comparison (TWFE, BJS, dCDH, SA, …) |
 | 18 | gme-funding-event-study.do | pooled GME payment first stage |
-| 19 | gme-firststage-byformula.do | payment first stage by formula arm |
-| 20 | yearvarying-suite.do | **primary spec**: headline, location, mechanism, quota |
+| 19 | gme-firststage-byformula.do | payment first stage by formula arm + PPML robustness |
+| 20 | yearvarying-suite.do | **primary spec**: headline, location, mechanism, quota (+ figure), PPML count check |
 | 21 | yearvarying-specialty.do | specialty split (hospital × specialty-group) |
-| 22 | yearvarying-robustness.do | not-yet-treated (+ mechanism inside), cohort-2014, HonestDiD |
+| 22 | yearvarying-robustness.do | not-yet-treated (+ mechanism inside), cohort-2014, HonestDiD, **pre-ACA placebo** |
 | 23 | leave-one-out.do | LOO: headline (treated+controls) + mechanism objects |
-| 24 | linked-sample-reconciliation.do | NRMP intake vs cost-report FTEs, linked sample |
+| 24 | linked-sample-reconciliation.do | NRMP intake vs cost-report FTEs, linked sample (full window) |
 | 25 | mechanism-reclassification.do | 2015-vintage classification + judgment flips |
-| 26 | deflator-robustness.do | log-pop outcome, log-pop control, alternative deflators |
+| 26 | deflator-robustness.do | log-pop outcome, log-pop control, alternative deflators (deflator rows: 2010–2019 subsample) |
 | 27 | specification-grid.do | weighting × denominator 2×2, state-level, control exclusions |
 | 28 | entryexit-estimation.do | headline under missing-not-zero / balanced / state totals |
 | 29 | abovecap-heterogeneity.do | above- vs below-cap split (linked sample) |
-| 30 | randomization-inference.do | RI, fixed-2010 outcomes |
-| 31 | ri-outcome-weight-diagnostic.do | RI by outcome × weighting |
-| 32 | ri-yearvarying.do | RI, year-varying headline |
-| 33 | ri-extended.do | RI, extended family (slowest script) |
-| 34 | label-permutation.do | formula-label permutation placebo |
+| 30 | randomization-inference.do | RI, fixed-2010 outcomes (run separately; slow) |
+| 31 | ri-outcome-weight-diagnostic.do | RI by outcome × weighting (run separately) |
+| 32 | ri-yearvarying.do | RI, year-varying headline — coefficient AND studentized (run separately) |
+| 33 | ri-extended.do | RI, extended family — coefficient AND studentized (slowest; run separately) |
+| 34 | label-permutation.do | formula-label permutation placebo (run separately) |
 | 35 | wild-bootstrap.do | wild cluster bootstrap-t (Webb), static TWFE analogs |
 | 36 | effective-clusters.do | Carter–Schnepel–Steigerwald G* |
-| 37 | multiple-testing-qvalues.py | dual-standard FDR q-values + forest plot |
-| 90 | make-2000-2019-residency-panel.R | auxiliary: 2000–2019 back-extension (pre-ACA placebo groundwork; not used by the paper yet) |
+| 37 | multiple-testing-qvalues.py | dual-standard FDR q-values incl. mechanism arms + forest plot |
 | 95 | make-all.R | R runner (01–12) |
-| 99 | run-all-analysis.do | Stata runner (13–36) |
+| 99 | run-all-analysis.do | Stata runner (13–29, 35–36; RI block commented) |
 
-Helpers: `_esplot-helpers.do` (event-study plots), `_ri-avgatt.do` (RI helper).
+Helpers: `_esplot-helpers.do` (event-study plots; default 10 pre-periods),
+`_ri-avgatt.do` (RI helper; returns att/se/t for studentized RI).
 Superseded scripts live in `archive/` (see its README). `nrmp-pdf-extraction/`
-is the OCR pipeline feeding script 90.
+is the OCR pipeline feeding script 05.
 
-## Renumbering map (2026-07-25)
+Replication note: `.do` scripts resolve the repository root from the working
+directory (run from repo root) or an explicitly set `global topdir`; R scripts
+use `here::here()`.
 
-Old name → new name (documents cite the old numbers; e.g., the 2026-07-24
-referee reports and response ledger):
+## Renumbering history
+
+2026-07-25 (second pass, full-panel migration): R side reordered so the panel
+builders sit at 05–06 (old 90→05, 91→06, 05→07, 06→08, 07→09, 08→10, 10→11,
+11+12→12 merged); `09-entry-exit-panel.R` retired to `archive/` (logic lives
+in 06); `92-longpretrend-and-placebo.do` absorbed into 20 (10-pre default)
+and 22 (placebo). Stata numbering 13–36 unchanged.
+
+2026-07-25 (first pass) old → new:
 
 | Old | New |
 |-----|-----|
