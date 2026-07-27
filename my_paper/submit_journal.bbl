@@ -1094,6 +1094,40 @@
       \field{title}{Graduate Medical Education that Meets the Nation's Health Needs}
       \field{year}{2014}
     \endentry
+    \entry{oppaga2023}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=5965a6559715dc6ddba203a09e0fde03}{%
+           family={{Florida Office of Program Policy Analysis and Government Accountability}},
+           familyi={F\bibinitperiod}}}%
+      }
+      \strng{namehash}{5965a6559715dc6ddba203a09e0fde03}
+      \strng{fullhash}{5965a6559715dc6ddba203a09e0fde03}
+      \strng{fullhashraw}{5965a6559715dc6ddba203a09e0fde03}
+      \strng{bibnamehash}{5965a6559715dc6ddba203a09e0fde03}
+      \strng{authorbibnamehash}{5965a6559715dc6ddba203a09e0fde03}
+      \strng{authornamehash}{5965a6559715dc6ddba203a09e0fde03}
+      \strng{authorfullhash}{5965a6559715dc6ddba203a09e0fde03}
+      \strng{authorfullhashraw}{5965a6559715dc6ddba203a09e0fde03}
+      \field{sortinit}{F}
+      \field{sortinithash}{2638baaa20439f1b5a8f80c6c08a13b4}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{number}{Report 23-GME}
+      \field{title}{Graduate Medical Education in {Florida}}
+      \field{urlday}{26}
+      \field{urlmonth}{7}
+      \field{urlyear}{2026}
+      \field{year}{2023}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://oppaga.fl.gov/Documents/Reports/23-GME.pdf
+      \endverb
+      \verb{url}
+      \verb https://oppaga.fl.gov/Documents/Reports/23-GME.pdf
+      \endverb
+    \endentry
     \entry{gale1962}{article}{}{}
       \name{author}{2}{}{%
         {{hash=8921ac40fd1635d7d5bcf2cc6307b6f7}{%
@@ -3033,6 +3067,39 @@
       \range{pages}{10}
       \verb{doi}
       \verb 10.1016/j.healthpol.2011.08.004
+      \endverb
+    \endentry
+    \entry{thecb2024}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=7ab7a5737cd8006199232d66f19e510e}{%
+           family={{Texas Higher Education Coordinating Board}},
+           familyi={T\bibinitperiod}}}%
+      }
+      \strng{namehash}{7ab7a5737cd8006199232d66f19e510e}
+      \strng{fullhash}{7ab7a5737cd8006199232d66f19e510e}
+      \strng{fullhashraw}{7ab7a5737cd8006199232d66f19e510e}
+      \strng{bibnamehash}{7ab7a5737cd8006199232d66f19e510e}
+      \strng{authorbibnamehash}{7ab7a5737cd8006199232d66f19e510e}
+      \strng{authornamehash}{7ab7a5737cd8006199232d66f19e510e}
+      \strng{authorfullhash}{7ab7a5737cd8006199232d66f19e510e}
+      \strng{authorfullhashraw}{7ab7a5737cd8006199232d66f19e510e}
+      \field{sortinit}{T}
+      \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{The Graduate Medical Education Report: An Assessment of Opportunities for Graduates of {Texas} Medical Schools to Enter Residency Programs in {Texas}}
+      \field{urlday}{26}
+      \field{urlmonth}{7}
+      \field{urlyear}{2026}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://reportcenter.highered.texas.gov/reports/legislative/the-graduate-medical-education-report-an-assessment-of-opportunities-for-graduates-of-texas-medical-schools-to-enter-residency-programs-in-texas-2024/
+      \endverb
+      \verb{url}
+      \verb https://reportcenter.highered.texas.gov/reports/legislative/the-graduate-medical-education-report-an-assessment-of-opportunities-for-graduates-of-texas-medical-schools-to-enter-residency-programs-in-texas-2024/
       \endverb
     \endentry
     \entry{vistnes2019}{report}{}{}

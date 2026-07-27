@@ -22,6 +22,49 @@
 \end{table}
 
 \clearpage
+
+\begin{table}[H]
+\centering
+\singlespacing
+\small
+\begin{threeparttable}
+\caption{The Entry Margin Classified: Genuine Entrants versus Single-Accreditation Migrants}
+\label{tab:entryclass}
+\begin{tabular}{lcc}
+\toprule
+ & Expansion states & Never-expansion states \\
+\midrule
+\multicolumn{3}{l}{\textit{Panel A: Post-2010 entrant institutions}} \\
+\midrule
+Entrants, 2011--2015          &        &        \\
+\quad Genuinely new sponsors  & 21     & 15     \\
+\quad Single-accreditation migrants & 5 & 4     \\
+Entrants, 2016--2019          &        &        \\
+\quad Genuinely new sponsors  & 42     & 23     \\
+\quad Single-accreditation migrants & 72 & 19   \\
+Matched positions at entrants, 2019 &  &        \\
+\quad At genuinely new sponsors & 1{,}166 & 933 \\
+\quad At single-accreditation migrants & 982 & 426 \\
+\midrule
+\multicolumn{3}{l}{\textit{Panel B: Event-study estimates}} \\
+\midrule
+ & \multicolumn{2}{c}{Average post effect \quad (Joint $p$; pre-trend $p$)} \\
+\cmidrule(lr){2-3}
+Genuine-entrant capacity per 100{,}000 (weighted)   & \multicolumn{2}{c}{$-0.116$ \ (0.154) \quad ($p = 0.19$; $0.19$)} \\
+Genuine-entrant capacity per 100{,}000 (unweighted) & \multicolumn{2}{c}{$+0.025$ \ (0.108) \quad ($p = 0.34$; $0.31$)} \\
+Migrant capacity per 100{,}000 (weighted)           & \multicolumn{2}{c}{$+0.047$ \ (0.072) \quad ($p < 0.001$; $0.34$)} \\
+State total excl.\ migrants (weighted)              & \multicolumn{2}{c}{$+0.535$ \ (0.380) \quad ($p = 0.37$; $0.0002$)} \\
+State total excl.\ migrants (unweighted)            & \multicolumn{2}{c}{$+0.364$ \ (0.252) \quad ($p = 0.40$; $0.16$)} \\
+Incumbent headline excl.\ migrants (weighted)       & \multicolumn{2}{c}{$-0.015$ \ (0.027) \quad ($p = 0.08$; $0.38$)} \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item \textit{Notes:} Panel A classifies the 201 institutions that first appear in the NRMP Main Match after 2010 as genuinely new sponsors or pre-existing AOA-accredited sponsors migrating under the Single Accreditation System (July 2015--June 2020), using the classification described in \cref{sec:data} (ACGME Accreditation Data System applicant lists, fuzzy name matching within state, and hand adjudication of ambiguous cases; the adjudication file ships with the replication package). Matched-position rows report total positions filled at those entrants in the 2019 match. Panel B reports average post-expansion effects from state-level event studies using the imputation estimator of Borusyak, Jaravel, and Spiess (2024) with state and year fixed effects, ten pre-expansion periods, and state-clustered standard errors (in parentheses); capacity outcomes are matched positions at the indicated entrant group per 100{,}000 contemporary population, so pre-expansion capacity at post-2010 entrants is near zero by construction and effects are reported in levels rather than percent. Weighted rows use 2010 state population weights. The migrant-capacity estimate reflects the national accreditation calendar interacting with the geography of osteopathic training, not a treatment effect (\cref{subsec:extensive}). The incumbent headline row is the institution-level headline specification excluding all classified migrants. Entry estimates are reported under clustered inference only; they are not members of the pre-specified randomization-inference family (\cref{subsec:inference}). Data: NRMP Main Residency Match reports; ACGME Accreditation Data System.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\clearpage
 \newpage
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -33,12 +76,12 @@
 \pagebreak
 
 \begin{figure}[H]
-    \caption{Staggered Timing of Medicaid Expansion Across Residency Programs}
+    \caption{Staggered Adoption of Medicaid Expansion by State}
     \label{fig1}
     \centering
-      \includegraphics[width=\linewidth]{figures/desc-timing.png}
+      \includegraphics[width=0.85\linewidth]{figures/desc-timing.png}
     \hfill
-\caption*{\footnotesize{\textit{Notes:} The figure summarizes the treatment structure of the sample, where the unit of observation is a residency program (institution) and the treatment is the host state's adoption of Medicaid expansion. Programs are grouped by the timing of their state's expansion, and the vertical axis reports the number of programs in each group. Medium-blue cells denote treated programs in years before their state expanded Medicaid (``Treated (Pre)''), dark-navy cells denote treated programs in expansion and post-expansion years (``Treated (Post)''), and light-blue cells denote never-expansion (control) programs. The horizontal axis is the calendar year. The figure illustrates the staggered rollout of Medicaid expansion exploited by the difference-in-differences design. Treatment status is displayed for every institution-year regardless of whether the institution was actively sponsoring positions in that year; entry into and exit from training provision are handled in estimation through the activity-window coding described in \cref{sec:data}. Data are from NRMP Main Residency Match reports and newly digitized archival results books, 2000--2019. The plot is produced with the \texttt{panelview} package (Mou, Liu, and Xu).}}
+\caption*{\footnotesize{\textit{Notes:} The figure shows the treatment status of every state and the District of Columbia over the 2000--2019 sample period. Each row is a state and each column a calendar year. Light-blue cells denote years before an expansion state adopted Medicaid expansion, dark-navy cells denote years from adoption onward, and grey cells denote states that never expanded during the sample period and serve as the comparison group. Expansion states are ordered by adoption year (2014 wave first, then the 2015, 2016, and 2019 adopters), with never-expansion states grouped at the bottom. This staggered rollout is the identifying variation for the event-study design described in \cref{sec:emp}. Expansion dates are from the Kaiser Family Foundation status-of-expansion tracker \autocite{kff2024}.}}
 \end{figure}
 
 \begin{figure}[H]
@@ -186,7 +229,7 @@ population. Standard errors are clustered at the state level.}}
     \centering
       \includegraphics[width=\linewidth]{figures/main-estimators.pdf}
     \hfill
-\caption*{\footnotesize{\textit{Notes:} The figure compares event-study estimates of the effect of Medicaid expansion on matched residency positions per 100,000 contemporary (year-varying) population across six difference-in-differences estimators that are robust to treatment-effect heterogeneity under staggered adoption: two-way fixed effects; Borusyak, Jaravel, and Spiess (2024); de Chaisemartin and D'Haultfoeuille (2020); Sun and Abraham (2021); Cengiz, Dube, Lindner, and Zipperer (2019); and Gardner (2022). The heterogeneity-robust estimator of Callaway and Sant'Anna (2021) is excluded because it is not well identified in the sparsely populated never-treated cells of this sample. The pre-trend $p$-value reported in the panel is from the Borusyak, Jaravel, and Spiess (2024) estimator. The horizontal axis measures years relative to a state's Medicaid expansion; the dashed vertical line marks the expansion year. Regressions include hospital and year fixed effects and weight by 2010 state population. Standard errors are clustered at the state level.}}
+\caption*{\footnotesize{\textit{Notes:} The figure compares event-study estimates of the effect of Medicaid expansion on matched residency positions per 100,000 contemporary (year-varying) population across six difference-in-differences estimators that are robust to treatment-effect heterogeneity under staggered adoption: two-way fixed effects; Borusyak, Jaravel, and Spiess (2024); de Chaisemartin and D'Haultfoeuille (2020); Sun and Abraham (2021); Cengiz, Dube, Lindner, and Zipperer (2019); and Gardner (2022). The heterogeneity-robust estimator of Callaway and Sant'Anna (2021) is omitted because it does not accept the population weights the other estimators use and its never-treated comparison cells are sparse in this sample; estimated unweighted with the not-yet-treated control group it gives a simple ATT of $-0.005$ per 100{,}000 (s.e.\ $0.007$, $p = 0.46$), consistent with the estimates shown. The pre-trend $p$-value reported in the panel is from the Borusyak, Jaravel, and Spiess (2024) estimator. The horizontal axis measures years relative to a state's Medicaid expansion; the dashed vertical line marks the expansion year. Regressions include hospital and year fixed effects and weight by 2010 state population. Standard errors are clustered at the state level.}}
 \end{figure}
 
 \clearpage

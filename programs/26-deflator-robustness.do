@@ -16,8 +16,9 @@
 *      estimated time-varying control (did_imputation controls()).
 *   3. The headline under alternative deflators: population 18-64 and
 *      population below 150% FPL (closest ACS cut to the 138% threshold),
-*      from state_year_deflators.dta (script 04). A non-demographic scale (state
-*      GDP / discharges) is flagged in data/raw/state-gdp-README.md.
+*      from state_year_deflators.dta (script 04), plus the NON-DEMOGRAPHIC
+*      scale the referee requested: state GDP (BEA SAGDP2, current $M,
+*      data/raw/state_gdp.csv; see data/raw/state-gdp-README.md).
 *
 * Outputs: output/tables/deflator-robustness.csv
 *          figures appx-logpop-outcome, appx-deflator-{a1864,fpl150}
@@ -60,11 +61,25 @@ merge m:1 state year using "${datadir}/state_year_deflators.dta", keep(master ma
 quietly count if missing(pop_1864)
 di as text "rows missing pop_1864: " r(N)
 
+* State GDP (BEA SAGDP2, current $M) -- the non-demographic scale requested
+* by the methods referee (Major Comment 1); built from the SAGDP bulk file
+preserve
+import delimited using "${topdir}/data/raw/state_gdp.csv", clear varnames(1)
+replace state = strtrim(upper(state))
+tempfile gdpfile
+save "`gdpfile'"
+restore
+merge m:1 state year using "`gdpfile'", keep(master match) nogen
+quietly count if missing(gdp)
+assert r(N) == 0
+
 gen double matched_per_100k_yr = matched / pop_yr * 100000
 gen double ln_pop      = ln(pop_yr)
 gen double asinh_matched = asinh(matched)
 gen double matched_per_100k_1864 = matched / pop_1864 * 100000 if !missing(pop_1864)
 gen double matched_per_100k_fpl  = matched / pop_u150fpl * 100000 if !missing(pop_u150fpl)
+* positions per $billion of state GDP (gdp is in $M)
+gen double matched_per_gdp = matched / gdp * 1000
 
 encode state, gen(state_id)
 xtset program_numeric_id year
@@ -150,6 +165,7 @@ _defrun asinh_matched "asinh_nocontrol"   `res' "" "" ""
 _defrun matched_per_100k_yr   "percap_totalpop" `res' "" "" ""
 _defrun matched_per_100k_1864 "percap_age1864"  `res' "appx-deflator-a1864" "Treatment Effect (per 100,000 aged 18-64)" ""
 _defrun matched_per_100k_fpl  "percap_u150fpl"  `res' "appx-deflator-fpl150" "Treatment Effect (per 100,000 below 150% FPL)" ""
+_defrun matched_per_gdp       "per_gdp"         `res' "appx-deflator-gdp" "Treatment Effect (per $billion state GDP)" ""
 
 postclose `res'
 use "`resfile'", clear

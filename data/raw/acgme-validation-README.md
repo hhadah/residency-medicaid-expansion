@@ -16,7 +16,8 @@
    `state, academic_year, residents_on_duty` (state = 2-letter code;
    academic_year = starting calendar year, e.g. 2014 for AY2014-15).
 2. Validation exercise (to be scripted once the file exists — see
-   `programs/30-linked-sample-reconciliation.do` for the estimation pattern):
+   `programs/24-linked-sample-reconciliation.do` for the estimation pattern;
+   post-2026-07-25 numbering):
    - Compare state-year NRMP matched-position stocks (sum of matched over the
      preceding 3-4 cohorts) against ACGME residents on duty, in levels and
      growth rates, by expansion status and GME-formula arm.

@@ -1,7 +1,7 @@
 # ==============================================================================
 # 12-descriptive-figures.R
-# Part A: panelview treatment-timing plot (desc-timing) and matched-positions-
-#   by-cohort plots in levels and per 100,000 (desc-cohort-levels,
+# Part A: state-by-state staggered-adoption heatmap (desc-timing) and matched-
+#   positions-by-cohort plots in levels and per 100,000 (desc-cohort-levels,
 #   desc-cohort-percapita), on the FULL 2000-2019 panel (activity-window
 #   coding; per-capita uses contemporary population).
 # Part B: physician-growth descriptive (IPUMS; formerly 12-population-residents.R).
@@ -37,42 +37,58 @@ dir.create(figures_wd,   recursive = TRUE, showWarnings = FALSE)
 dir.create(thesis_plots, recursive = TRUE, showWarnings = FALSE)
 
 ## ----------------------------------------------------
-## 1. Generate the plot with panelview(), saving to a known file
-## ----------------------------------------------------
-## ----------------------------------------------------
-## 1. Generate the plot with panelview(), saving to a known file
+## 1. State-by-state staggered adoption heatmap (desc-timing)
 ## ----------------------------------------------------
 
+# Expansion is a state-level policy, so the timing display plots the full
+# 50-state + DC grid (not the estimation sample): one row per state, one
+# column per year, cells colored by expansion status.
+# exists() alone is not enough: base R has a raw() function
+if (!exists("raw", mode = "character")) raw <- file.path(here::here(), "data", "raw")
 
-# Build the panelview plot once, then save PNG (raster) + PDF (vector) to both
-# output locations.
-timing_plot <- panelview(
-  # zero-filled outcome for the TIMING display only: treatment status is known
-  # for every institution-year, so the timing plot should have no missing
-  # cells (estimation uses the activity-window coding, matched_na)
-  matched_zf ~ medicaid_expansion,
-  data = long_data,
-  index = c("institution_code","year"),
-  by.timing = TRUE,
-  pre.post = TRUE,
-  display.all = TRUE,
-  xlab = "Year",
-  ylab = "Number of Programs",
-  background = "white",
-  collapse.history = TRUE,
-  cex.main = 28,
-  cex.axis = 24,
-  cex.lab = 24,
-  cex.legend = 28,
-  axis.lab.gap = c(1,0),
-  gridOff = FALSE,
-  main = ""
-)
+expansion_status <- read_dta(file.path(raw, "expansion_status.dta")) |>
+  mutate(state = toupper(str_trim(state)))
+
+# earliest adopters at the top; never-expansion states grouped at the bottom
+state_order <- expansion_status |>
+  arrange(is.na(year_expanded), year_expanded, state) |>
+  pull(state)
+
+adoption_grid <- tidyr::crossing(expansion_status, year = 2000:2019) |>
+  mutate(
+    status = case_when(
+      is.na(year_expanded)  ~ "Never expanded",
+      year >= year_expanded ~ "Expanded",
+      TRUE                  ~ "Pre-expansion"
+    ),
+    status = factor(status,
+                    levels = c("Pre-expansion", "Expanded", "Never expanded")),
+    state  = factor(state, levels = rev(state_order))
+  )
+
+timing_plot <- ggplot(adoption_grid, aes(x = year, y = state, fill = status)) +
+  geom_tile(color = "white", linewidth = 0.4) +
+  scale_x_continuous(breaks = 2000:2019, expand = c(0, 0)) +
+  scale_y_discrete(expand = c(0, 0)) +
+  # light/dark separation keeps the three groups readable in grayscale
+  scale_fill_manual(values = c("Pre-expansion"  = "#9ECAE1",
+                               "Expanded"       = "#08519C",
+                               "Never expanded" = "grey85")) +
+  labs(x = "Year", y = NULL, fill = NULL) +
+  theme_customs() +
+  theme(axis.text.y     = element_text(size = 17),
+        axis.text.x     = element_text(size = 23, angle = 45, hjust = 1),
+        axis.title.x    = element_text(size = 28),
+        legend.text     = element_text(size = 27),
+        legend.key.size = unit(1.4, "lines"),
+        legend.position = "bottom",
+        axis.line       = element_blank())
+
 for (dir_out in c(figures_wd, thesis_plots)) {
   ggsave(file.path(dir_out, "desc-timing.png"), plot = timing_plot,
-         width = 18, height = 10, units = "in", dpi = 100)
+         width = 10, height = 12, units = "in", dpi = 300)
   ggsave(file.path(dir_out, "desc-timing.pdf"), plot = timing_plot,
-         width = 18, height = 10, units = "in")
+         width = 10, height = 12, units = "in")
 }
 
 #-----------------------------------
@@ -371,7 +387,7 @@ growth_plot <- ggplot(plot_data_growth, aes(x = YEAR, y = pct_of_start, color = 
     y = label_data$pct_of_start,
     label = label_data$series,
     color = c("#D81B60", "#FFC107"),
-    hjust = 0, size = 7
+    hjust = 0, size = 10
   ) +
   labs(
     title = NULL,
