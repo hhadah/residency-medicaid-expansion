@@ -1,31 +1,28 @@
 * =============================================================================
-* MECHANISM RECLASSIFICATION: gme_formula_2015 vintage + judgment-state flips
+* MECHANISM CLASSIFICATION SENSITIVITY: judgment-state flips + time-varying check
 * ---------------------------------------------------------------------------
-* Referee response (editorial decision 2026-07-24, MUST-3 / cluster F2).
-* The submitted paper classifies states by the 2012 (Henderson 2013) Medicaid
-* GME formula vintage. The classification file also carries a 2015 vintage
-* under which NY, IL, AZ, VT, VA move INTO the volume arm (and NC, ID out),
-* i.e. the 2012 vintage is wrong during most of the 2014-2019 treatment
-* window for the two largest non-California expansion states. This script:
+* The paper classifies states by the Medicaid GME formula rules in force
+* during the 2014-2019 treatment window (gme_formula_2015; Henderson 2016
+* AAMC survey). This script probes that classification:
 *
-*   1. Re-runs the three mechanism objects (volume arm, non-responsive arm,
-*      cross-arm difference) on the NRMP panel under the 2015 vintage.
+*   1. Runs the three mechanism objects (volume arm, non-responsive arm,
+*      cross-arm difference) on the NRMP panel under the 2015 classification.
 *      TIME-VARYING NOTE: an exposure-weighted time-varying classification
-*      (2012 vintage in force through 2014, 2015 vintage from 2015) assigns
-*      every expansion state the arm of the vintage covering >=5/6 of its
-*      post period, which is the 2015 vintage for every state. The script
-*      verifies this and reports it; the 2015-vintage run IS the
+*      assigns every expansion state the arm of the vintage covering >=5/6
+*      of its post period, which is the 2015 classification for every state.
+*      The script verifies this and reports it; the 2015 run IS the
 *      time-varying run under majority-exposure assignment.
-*   2. Re-runs the GME payment first stage (script 19 outcomes) by arm under
-*      the 2015 vintage (summary CSV; figures for asinh_dgme).
+*   2. Runs the GME payment first stage (script 19 outcomes) by arm
+*      (summary CSV; figures for asinh_dgme) - cross-check against script 19.
 *   3. Sensitivity table: flips each recorded judgment state (MD, MN, MT,
-*      IA, NM) between arms, one at a time, under BOTH vintages, and
-*      reports the cross-arm difference each time.
+*      IA, NM) between arms, one at a time, and reports the cross-arm
+*      difference each time.
 *
 * Utah is resolved (fixed pool, SPA 4.19-A Sec 700) in the classification
 * file; it is a non-expansion control and never enters the arms.
 *
 * Outputs: output/tables/reclassification-sensitivity.csv
+*          output/tables/firststage-2015vintage-summary.csv
 *          figures appx-mech2015-{volume,nonresp},
 *                  appx-firststage2015-dgme-{volume,nonresp}
 * =============================================================================
@@ -53,21 +50,14 @@ cap mkdir "${latex_figdir}"
 log using "${topdir}/output/25-mechanism-reclassification.log", replace
 
 * ---------------------------------------------------------------------------
-* Classification file: both vintages
+* Classification file (2015 payment rules)
 * ---------------------------------------------------------------------------
 import delimited "${rawdir}/gme_formula_classification.csv", clear varnames(1) stringcols(_all)
-keep state gme_formula gme_formula_2015
+keep state gme_formula_2015
 replace state = strtrim(upper(state))
-assert !inlist("TODO", gme_formula, gme_formula_2015)
+assert gme_formula_2015 != "TODO"
 tempfile gme
 save `gme'
-
-* Report vintage disagreements (for the response letter)
-use `gme', clear
-gen byte vol12 = (gme_formula == "volume")
-gen byte vol15 = (gme_formula_2015 == "volume")
-di as text _n "States whose binary volume classification differs across vintages:"
-list state gme_formula gme_formula_2015 if vol12 != vol15, clean noobs
 
 * ---------------------------------------------------------------------------
 * NRMP panel prep (as in script 20)
@@ -89,9 +79,7 @@ merge m:1 state using `gme', keep(master match) nogen
 encode state, gen(state_id)
 xtset program_numeric_id year
 
-* Arm indicators under each vintage
-gen byte vol12 = (gme_formula == "volume")
-gen byte nvl12 = inlist(gme_formula, "fixed", "none")
+* Arm indicators (2015 classification)
 gen byte vol15 = (gme_formula_2015 == "volume")
 gen byte nvl15 = inlist(gme_formula_2015, "fixed", "none")
 
@@ -188,29 +176,23 @@ program define _mechrun
 end
 
 * ---------------------------------------------------------------------------
-* 1) Baseline runs under each vintage
+* 1) Baseline run (2015 classification)
 * ---------------------------------------------------------------------------
 use "`master'", clear
-di _n "==================== VINTAGE 2012 (paper baseline) ===================="
-_mechrun vol12 nvl12 "c2012" "" `res' ""
-
-use "`master'", clear
-di _n "==================== VINTAGE 2015 (post-period-correct) ===================="
+di _n "==================== 2015 CLASSIFICATION (paper baseline) ===================="
 _mechrun vol15 nvl15 "c2015" "" `res' "figs"
 
 * ---------------------------------------------------------------------------
-* 2) Judgment-state flips (MD, MN, MT, IA, NM), one at a time, both vintages
+* 2) Judgment-state flips (MD, MN, MT, IA, NM), one at a time
 * ---------------------------------------------------------------------------
 foreach jst in MD MN MT IA NM {
-    foreach v in 12 15 {
-        use "`master'", clear
-        gen byte volf = vol`v'
-        gen byte nvlf = nvl`v'
-        quietly replace volf = 1 - volf if state == "`jst'"
-        quietly replace nvlf = 1 - volf if state == "`jst'"
-        di _n "==================== FLIP `jst' under vintage 20`v' ===================="
-        _mechrun volf nvlf "c20`v'" "`jst'" `res' ""
-    }
+    use "`master'", clear
+    gen byte volf = vol15
+    gen byte nvlf = nvl15
+    quietly replace volf = 1 - volf if state == "`jst'"
+    quietly replace nvlf = 1 - volf if state == "`jst'"
+    di _n "==================== FLIP `jst' ===================="
+    _mechrun volf nvlf "c2015" "`jst'" `res' ""
 }
 
 postclose `res'

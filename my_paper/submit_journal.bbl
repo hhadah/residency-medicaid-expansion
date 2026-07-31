@@ -1020,39 +1020,6 @@
       \verb 10.1377/hlthaff.2015.1344
       \endverb
     \endentry
-    \entry{duggan2000}{article}{}{}
-      \name{author}{1}{}{%
-        {{hash=b16508a977165558879b460c3f214e0d}{%
-           family={Duggan},
-           familyi={D\bibinitperiod},
-           given={Mark},
-           giveni={M\bibinitperiod}}}%
-      }
-      \strng{namehash}{b16508a977165558879b460c3f214e0d}
-      \strng{fullhash}{b16508a977165558879b460c3f214e0d}
-      \strng{fullhashraw}{b16508a977165558879b460c3f214e0d}
-      \strng{bibnamehash}{b16508a977165558879b460c3f214e0d}
-      \strng{authorbibnamehash}{b16508a977165558879b460c3f214e0d}
-      \strng{authornamehash}{b16508a977165558879b460c3f214e0d}
-      \strng{authorfullhash}{b16508a977165558879b460c3f214e0d}
-      \strng{authorfullhashraw}{b16508a977165558879b460c3f214e0d}
-      \field{sortinit}{D}
-      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{author}
-      \field{journaltitle}{Quarterly Journal of Economics}
-      \field{number}{4}
-      \field{title}{Hospital Ownership and Public Medical Spending}
-      \field{volume}{115}
-      \field{year}{2000}
-      \field{pages}{1343\bibrangedash 1373}
-      \range{pages}{31}
-      \verb{doi}
-      \verb 10.1162/003355300555097
-      \endverb
-    \endentry
     \entry{eden2014}{book}{}{}
       \name{author}{3}{}{%
         {{hash=1595a73a941f220d2b78505d574ffc64}{%
@@ -1405,7 +1372,7 @@
       \field{title}{Physician Supply and the Affordable Care Act}
       \field{year}{2013}
     \endentry
-    \entry{henderson2013}{book}{}{}
+    \entry{henderson2016}{book}{}{}
       \name{author}{1}{}{%
         {{hash=c374dfc5915be133e6d5b9772bbf7f68}{%
            family={Henderson},
@@ -1435,38 +1402,6 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{{Medicaid} Graduate Medical Education Payments: A 50-State Survey}
-      \field{year}{2013}
-    \endentry
-    \entry{henderson2016}{book}{}{}
-      \name{author}{1}{}{%
-        {{hash=c374dfc5915be133e6d5b9772bbf7f68}{%
-           family={Henderson},
-           familyi={H\bibinitperiod},
-           given={Thomas\bibnamedelima M.},
-           giveni={T\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
-      }
-      \list{location}{1}{%
-        {Washington, DC}%
-      }
-      \list{publisher}{1}{%
-        {AAMC}%
-      }
-      \strng{namehash}{c374dfc5915be133e6d5b9772bbf7f68}
-      \strng{fullhash}{c374dfc5915be133e6d5b9772bbf7f68}
-      \strng{fullhashraw}{c374dfc5915be133e6d5b9772bbf7f68}
-      \strng{bibnamehash}{c374dfc5915be133e6d5b9772bbf7f68}
-      \strng{authorbibnamehash}{c374dfc5915be133e6d5b9772bbf7f68}
-      \strng{authornamehash}{c374dfc5915be133e6d5b9772bbf7f68}
-      \strng{authorfullhash}{c374dfc5915be133e6d5b9772bbf7f68}
-      \strng{authorfullhashraw}{c374dfc5915be133e6d5b9772bbf7f68}
-      \field{extraname}{2}
-      \field{sortinit}{H}
-      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
-      \field{extradatescope}{labelyear}
-      \field{labeldatesource}{}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{title}{{Medicaid} Graduate Medical Education Payments: A 50-State Survey}
       \field{year}{2016}
     \endentry
     \entry{henderson2021}{article}{}{}
@@ -1485,7 +1420,7 @@
       \strng{authornamehash}{c374dfc5915be133e6d5b9772bbf7f68}
       \strng{authorfullhash}{c374dfc5915be133e6d5b9772bbf7f68}
       \strng{authorfullhashraw}{c374dfc5915be133e6d5b9772bbf7f68}
-      \field{extraname}{3}
+      \field{extraname}{2}
       \field{sortinit}{H}
       \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
       \field{extradatescope}{labelyear}
@@ -1525,7 +1460,7 @@
       \strng{authornamehash}{c374dfc5915be133e6d5b9772bbf7f68}
       \strng{authorfullhash}{c374dfc5915be133e6d5b9772bbf7f68}
       \strng{authorfullhashraw}{c374dfc5915be133e6d5b9772bbf7f68}
-      \field{extraname}{4}
+      \field{extraname}{3}
       \field{sortinit}{H}
       \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
       \field{extradatescope}{labelyear}
@@ -2139,7 +2074,23 @@
       \field{title}{Graduate Medical Education Funding}
       \field{year}{2024}
     \endentry
-    \entry{nrmp2010}{report}{}{}
+    \entry{nfib_v_sebelius_2012}{jurisdiction}{}{}
+      \field{sortinit}{N}
+      \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labeltitlesource}{shorttitle}
+      \field{journaltitle}{United States Supreme Court Reports}
+      \field{shortjournal}{U.S\adddot}
+      \field{shorttitle}{NFIB}
+      \field{title}{National Federation of Independent Business v\adddotspace Sebelius}
+      \field{volume}{567}
+      \field{year}{2012}
+      \field{dateera}{ce}
+      \field{pages}{519}
+      \range{pages}{1}
+    \endentry
+    \entry{nrmp2000}{report}{}{}
       \name{author}{1}{}{%
         {{hash=b7325a7280e4b6afad9c9a4da7a3df7d}{%
            family={{National Resident Matching Program}},
@@ -2160,6 +2111,316 @@
       \strng{authorfullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
       \strng{authorfullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
       \field{extraname}{1}
+      \field{sortinit}{N}
+      \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Results and Data: 2000 Main Residency Match}
+      \field{type}{techreport}
+      \field{year}{2000}
+    \endentry
+    \entry{nrmp2001}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=b7325a7280e4b6afad9c9a4da7a3df7d}{%
+           family={{National Resident Matching Program}},
+           familyi={N\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {National Resident Matching Program}%
+      }
+      \list{location}{1}{%
+        {Washington, DC}%
+      }
+      \strng{namehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{fullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{fullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{bibnamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorbibnamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authornamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorfullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorfullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \field{extraname}{2}
+      \field{sortinit}{N}
+      \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Results and Data: 2001 Main Residency Match}
+      \field{type}{techreport}
+      \field{year}{2001}
+    \endentry
+    \entry{nrmp2002}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=b7325a7280e4b6afad9c9a4da7a3df7d}{%
+           family={{National Resident Matching Program}},
+           familyi={N\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {National Resident Matching Program}%
+      }
+      \list{location}{1}{%
+        {Washington, DC}%
+      }
+      \strng{namehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{fullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{fullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{bibnamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorbibnamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authornamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorfullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorfullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \field{extraname}{3}
+      \field{sortinit}{N}
+      \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Results and Data: 2002 Main Residency Match}
+      \field{type}{techreport}
+      \field{year}{2002}
+    \endentry
+    \entry{nrmp2003}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=b7325a7280e4b6afad9c9a4da7a3df7d}{%
+           family={{National Resident Matching Program}},
+           familyi={N\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {National Resident Matching Program}%
+      }
+      \list{location}{1}{%
+        {Washington, DC}%
+      }
+      \strng{namehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{fullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{fullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{bibnamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorbibnamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authornamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorfullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorfullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \field{extraname}{4}
+      \field{sortinit}{N}
+      \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Results and Data: 2003 Main Residency Match}
+      \field{type}{techreport}
+      \field{year}{2003}
+    \endentry
+    \entry{nrmp2004}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=b7325a7280e4b6afad9c9a4da7a3df7d}{%
+           family={{National Resident Matching Program}},
+           familyi={N\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {National Resident Matching Program}%
+      }
+      \list{location}{1}{%
+        {Washington, DC}%
+      }
+      \strng{namehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{fullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{fullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{bibnamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorbibnamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authornamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorfullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorfullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \field{extraname}{5}
+      \field{sortinit}{N}
+      \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Results and Data: 2004 Main Residency Match}
+      \field{type}{techreport}
+      \field{year}{2004}
+    \endentry
+    \entry{nrmp2005}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=b7325a7280e4b6afad9c9a4da7a3df7d}{%
+           family={{National Resident Matching Program}},
+           familyi={N\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {National Resident Matching Program}%
+      }
+      \list{location}{1}{%
+        {Washington, DC}%
+      }
+      \strng{namehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{fullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{fullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{bibnamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorbibnamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authornamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorfullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorfullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \field{extraname}{6}
+      \field{sortinit}{N}
+      \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Results and Data: 2005 Main Residency Match}
+      \field{type}{techreport}
+      \field{year}{2005}
+    \endentry
+    \entry{nrmp2006}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=b7325a7280e4b6afad9c9a4da7a3df7d}{%
+           family={{National Resident Matching Program}},
+           familyi={N\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {National Resident Matching Program}%
+      }
+      \list{location}{1}{%
+        {Washington, DC}%
+      }
+      \strng{namehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{fullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{fullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{bibnamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorbibnamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authornamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorfullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorfullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \field{extraname}{7}
+      \field{sortinit}{N}
+      \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Results and Data: 2006 Main Residency Match}
+      \field{type}{techreport}
+      \field{year}{2006}
+    \endentry
+    \entry{nrmp2007}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=b7325a7280e4b6afad9c9a4da7a3df7d}{%
+           family={{National Resident Matching Program}},
+           familyi={N\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {National Resident Matching Program}%
+      }
+      \list{location}{1}{%
+        {Washington, DC}%
+      }
+      \strng{namehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{fullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{fullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{bibnamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorbibnamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authornamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorfullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorfullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \field{extraname}{8}
+      \field{sortinit}{N}
+      \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Results and Data: 2007 Main Residency Match}
+      \field{type}{techreport}
+      \field{year}{2007}
+    \endentry
+    \entry{nrmp2008}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=b7325a7280e4b6afad9c9a4da7a3df7d}{%
+           family={{National Resident Matching Program}},
+           familyi={N\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {National Resident Matching Program}%
+      }
+      \list{location}{1}{%
+        {Washington, DC}%
+      }
+      \strng{namehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{fullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{fullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{bibnamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorbibnamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authornamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorfullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorfullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \field{extraname}{9}
+      \field{sortinit}{N}
+      \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Results and Data: 2008 Main Residency Match}
+      \field{type}{techreport}
+      \field{year}{2008}
+    \endentry
+    \entry{nrmp2009}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=b7325a7280e4b6afad9c9a4da7a3df7d}{%
+           family={{National Resident Matching Program}},
+           familyi={N\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {National Resident Matching Program}%
+      }
+      \list{location}{1}{%
+        {Washington, DC}%
+      }
+      \strng{namehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{fullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{fullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{bibnamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorbibnamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authornamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorfullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorfullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \field{extraname}{10}
+      \field{sortinit}{N}
+      \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Results and Data: 2009 Main Residency Match}
+      \field{type}{techreport}
+      \field{year}{2009}
+    \endentry
+    \entry{nrmp2010}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=b7325a7280e4b6afad9c9a4da7a3df7d}{%
+           family={{National Resident Matching Program}},
+           familyi={N\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {National Resident Matching Program}%
+      }
+      \list{location}{1}{%
+        {Washington, DC}%
+      }
+      \strng{namehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{fullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{fullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{bibnamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorbibnamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authornamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorfullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \strng{authorfullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
+      \field{extraname}{11}
       \field{sortinit}{N}
       \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
       \field{extradatescope}{labelyear}
@@ -2190,7 +2451,7 @@
       \strng{authornamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
       \strng{authorfullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
       \strng{authorfullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
-      \field{extraname}{2}
+      \field{extraname}{12}
       \field{sortinit}{N}
       \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
       \field{extradatescope}{labelyear}
@@ -2221,7 +2482,7 @@
       \strng{authornamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
       \strng{authorfullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
       \strng{authorfullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
-      \field{extraname}{3}
+      \field{extraname}{13}
       \field{sortinit}{N}
       \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
       \field{extradatescope}{labelyear}
@@ -2252,7 +2513,7 @@
       \strng{authornamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
       \strng{authorfullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
       \strng{authorfullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
-      \field{extraname}{4}
+      \field{extraname}{14}
       \field{sortinit}{N}
       \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
       \field{extradatescope}{labelyear}
@@ -2283,7 +2544,7 @@
       \strng{authornamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
       \strng{authorfullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
       \strng{authorfullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
-      \field{extraname}{5}
+      \field{extraname}{15}
       \field{sortinit}{N}
       \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
       \field{extradatescope}{labelyear}
@@ -2314,7 +2575,7 @@
       \strng{authornamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
       \strng{authorfullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
       \strng{authorfullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
-      \field{extraname}{6}
+      \field{extraname}{16}
       \field{sortinit}{N}
       \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
       \field{extradatescope}{labelyear}
@@ -2345,7 +2606,7 @@
       \strng{authornamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
       \strng{authorfullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
       \strng{authorfullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
-      \field{extraname}{7}
+      \field{extraname}{17}
       \field{sortinit}{N}
       \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
       \field{extradatescope}{labelyear}
@@ -2376,7 +2637,7 @@
       \strng{authornamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
       \strng{authorfullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
       \strng{authorfullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
-      \field{extraname}{8}
+      \field{extraname}{18}
       \field{sortinit}{N}
       \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
       \field{extradatescope}{labelyear}
@@ -2407,7 +2668,7 @@
       \strng{authornamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
       \strng{authorfullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
       \strng{authorfullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
-      \field{extraname}{9}
+      \field{extraname}{19}
       \field{sortinit}{N}
       \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
       \field{extradatescope}{labelyear}
@@ -2438,7 +2699,7 @@
       \strng{authornamehash}{b7325a7280e4b6afad9c9a4da7a3df7d}
       \strng{authorfullhash}{b7325a7280e4b6afad9c9a4da7a3df7d}
       \strng{authorfullhashraw}{b7325a7280e4b6afad9c9a4da7a3df7d}
-      \field{extraname}{10}
+      \field{extraname}{20}
       \field{sortinit}{N}
       \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
       \field{extradatescope}{labelyear}
@@ -3196,7 +3457,81 @@
 
 \refsection{2}
   \datalist[entry]{nyt/global//global/global/global}
-    \entry{henderson2013}{book}{}{}
+    \entry{chcf2024}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=9ae2f9988333202c834bc7a79cc67d48}{%
+           family={{California Health Care Foundation}},
+           familyi={C\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {California Health Care Foundation}%
+      }
+      \list{location}{1}{%
+        {Oakland, CA}%
+      }
+      \strng{namehash}{9ae2f9988333202c834bc7a79cc67d48}
+      \strng{fullhash}{9ae2f9988333202c834bc7a79cc67d48}
+      \strng{fullhashraw}{9ae2f9988333202c834bc7a79cc67d48}
+      \strng{bibnamehash}{9ae2f9988333202c834bc7a79cc67d48}
+      \strng{authorbibnamehash}{9ae2f9988333202c834bc7a79cc67d48}
+      \strng{authornamehash}{9ae2f9988333202c834bc7a79cc67d48}
+      \strng{authorfullhash}{9ae2f9988333202c834bc7a79cc67d48}
+      \strng{authorfullhashraw}{9ae2f9988333202c834bc7a79cc67d48}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{The Role of State and Federal Funding for Graduate Medical Education in {California}}
+      \field{type}{techreport}
+      \field{year}{2024}
+      \verb{urlraw}
+      \verb https://www.chcf.org/wp-content/uploads/2024/10/ExplainerRoleStateFederalFundingGME.pdf
+      \endverb
+      \verb{url}
+      \verb https://www.chcf.org/wp-content/uploads/2024/10/ExplainerRoleStateFederalFundingGME.pdf
+      \endverb
+    \endentry
+    \entry{chen2024logs}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=7475daa1cb086edff0cd0691571a915d}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Jiafeng},
+           giveni={J\bibinitperiod}}}%
+        {{hash=73c1da3266b3c7728f6b1f38a73c7671}{%
+           family={Roth},
+           familyi={R\bibinitperiod},
+           given={Jonathan},
+           giveni={J\bibinitperiod}}}%
+      }
+      \strng{namehash}{52954c3e9bfdb77ae37811e905cee1fc}
+      \strng{fullhash}{52954c3e9bfdb77ae37811e905cee1fc}
+      \strng{fullhashraw}{52954c3e9bfdb77ae37811e905cee1fc}
+      \strng{bibnamehash}{52954c3e9bfdb77ae37811e905cee1fc}
+      \strng{authorbibnamehash}{52954c3e9bfdb77ae37811e905cee1fc}
+      \strng{authornamehash}{52954c3e9bfdb77ae37811e905cee1fc}
+      \strng{authorfullhash}{52954c3e9bfdb77ae37811e905cee1fc}
+      \strng{authorfullhashraw}{52954c3e9bfdb77ae37811e905cee1fc}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{author}
+      \field{journaltitle}{The Quarterly Journal of Economics}
+      \field{number}{2}
+      \field{title}{Logs with Zeros? {Some} Problems and Solutions}
+      \field{volume}{139}
+      \field{year}{2024}
+      \field{pages}{891\bibrangedash 936}
+      \range{pages}{46}
+      \verb{doi}
+      \verb 10.1093/qje/qjad054
+      \endverb
+    \endentry
+    \entry{henderson2016}{book}{}{}
       \name{author}{1}{}{%
         {{hash=c374dfc5915be133e6d5b9772bbf7f68}{%
            family={Henderson},
@@ -3225,7 +3560,43 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{{Medicaid} Graduate Medical Education Payments: A 50-State Survey}
-      \field{year}{2013}
+      \field{year}{2016}
+    \endentry
+    \entry{lao2019}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=a9a709fa1a5cd072894a2bd9930cb4ad}{%
+           family={{Legislative Analyst's Office}},
+           familyi={L\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {California Legislative Analyst's Office}%
+      }
+      \list{location}{1}{%
+        {Sacramento, CA}%
+      }
+      \strng{namehash}{a9a709fa1a5cd072894a2bd9930cb4ad}
+      \strng{fullhash}{a9a709fa1a5cd072894a2bd9930cb4ad}
+      \strng{fullhashraw}{a9a709fa1a5cd072894a2bd9930cb4ad}
+      \strng{bibnamehash}{a9a709fa1a5cd072894a2bd9930cb4ad}
+      \strng{authorbibnamehash}{a9a709fa1a5cd072894a2bd9930cb4ad}
+      \strng{authornamehash}{a9a709fa1a5cd072894a2bd9930cb4ad}
+      \strng{authorfullhash}{a9a709fa1a5cd072894a2bd9930cb4ad}
+      \strng{authorfullhashraw}{a9a709fa1a5cd072894a2bd9930cb4ad}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{The 2019--20 Budget: Using {Proposition} 56 Funding in {Medi-Cal}}
+      \field{type}{techreport}
+      \field{year}{2019}
+      \verb{urlraw}
+      \verb https://lao.ca.gov/Publications/Report/3949
+      \endverb
+      \verb{url}
+      \verb https://lao.ca.gov/Publications/Report/3949
+      \endverb
     \endentry
     \entry{rambachan2023more}{article}{}{}
       \name{author}{2}{}{%

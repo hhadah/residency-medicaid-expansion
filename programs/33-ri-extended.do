@@ -70,14 +70,14 @@ if _rc == 0 gen byte urban_rural = (rural_urban_2010 > 3) if !missing(rural_urba
 * GME formula classification (for the mechanism cross-arm difference spec)
 preserve
     import delimited "${rawdir}/gme_formula_classification.csv", clear varnames(1) stringcols(_all)
-    keep state gme_formula
+    keep state gme_formula_2015
     replace state = strtrim(upper(state))
     tempfile gme
     save `gme'
 restore
 merge m:1 state using `gme', keep(master match) nogen
-gen byte gme_vol    = (gme_formula == "volume")
-gen byte gme_notvol = inlist(gme_formula, "fixed", "none")
+gen byte gme_vol    = (gme_formula_2015 == "volume")
+gen byte gme_notvol = inlist(gme_formula_2015, "fixed", "none")
 egen program_numeric_id = group(state institution_code)
 encode state, gen(state_id)
 xtset program_numeric_id year

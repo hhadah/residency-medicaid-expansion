@@ -92,15 +92,16 @@ foreach s in ///
 * RANDOMIZATION INFERENCE (scripts 30-34) -- run separately
 * -------------------------------------------------------------------------
 * The RI suite is the pipeline's slow block (hours at full replication
-* counts on the 2000-2019 panel). It was ported to the full panel on
-* 2026-07-25 but NOT rerun; the manuscript flags its numbers as computed on
-* the 2010-2019 panel pending this rerun. To run at full fidelity:
+* counts on the 2000-2019 panel). Scripts 32 and 33 were last rerun
+* 2026-07-30 under the 2015 formula classification (the manuscript's RI
+* numbers); 30, 31, and 34 are uncited replication artifacts. To run:
   foreach s in "30-randomization-inference" "31-ri-outcome-weight-diagnostic" ///
       "32-ri-yearvarying" "33-ri-extended" "34-label-permutation" {
       do "${progdir}/`s'.do"
   }
 * Smoke test with reduced reps: do "${progdir}/33-ri-extended.do" 20
 * Afterwards rerun: python3 programs/37-multiple-testing-qvalues.py
+*                   Rscript programs/40-make-payment-decomposition-table.R
 * =========================================================================
 
 * =========================================================================

@@ -14,19 +14,20 @@
 
 \section{Tables}\label{appendix:tabs}
 
-\begin{landscape}
 \begin{table}[H]
 \centering
+\singlespacing
 \begin{threeparttable}
-\caption{Multiple-Testing Adjustment for the Primary Family of Per-Capita Effects}
-\label{atab:qvalues}
-\input{tables/multiple-testing-qvalues.tex}
+\caption{Payment Responses Decomposed: Intensive and Extensive Margins}
+\label{atab:logpositive}
+\input{tables/reg_logpositive_summary.tex}
 \begin{tablenotes}\footnotesize
-\item \textit{Notes:} The table reports Benjamini--Hochberg false-discovery-rate $q$-values for the primary family of average post-expansion effects on matched positions per 100{,}000 population, computed under two inference standards. ``Clustered'' $p$-values are the joint tests of the post-expansion event-time coefficients with standard errors clustered at the state level (the offered-positions row uses the quota outcome). ``Randomization inference'' $p$-values permute the vector of state expansion-timing cohorts across the states in each specification's sample under the sharp null of no effect ($1{,}000$ draws for the full-sample headline, $500$ for the other members) and compare the observed average post effect with the permutation distribution; studentized variants that permute the $t$-statistic instead of the coefficient are reported in the replication output (\texttt{ri-yearvarying-summary.csv}, \texttt{ri-extended-summary.csv}) and give the same conclusions. Within each standard, $q$-values apply the Benjamini--Hochberg correction across the family of nine tests (the two mechanism arms and the cross-arm difference were added at referee request); a $q$-value below $0.05$ indicates a finding that survives a $5$ percent false-discovery-rate correction. No member survives under randomization inference ($q \geq 0.74$); the mechanism rows that survive under clustered inference are disqualified on other grounds (failing pre-trends and California-dependence; \cref{subsec:mechanisms}).
+\item \textit{Notes:} The table decomposes the payment responses that the inverse-hyperbolic-sine specifications measure elsewhere in the paper into the two margins the asinh transformation conflates; with mass at zero in the outcome, asinh coefficients are not unit-invariant \autocite{chen2024logs}. The log rows estimate the natural log of annualized Medicare cost-report payments on the subsample of hospital--fiscal-years with positive payments ($98$ percent of the estimation sample for Direct GME, $89$ percent for IME), so coefficients are proportional changes on the intensive margin. The extensive-margin rows estimate a linear probability model for whether a hospital receives any payment, so coefficients are changes in percentage-point terms. All rows use a static treated-post indicator with hospital and fiscal-year fixed effects, unweighted; the volume-arm interaction rows report the coefficient on treated-post interacted with the volume-responsive formula classification---the cross-arm difference. Standard errors are clustered at the state level.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
+\begin{landscape}
 \begin{table}[H]
 \centering
 \singlespacing
@@ -36,19 +37,23 @@
 \label{atab:balance}
 \input{tables/balance_gme_formula.tex}
 \begin{tablenotes}\footnotesize
-\item \textit{Notes:} The table reports baseline (2010, pre-treatment) means by Medicaid GME formula group, for the same characteristics as the summary-statistics table (\cref{tab:sumstats}). Expansion states are classified as volume-responsive or fixed/none from the payment methodology reported in the 2012 survey of \textcite{henderson2013}; never-expansion states are shown for reference. All rows except the population-weighted row are unweighted means across states (the state is the unit of observation); the $p$-value is from a Welch two-sample $t$-test of the volume-responsive versus fixed/none difference at the state level, so power is limited by the number of states. The population-weighted row reports the program-level mean of matched positions per 100{,}000 (2010 population), weighted by state population---the object the estimation weights by; its cross-group gap reflects the concentration of training in a few large volume-responsive states rather than state-level imbalance. The fill-share row is measured at the NRMP specialty-program level (the share of a state's specialty programs filling every offered position); the primary-care share is the share of matched positions in family medicine, internal medicine, and pediatrics; rural programs are those whose institution ZIP code (obtained by geocoding the institution address) carries a 2010 RUCA code above 3; RUCA is unavailable for institutions that exited before 2010 and for Alaska and Hawaii institutions, whose coordinates fall outside the geocoder's continental-U.S. filter, so those institutions are excluded from the rural/urban split (not from the main analysis). Data are from NRMP Main Residency Match reports and the U.S.\ Census Bureau.
+\item \textit{Notes:} The table reports baseline (2010, pre-treatment) means by Medicaid GME formula group, for the same characteristics as the summary-statistics table (\cref{tab:sumstats}). Expansion states are classified as volume-responsive or fixed/none by the payment rules in force during the 2014--2019 treatment window, from the survey of \textcite{henderson2016}; never-expansion states are shown for reference. All rows except the population-weighted row are unweighted means across states (the state is the unit of observation); the $p$-value is from a Welch two-sample $t$-test of the volume-responsive versus fixed/none difference at the state level, so power is limited by the number of states. The population-weighted row reports the program-level mean of matched positions per 100{,}000 (2010 population), weighted by state population---the object the estimation weights by; its cross-group gap reflects the concentration of training in a few large volume-responsive states rather than state-level imbalance. The fill-share row is measured at the NRMP specialty-program level (the share of a state's specialty programs filling every offered position); the primary-care share is the share of matched positions in family medicine, internal medicine, and pediatrics; rural programs are those whose institution ZIP code (obtained by geocoding the institution address) carries a 2010 RUCA code above 3; RUCA is unavailable for institutions that exited before 2010 and for Alaska and Hawaii institutions, whose coordinates fall outside the geocoder's continental-U.S. filter, so those institutions are excluded from the rural/urban split (not from the main analysis). Data are from NRMP Main Residency Match reports and the U.S.\ Census Bureau.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{threeparttable}
+\caption{Multiple-Testing Adjustment for the Primary Family of Per-Capita Effects}
+\label{atab:qvalues}
+\input{tables/multiple-testing-qvalues.tex}
+\begin{tablenotes}\footnotesize
+\item \textit{Notes:} The table reports Benjamini--Hochberg false-discovery-rate $q$-values for the primary family of average post-expansion effects on matched positions per 100{,}000 population, computed under two inference standards. ``Clustered'' $p$-values are the joint tests of the post-expansion event-time coefficients with standard errors clustered at the state level (the offered-positions row uses the quota outcome). ``Randomization inference'' $p$-values permute the vector of state expansion-timing cohorts across the states in each specification's sample under the sharp null of no effect ($1{,}000$ draws for the full-sample headline, $500$ for the other members) and compare the observed average post effect with the permutation distribution; studentized variants that permute the $t$-statistic instead of the coefficient are reported in the replication output (\texttt{ri-yearvarying-summary.csv}, \texttt{ri-extended-summary.csv}) and give the same conclusions. Within each standard, $q$-values apply the Benjamini--Hochberg correction across the family of nine tests (the two mechanism arms and the cross-arm difference were added at referee request); a $q$-value below $0.05$ indicates a finding that survives a $5$ percent false-discovery-rate correction. No member survives under randomization inference (all $q \geq 0.99$); the mechanism rows that survive under clustered inference are disqualified on other grounds (failing pre-trends and California-dependence; \cref{subsec:mechanisms}).
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 \end{landscape}
-\begin{figure}[H]
-    \caption{Average Post-Expansion Effects and False-Discovery-Rate Significance Across the Primary Family}
-    \label{afig:fdrforest}
-    \centering
-      \includegraphics[width=0.85\linewidth]{figures/appx-fdr-forest.pdf}
-    \hfill
-\caption*{\footnotesize{\textit{Notes:} The figure plots the average post-expansion effect on matched positions per 100{,}000 contemporary (year-varying) population for each member of the primary family of hypotheses, with 95 percent confidence intervals (point estimate $\pm 1.96$ clustered standard errors). The label beside each marker reports the Benjamini--Hochberg false-discovery-rate $q$-value under both inference standards: $q_{cl}$ (clustered) and $q_{RI}$ (randomization inference). Under clustered inference no non-mechanism member of the nine-hypothesis family survives a $5$ percent false-discovery-rate correction (headline $q = 0.09$); the mechanism rows that do survive are disqualified by failing pre-trends and California-dependence (\cref{subsec:mechanisms}). Standard errors are clustered at the state level.}}
-\end{figure}
 
 \newpage
 \pagebreak
@@ -62,6 +67,242 @@
       \includegraphics[width=\linewidth]{figures/appx-levels-headline.pdf}
     \hfill
 \caption*{\footnotesize{\textit{Notes:} The figure plots event-study coefficients from the imputation estimator of Borusyak, Jaravel, and Spiess (2024), where the outcome is the absolute number of matched residency positions per hospital (not normalized by population). The horizontal axis measures years relative to a state's Medicaid expansion; year 0 is the first year of expansion. Green circles (years $-10$ to $-1$) show pre-expansion coefficients; dark red circles (years $0$ to $+5$) show post-expansion treatment effects. The dashed red line indicates the average post-expansion treatment effect of $-3.85$ positions per hospital, corresponding to a $13.1$ percent decline relative to the pre-expansion mean of $29.43$ matched positions (p $< 0.01$). \textbf{The pre-expansion coefficients in this raw-count specification are large and negative} (on the order of $-2$ positions per hospital, comparable in magnitude to the treatment effect), indicating a violation of parallel trends. This levels estimate therefore corroborates the \emph{direction} of the effect but should not be read as a clean causal magnitude; the paper's primary specification instead normalizes by contemporary population, which restores flat pre-trends (see \cref{subsec:inference}). Shaded bands are 95 percent confidence intervals. Regressions include hospital and year fixed effects. Standard errors are clustered at the state level.}}
+\end{figure}
+
+\begin{figure}[H]
+    \caption{Genuine-Entrant Capacity: Event Study}
+    \label{afig:entry-genuine}
+    \centering
+      \includegraphics[width=0.85\linewidth]{figures/appx-entry-genuine.pdf}
+    \hfill
+\caption*{\footnotesize{\textit{Notes:} The figure estimates the state-level event study for matched positions per 100{,}000 contemporary population at genuinely new post-2010 entrant institutions only---the direct test of whether Medicaid expansion induced new sponsors to enter training provision (\cref{subsec:extensive}). Because pre-expansion capacity at post-2010 entrants is near zero by construction, effects are read in levels; the annotation box reports the average post-expansion effect, joint post-period $p$-value, and ten-period pre-trends $p$-value, and the unweighted counterpart appears in \cref{tab:entryclass}. Estimates use the imputation estimator of Borusyak, Jaravel, and Spiess (2024) with state and year fixed effects, 2010-population weights, and state-clustered standard errors; entry estimates are reported under clustered inference only (\cref{subsec:inference}). Green circles show pre-expansion coefficients; dark red circles show post-expansion effects; shaded bands are 95 percent confidence intervals. Data: NRMP Main Residency Match reports; ACGME Accreditation Data System.}}
+\end{figure}
+
+\begin{figure}[H]
+    \caption{State-Level Training Totals: Event Study Including the Entry Margin}
+    \label{afig:statetotal}
+    \centering
+      \includegraphics[width=0.85\linewidth]{figures/appx-statetotal.pdf}
+    \hfill
+\caption*{\footnotesize{\textit{Notes:} The figure aggregates matched positions to state-level totals per 100{,}000 contemporary population---the object that correctly includes the entry margin, since an entrant institution's pre-entry contribution to its state's total is genuinely zero---and re-estimates the headline event study with the state as the unit ($51$ states). The average post-expansion effect is $+0.58$ per 100{,}000 (s.e.\ $0.42$; $+6.7$ percent of the pre-expansion mean; joint $p = 0.10$); restricting the totals to always-active institutions gives $+11.3$ percent (joint $p = 0.34$). The state-level pre-trend test fails, so the magnitude should be read with caution; the sign contrast with the intake-margin estimates is the robust object (\cref{subsec:extensive}). Estimates use the imputation estimator of Borusyak, Jaravel, and Spiess (2024) with state and year fixed effects, 2010-population weights, and state-clustered standard errors. Green circles show pre-expansion coefficients; dark red circles show post-expansion effects; shaded bands are 95 percent confidence intervals.}}
+\end{figure}
+
+\begin{figure}[H]
+    \caption{State Totals Excluding Single-Accreditation Migrants}
+    \label{afig:statetotal-nosas}
+    \centering
+      \includegraphics[width=0.85\linewidth]{figures/appx-statetotal-nosas.pdf}
+    \hfill
+\caption*{\footnotesize{\textit{Notes:} The figure re-estimates the state-level total event study of \cref{afig:statetotal} after removing all matched positions at the 100 post-2010 entrant institutions classified as AOA-to-ACGME Single Accreditation System migrants (\cref{sec:data}), so the totals reflect existing institutions plus genuinely new entrants only. The annotation box reports the average post-expansion effect, its percent-of-baseline equivalent, the joint post-period $p$-value, and the ten-period pre-trends $p$-value; the corresponding unweighted estimate appears in \cref{tab:entryclass}. The non-declining state total is not an artifact of the accreditation transition. Estimates use the imputation estimator of Borusyak, Jaravel, and Spiess (2024) with state and year fixed effects, 2010-population weights, and state-clustered standard errors. Green circles show pre-expansion coefficients; dark red circles show post-expansion effects; shaded bands are 95 percent confidence intervals. Data: NRMP Main Residency Match reports; ACGME Accreditation Data System.}}
+\end{figure}
+
+\begin{figure}[H]
+    \caption{Group-Specific Payment Evidence: Effect of Medicaid Expansion on Direct GME (DGME) Payments by State Medicaid GME Formula}
+    \label{afig:fs_dgme}
+    \centering
+    \begin{subfigure}{\linewidth}
+        \centering
+        \includegraphics[width=0.75\linewidth]{figures/appx-firststage-dgme-volume.pdf}
+        \caption{Volume-Responsive GME States}
+        \label{afig:fs_dgme:vol}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{\linewidth}
+        \centering
+        \includegraphics[width=0.75\linewidth]{figures/appx-firststage-dgme-nonresp.pdf}
+        \caption{Non-Responsive GME States (Fixed/None)}
+        \label{afig:fs_dgme:nonresp}
+    \end{subfigure}
+\caption*{\footnotesize{\textit{Notes:} The figure re-estimates the Direct GME (DGME) payment event study from \cref{afig13} separately for volume-responsive (top) and non-responsive (bottom) expansion states, each using never-expansion states as the comparison group. The outcome is Medicare cost-report payments, which we read as a proxy for training-related revenue rather than a direct measure of state Medicaid GME payments (see \cref{subsec:mechanisms}). The outcome is the inverse hyperbolic sine (asinh) of DGME payments per teaching hospital, so coefficients approximate proportional changes. With cost-report periods annualized by months covered, in volume-responsive states the average post-expansion effect is $0.15$ (s.e.\ $0.13$; joint $p < 0.01$) and in non-responsive states it is $0.17$ (s.e.\ $0.15$; joint $p < 0.01$); both panels fail their ten-period pre-trend tests (volume-responsive $p < 0.001$, non-responsive $p = 0.004$), and the cross-group difference is null ($-0.02$, s.e.\ $0.11$, $p = 0.87$ from a pooled interacted model). Estimated in logs on the subsample with positive payments, the cross-arm payment difference is likewise null (\cref{atab:logpositive}); see \cref{afig:fs_ftes,afig:fs_perfte} for the FTE/rate decomposition. Green circles (years $-10$ to $-1$) show pre-expansion coefficients; dark red circles (years $0$ to $+5$) show post-expansion effects; the dashed red line marks the average post-expansion effect. Shaded bands are 95 percent confidence intervals. Estimates come from CMS Medicare hospital cost reports at the hospital--fiscal-year level. Regressions include hospital and year fixed effects and are unweighted. Standard errors are clustered at the state level.}}
+\end{figure}
+
+\begin{figure}[H]
+    \caption{Group-Specific Payment Evidence: Effect of Medicaid Expansion on Indirect Medical Education (IME) Payments by State Medicaid GME Formula}
+    \label{afig:fs_ime}
+    \centering
+    \begin{subfigure}{\linewidth}
+        \centering
+        \includegraphics[width=0.75\linewidth]{figures/appx-firststage-ime-volume.pdf}
+        \caption{Volume-Responsive GME States}
+        \label{afig:fs_ime:vol}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{\linewidth}
+        \centering
+        \includegraphics[width=0.75\linewidth]{figures/appx-firststage-ime-nonresp.pdf}
+        \caption{Non-Responsive GME States (Fixed/None)}
+        \label{afig:fs_ime:nonresp}
+    \end{subfigure}
+\caption*{\footnotesize{\textit{Notes:} The figure re-estimates the Indirect Medical Education (IME) payment event study from \cref{afig14} separately for volume-responsive (top) and non-responsive (bottom) expansion states, each using never-expansion states as the comparison group. The outcome is the inverse hyperbolic sine (asinh) of IME payments per teaching hospital, from Medicare cost reports (a proxy for training-related revenue; see \cref{subsec:mechanisms}). With cost-report periods annualized by months covered, in volume-responsive states the average post-expansion effect is $0.08$ (s.e.\ $0.08$; joint $p = 0.03$; pre-trend $p = 0.07$) and in non-responsive states it is $0.11$ (s.e.\ $0.09$; joint $p < 0.001$; pre-trend $p = 0.02$); the cross-group difference is null ($-0.04$, s.e.\ $0.07$, $p = 0.56$ from a pooled interacted model). With the log-level null (\cref{atab:logpositive}) there is no credible payment gradient. Green circles (years $-10$ to $-1$) show pre-expansion coefficients; dark red circles (years $0$ to $+5$) show post-expansion effects. Shaded bands are 95 percent confidence intervals. Regressions include hospital and year fixed effects and are unweighted. Standard errors are clustered at the state level.}}
+\end{figure}
+
+\begin{figure}[H]
+    \caption{Decomposition of the DGME Payment Response: Resident FTEs by State Medicaid GME Formula}
+    \label{afig:fs_ftes}
+    \centering
+    \begin{subfigure}{\linewidth}
+        \centering
+        \includegraphics[width=0.75\linewidth]{figures/appx-firststage-dgmeftes-volume.pdf}
+        \caption{Volume-Responsive GME States}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{\linewidth}
+        \centering
+        \includegraphics[width=0.75\linewidth]{figures/appx-firststage-dgmeftes-nonresp.pdf}
+        \caption{Non-Responsive GME States (Fixed/None)}
+    \end{subfigure}
+\caption*{\footnotesize{\textit{Notes:} The figure decomposes the Direct GME payment response in \cref{afig:fs_dgme}: the outcome is the inverse hyperbolic sine of cost-report DGME resident FTEs per teaching hospital, so coefficients approximate proportional changes in the number of residents hospitals report for payment purposes. With cost-report periods annualized by months covered, resident FTEs move in \emph{neither} arm: the volume-responsive average post effect is $0.02$ (s.e.\ $0.08$; joint $p = 0.08$; pre-trend $p = 0.001$) and the non-responsive effect is $0.05$ (s.e.\ $0.09$; joint $p = 0.12$; pre-trend $p = 0.004$); the cross-group difference is null ($-0.01$, s.e.\ $0.07$, $p = 0.86$). On the linked NRMP--cost-report sample the FTE response is likewise absent (\cref{subsec:linked}). Green circles (years $-10$ to $-1$) show pre-expansion coefficients; dark red circles (years $0$ to $+5$) show post-expansion effects. Shaded bands are 95 percent confidence intervals. Estimates come from CMS Medicare hospital cost reports at the hospital--fiscal-year level with never-expansion states as the comparison group. Regressions include hospital and year fixed effects and are unweighted. Standard errors are clustered at the state level.}}
+\end{figure}
+
+\begin{figure}[H]
+    \caption{Decomposition of the DGME Payment Response: Payment per Resident FTE by State Medicaid GME Formula}
+    \label{afig:fs_perfte}
+    \centering
+    \begin{subfigure}{\linewidth}
+        \centering
+        \includegraphics[width=0.75\linewidth]{figures/appx-firststage-dgmeperfte-volume.pdf}
+        \caption{Volume-Responsive GME States}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{\linewidth}
+        \centering
+        \includegraphics[width=0.75\linewidth]{figures/appx-firststage-dgmeperfte-nonresp.pdf}
+        \caption{Non-Responsive GME States (Fixed/None)}
+    \end{subfigure}
+\caption*{\footnotesize{\textit{Notes:} The figure completes the decomposition in \cref{afig:fs_ftes}: the outcome is the inverse hyperbolic sine of DGME payment per resident FTE (hospitals with positive FTEs only). Per-FTE payments do not rise in either group: the average post effect is $-0.04$ in volume-responsive states (s.e.\ $0.06$; joint $p = 0.22$) and $0.00$ in non-responsive states (s.e.\ $0.05$; joint $p = 0.83$; pre-trend $p = 0.004$); the cross-group difference is null ($-0.03$, s.e.\ $0.04$, $p = 0.43$). The volume-responsive panel exhibits a differential pre-trend (pre-trend $p < 0.001$), so its level should be read with caution; with the annualized FTE panel showing no quantity response either (\cref{afig:fs_ftes}), the decomposition does not support a payment mechanism in any direction. Green circles (years $-10$ to $-1$) show pre-expansion coefficients; dark red circles (years $0$ to $+5$) show post-expansion effects. Shaded bands are 95 percent confidence intervals. Estimates come from CMS Medicare hospital cost reports at the hospital--fiscal-year level with never-expansion states as the comparison group. Regressions include hospital and year fixed effects and are unweighted. Standard errors are clustered at the state level.}}
+\end{figure}
+
+\begin{figure}[H]
+    \caption{Robustness of Event Study Estimates Across Difference-in-Differences Estimators, Total Matched Residency Positions in Levels}
+    \label{afig7}
+    \centering
+      \includegraphics[width=\linewidth]{figures/appx-estimators-levels.pdf}
+    \hfill
+\caption*{\footnotesize{\textit{Notes:} The figure compares event-study estimates of the effect of Medicaid expansion on the absolute number of matched residency positions per hospital across six difference-in-differences estimators that are robust to treatment-effect heterogeneity under staggered adoption: two-way fixed effects; Borusyak, Jaravel, and Spiess (2024); de Chaisemartin and D'Haultfoeuille (2020); Sun and Abraham (2021); Cengiz, Dube, Lindner, and Zipperer (2019); and Gardner (2022). The heterogeneity-robust estimator of Callaway and Sant'Anna (2021) is omitted because it does not accept the population weights used elsewhere in the paper and its never-treated comparison cells are sparse in this sample; the unweighted not-yet-treated estimate is reported in \cref{subsec:estimators}. The pre-trend $p$-value reported in the panel is from the Borusyak, Jaravel, and Spiess (2024) estimator. The dashed vertical line marks the expansion year. Regressions include hospital and year fixed effects. Standard errors are clustered at the state level.}}
+\end{figure}
+
+\begin{figure}[H]
+    \caption{Robustness of Event Study Estimates Across Difference-in-Differences Estimators, Residency Quota Positions per 100,000 Population}
+    \label{afig8}
+    \centering
+      \includegraphics[width=\linewidth]{figures/appx-estimators-quota.pdf}
+    \hfill
+\caption*{\footnotesize{\textit{Notes:} The figure compares event-study estimates of the effect of Medicaid expansion on quota positions per 100,000 state population across six difference-in-differences estimators. Quota positions measure positions offered by residency programs prior to the matching algorithm. The estimators are: two-way fixed effects; Borusyak, Jaravel, and Spiess (2024); de Chaisemartin and D'Haultfoeuille (2020); Sun and Abraham (2021); Cengiz, Dube, Lindner, and Zipperer (2019); and Gardner (2022); the Callaway and Sant'Anna (2021) estimator is omitted as in the previous figure (population weights and sparse never-treated cells). The dashed vertical line marks the expansion year. Regressions include hospital and year fixed effects. Standard errors are clustered at the state level.}}
+\end{figure}
+
+\begin{figure}[H]
+    \caption{Pre-ACA Placebo: Expansion Dates Shifted Back Ten Years, 2000--2013 Sample}
+    \label{afig:placebo}
+    \centering
+    \begin{subfigure}{\linewidth}
+        \centering
+        \includegraphics[width=0.8\linewidth]{figures/appx-placebo-preaca.pdf}
+        \caption{Institution level (activity-window coding)}
+        \label{afig:placebo:inst}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{\linewidth}
+        \centering
+        \includegraphics[width=0.8\linewidth]{figures/appx-placebo-statetotal.pdf}
+        \caption{State-level totals (entry margin included)}
+        \label{afig:placebo:state}
+    \end{subfigure}
+\caption*{\footnotesize{\textit{Notes:} The figure assigns each expansion state a placebo expansion ten years before its actual one (a 2014 adopter receives a placebo date of 2004) and re-estimates the event study on 2000--2013 data only, so no real treatment enters the sample; never-expansion states serve as controls. If differential regional trends in training capacity---rather than expansion itself---drove the post-2014 estimates, the same pattern should appear around the placebo dates. It does not: at the institution level (panel~a) the average placebo effect is $-0.011$ per 100{,}000 (s.e.\ $0.013$; joint $p = 0.54$) after flat placebo pre-trends ($p = 0.71$), and at the state level (panel~b) it is $+0.25$ (s.e.\ $0.18$; joint $p = 0.32$; pre-trend $p = 0.60$). Sample, outcome construction, weights, estimator, and clustering are identical to the headline design (\cref{fig5}), with four placebo pre-periods and up to six placebo post-periods (later cohorts contribute fewer horizons). Green circles show placebo pre-period coefficients; dark red circles show placebo post-period effects; shaded bands are 95 percent confidence intervals.}}
+\end{figure}
+
+\begin{figure}[H]
+    \caption{Robustness to Not-Yet-Treated Controls: Effect of Medicaid Expansion on Matched Residency Positions per 100,000 Population}
+    \label{afig:notyet}
+    \centering
+      \includegraphics[width=\linewidth]{figures/appx-notyet.pdf}
+    \hfill
+\caption*{\footnotesize{\textit{Notes:} The figure re-estimates the main event study after dropping never-expansion states, so identification rests solely on variation in the timing of expansion among eventually-treated states (the not-yet-treated design). The outcome is matched positions per 100,000 contemporary (year-varying) population. Because the last-treated cohort has no valid comparison at horizon $+5$ under the not-yet-treated design, the event study is estimated over horizons $0$ to $+4$. The average post-expansion effect is $-0.043$ (a $16.6$ percent decline relative to the pre-expansion mean of $0.26$; s.e.\ $0.020$)---larger than the full-sample effect---but the ten-period window reveals what a five-period window could not: the design's pre-expansion coefficients fail the pre-trends test decisively ($p < 0.001$), so we no longer treat the timing-only estimate as the cleaner alternative and rely on the never-expansion comparison in the main text. Earlier drafts reported this design favorably on a five-period window; the correction is an example of what the longer panel buys. Green circles (years $-10$ to $-1$) show pre-expansion coefficients; dark red circles (years $0$ to $+4$) show post-expansion effects; the dashed red line marks the average post-expansion effect. Shaded bands are 95 percent confidence intervals. Regressions include hospital and year fixed effects and weight by 2010 state population. Standard errors are clustered at the state level.}}
+\end{figure}
+
+\begin{figure}[H]
+    \caption{Average Post-Expansion Effects and False-Discovery-Rate Significance Across the Primary Family}
+    \label{afig:fdrforest}
+    \centering
+      \includegraphics[width=0.85\linewidth]{figures/appx-fdr-forest.pdf}
+    \hfill
+\caption*{\footnotesize{\textit{Notes:} The figure plots the average post-expansion effect on matched positions per 100{,}000 contemporary (year-varying) population for each member of the primary family of hypotheses, with 95 percent confidence intervals (point estimate $\pm 1.96$ clustered standard errors). The label beside each marker reports the Benjamini--Hochberg false-discovery-rate $q$-value under both inference standards: $q_{cl}$ (clustered) and $q_{RI}$ (randomization inference). Under clustered inference no non-mechanism member of the nine-hypothesis family survives a $5$ percent false-discovery-rate correction (headline $q = 0.09$); the mechanism rows that do survive are disqualified by failing pre-trends and California-dependence (\cref{subsec:mechanisms}). Standard errors are clustered at the state level.}}
+\end{figure}
+
+\begin{figure}[H]
+    \caption{Balanced-Cohort Event Study: 2014 Adopters Only}
+    \label{afig:cohort2014}
+    \centering
+      \includegraphics[width=\linewidth]{figures/appx-cohort2014.pdf}
+    \hfill
+\caption*{\footnotesize{\textit{Notes:} The figure re-estimates the main event study restricting treatment to the 2014 expansion cohort (the largest wave), with never-expansion states as the comparison group, so that every event-time coefficient is identified from the same fixed set of treated states. The outcome is matched positions per 100,000 contemporary (year-varying) population. The average post-expansion effect is $-0.014$ (a $5.7$ percent decline relative to the pre-expansion mean of $0.24$; s.e.\ $0.028$; joint $p = 0.02$), following ten flat pre-expansion coefficients (pre-trend $p = 0.37$)---the single-cohort design reproduces the headline almost exactly. Because cohort composition is held fixed, the widening path here reflects genuine dynamics rather than the changing composition of cohorts across horizons. Green circles (years $-10$ to $-1$) show pre-expansion coefficients; dark red circles (years $0$ to $+5$) show post-expansion effects; the dashed red line marks the average post-expansion effect. Shaded bands are 95 percent confidence intervals. Regressions include hospital and year fixed effects and weight by 2010 state population. Standard errors are clustered at the state level.}}
+\end{figure}
+
+\begin{figure}[H]
+    \caption{Leave-One-State-Out Estimates of the Headline Effect}
+    \label{afig:loo}
+    \centering
+      \includegraphics[width=0.8\linewidth]{figures/appx-loo.pdf}
+    \hfill
+\caption*{\footnotesize{\textit{Notes:} The figure plots the average post-expansion effect on matched positions per 100,000 contemporary (year-varying) population, re-estimated after dropping each state in turn---treated states (circles) and control states (triangles)---with 95 percent confidence intervals. The dashed maroon line marks the full-sample estimate ($-0.014$); the thin black line marks zero. The estimate is not robust to the largest states in either direction: dropping California flips its sign (to $+0.018$), and dropping Texas moves it to $-0.048$. This instability is itself informative---it is why the paper's headline claim is a null on the intake margin rather than a magnitude(\cref{subsec:inference}). Regressions include hospital and year fixed effects and weight by 2010 state population.}}
+\end{figure}
+
+\begin{figure}[H]
+    \caption{Denominator Diagnostics: Alternative Deflators and the Population Outcome}
+    \label{afig:deflators}
+    \centering
+    \begin{subfigure}{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/appx-logpop-outcome.pdf}
+        \caption{Log contemporary state population as outcome}
+        \label{afig:deflators:logpop}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/appx-deflator-a1864.pdf}
+        \caption{Matched per 100,000 aged 18--64}
+        \label{afig:deflators:a1864}
+    \end{subfigure}
+    \begin{subfigure}{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/appx-deflator-fpl150.pdf}
+        \caption{Matched per 100,000 below 150\% FPL}
+        \label{afig:deflators:fpl}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/appx-deflator-gdp.pdf}
+        \caption{Matched per \$billion state GDP}
+        \label{afig:deflators:gdp}
+    \end{subfigure}
+\caption*{\footnotesize{\textit{Notes:} The figure reports the denominator diagnostics discussed in \cref{subsec:inference}. Panel~(a) uses the log of contemporary state population itself as the event-study outcome: the denominator of the headline ratio trends differentially around expansion, in the direction that biases against finding a decline in per-capita training. Panels~(b)--(d) re-estimate the headline event study with matched positions deflated by three alternative scales: the state population aged 18--64 and the population below 150 percent of the federal poverty line (both from the American Community Survey, available 2010--2019), and current-dollar state GDP from the Bureau of Economic Analysis regional accounts (SAGDP2, available for the full 2000--2019 panel)---the non-demographic scale that is not mechanically post-treatment through coverage-induced migration or income effects. Each panel's annotation box reports the average post-expansion effect, its percent-of-baseline equivalent, the joint post-period $p$-value, and the ten-period pre-trends $p$-value. The two demographic deflators fail their pre-trends tests; the GDP deflator passes and, together with the contemporary-population headline, brackets zero. Estimates use the imputation estimator of Borusyak, Jaravel, and Spiess (2024) with hospital and year fixed effects, 2010-population weights, and state-clustered standard errors. Green circles show pre-expansion coefficients; dark red circles show post-expansion effects; shaded bands are 95 percent confidence intervals.}}
+\end{figure}
+
+\begin{figure}[H]
+    \caption{HonestDiD Sensitivity to Violations of Parallel Trends}
+    \label{afig:honest}
+    \centering
+    \begin{subfigure}{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/appx-honestdid-headline.pdf}
+        \caption{Headline (per 100,000, year-varying)}
+        \label{afig:honest:head}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/appx-honestdid-nonresp.pdf}
+        \caption{Non-Responsive States}
+        \label{afig:honest:nonresp}
+    \end{subfigure}
+    \begin{subfigure}{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/appx-honestdid-urban.pdf}
+        \caption{Urban Hospitals}
+        \label{afig:honest:urban}
+    \end{subfigure}
+\caption*{\footnotesize{\textit{Notes:} The figure reports \textcite{rambachan2023more} sensitivity analysis for the average post-expansion effect on matched positions per 100,000 contemporary population, under the relative-magnitudes restriction $\Delta^{RM}(\bar{M})$, which bounds the post-period differential trend by $\bar{M}$ times the largest pre-period differential trend. Each panel plots the robust 95 percent confidence interval for the average post ATT as $\bar{M}$ increases. For the headline effect, the non-responsive mechanism panel, and the urban subsample, the robust confidence interval includes zero even at $\bar{M} = 0$ (exact parallel trends), confirming that the average magnitude is not distinguishable from zero at conventional levels; what the design supports is the sign and the growing dynamic path of the effect, together with the clustered joint tests. The leftmost interval in each panel is the original CI. Estimates use the Borusyak, Jaravel, and Spiess (2024) event-study coefficients with state-clustered standard errors.}}
 \end{figure}
 
 \begin{figure}[H]
@@ -131,25 +372,6 @@
 \caption*{\footnotesize{\textit{Notes:} The figure plots event-study coefficients from the imputation estimator of Borusyak, Jaravel, and Spiess (2024), estimated separately for non-primary care (top panel) and primary care specialties (bottom panel). The outcome is quota positions per 100,000 state population, where quota measures positions offered by programs prior to the matching algorithm. For non-primary care, the average post-expansion treatment effect is $-0.00$ ($-9.7$ percent relative to the pre-expansion mean of $0.04$; p $= 0.12$), corresponding to an average annual reduction of approximately $193$ offered positions nationally. For primary care, the average treatment effect is $-0.01$ ($-9.3$ percent relative to the pre-expansion mean of $0.07$; p $< 0.01$), corresponding to an average annual reduction of approximately $554$ offered positions. Shaded bands are 95 percent confidence intervals. Regressions include hospital and year fixed effects. Standard errors are clustered at the state level.}}
 \end{figure}
 
-
-\begin{figure}[H]
-    \caption{Robustness of Event Study Estimates Across Difference-in-Differences Estimators, Total Matched Residency Positions in Levels}
-    \label{afig7}
-    \centering
-      \includegraphics[width=\linewidth]{figures/appx-estimators-levels.pdf}
-    \hfill
-\caption*{\footnotesize{\textit{Notes:} The figure compares event-study estimates of the effect of Medicaid expansion on the absolute number of matched residency positions per hospital across six difference-in-differences estimators that are robust to treatment-effect heterogeneity under staggered adoption: two-way fixed effects; Borusyak, Jaravel, and Spiess (2024); de Chaisemartin and D'Haultfoeuille (2020); Sun and Abraham (2021); Cengiz, Dube, Lindner, and Zipperer (2019); and Gardner (2022). The heterogeneity-robust estimator of Callaway and Sant'Anna (2021) is omitted because it does not accept the population weights used elsewhere in the paper and its never-treated comparison cells are sparse in this sample; the unweighted not-yet-treated estimate is reported in \cref{subsec:estimators}. The pre-trend $p$-value reported in the panel is from the Borusyak, Jaravel, and Spiess (2024) estimator. The dashed vertical line marks the expansion year. Regressions include hospital and year fixed effects. Standard errors are clustered at the state level.}}
-\end{figure}
-
-\begin{figure}[H]
-    \caption{Robustness of Event Study Estimates Across Difference-in-Differences Estimators, Residency Quota Positions per 100,000 Population}
-    \label{afig8}
-    \centering
-      \includegraphics[width=\linewidth]{figures/appx-estimators-quota.pdf}
-    \hfill
-\caption*{\footnotesize{\textit{Notes:} The figure compares event-study estimates of the effect of Medicaid expansion on quota positions per 100,000 state population across six difference-in-differences estimators. Quota positions measure positions offered by residency programs prior to the matching algorithm. The estimators are: two-way fixed effects; Borusyak, Jaravel, and Spiess (2024); de Chaisemartin and D'Haultfoeuille (2020); Sun and Abraham (2021); Cengiz, Dube, Lindner, and Zipperer (2019); and Gardner (2022); the Callaway and Sant'Anna (2021) estimator is omitted as in the previous figure (population weights and sparse never-treated cells). The dashed vertical line marks the expansion year. Regressions include hospital and year fixed effects. Standard errors are clustered at the state level.}}
-\end{figure}
-
 \begin{figure}[H]
     \caption{Effect of Medicaid Expansion on Matched Residency Positions (Unweighted): Event Study Estimates}
     \label{afig10}
@@ -177,214 +399,14 @@
 \caption*{\footnotesize{\textit{Notes:} The figure plots event-study coefficients from the imputation estimator of Borusyak, Jaravel, and Spiess (2024), where the outcome is residency quota (offered) positions per 100,000 state population. This specification is estimated without population weights and includes 2010 state population as a control. The horizontal axis measures years relative to a state's Medicaid expansion; year 0 is the first year of expansion. Green circles (years $-10$ to $-1$) show pre-expansion coefficients. Dark red circles (years $0$ to $+5$) show post-expansion treatment effects. The annotation box reports the baseline mean, average post-expansion effect, and joint and ten-period pre-trend $p$-values; the estimate is statistically indistinguishable from zero. Shaded bands are 95 percent confidence intervals. Regressions include hospital and year fixed effects. Standard errors are clustered at the state level.}}
 \end{figure}
 
-\begin{figure}[H]
-    \caption{Group-Specific Payment Evidence: Effect of Medicaid Expansion on Direct GME (DGME) Payments by State Medicaid GME Formula}
-    \label{afig:fs_dgme}
-    \centering
-    \begin{subfigure}{\linewidth}
-        \centering
-        \includegraphics[width=0.75\linewidth]{figures/appx-firststage-dgme-volume.pdf}
-        \caption{Volume-Responsive GME States}
-        \label{afig:fs_dgme:vol}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{\linewidth}
-        \centering
-        \includegraphics[width=0.75\linewidth]{figures/appx-firststage-dgme-nonresp.pdf}
-        \caption{Non-Responsive GME States (Fixed/None)}
-        \label{afig:fs_dgme:nonresp}
-    \end{subfigure}
-\caption*{\footnotesize{\textit{Notes:} The figure re-estimates the Direct GME (DGME) payment event study from \cref{afig13} separately for volume-responsive (top) and non-responsive (bottom) expansion states, each using never-expansion states as the comparison group. The outcome is Medicare cost-report payments, which we read as a proxy for training-related revenue rather than a direct measure of state Medicaid GME payments (see \cref{subsec:mechanisms}). The outcome is the inverse hyperbolic sine (asinh) of DGME payments per teaching hospital, so coefficients approximate proportional changes. With cost-report periods annualized by months covered, in volume-responsive states the average post-expansion effect is $0.20$ (s.e.\ $0.14$; joint $p < 0.01$), but this panel fails its ten-period pre-trend test decisively (pre-trend $p < 0.001$); in non-responsive states the effect is $0.13$ (s.e.\ $0.14$; joint $p < 0.01$; pre-trend $p = 0.18$), and the cross-group difference is null ($0.06$, s.e.\ $0.11$, $p = 0.59$ from a pooled interacted model). A Poisson specification in levels finds no cross-arm payment difference (\cref{subsec:mechanisms}); see \cref{afig:fs_ftes,afig:fs_perfte} for the FTE/rate decomposition. Green circles (years $-10$ to $-1$) show pre-expansion coefficients; dark red circles (years $0$ to $+5$) show post-expansion effects; the dashed red line marks the average post-expansion effect. Shaded bands are 95 percent confidence intervals. Estimates come from CMS Medicare hospital cost reports at the hospital--fiscal-year level. Regressions include hospital and year fixed effects and are unweighted. Standard errors are clustered at the state level.}}
-\end{figure}
-
-\begin{figure}[H]
-    \caption{Group-Specific Payment Evidence: Effect of Medicaid Expansion on Indirect Medical Education (IME) Payments by State Medicaid GME Formula}
-    \label{afig:fs_ime}
-    \centering
-    \begin{subfigure}{\linewidth}
-        \centering
-        \includegraphics[width=0.75\linewidth]{figures/appx-firststage-ime-volume.pdf}
-        \caption{Volume-Responsive GME States}
-        \label{afig:fs_ime:vol}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{\linewidth}
-        \centering
-        \includegraphics[width=0.75\linewidth]{figures/appx-firststage-ime-nonresp.pdf}
-        \caption{Non-Responsive GME States (Fixed/None)}
-        \label{afig:fs_ime:nonresp}
-    \end{subfigure}
-\caption*{\footnotesize{\textit{Notes:} The figure re-estimates the Indirect Medical Education (IME) payment event study from \cref{afig14} separately for volume-responsive (top) and non-responsive (bottom) expansion states, each using never-expansion states as the comparison group. The outcome is the inverse hyperbolic sine (asinh) of IME payments per teaching hospital, from Medicare cost reports (a proxy for training-related revenue; see \cref{subsec:mechanisms}). With cost-report periods annualized by months covered, in volume-responsive states the average post-expansion effect is $0.14$ (s.e.\ $0.09$; joint $p < 0.01$), but the panel fails its ten-period pre-trend test ($p < 0.001$); in non-responsive states it is $0.06$ (s.e.\ $0.08$; joint $p < 0.01$; pre-trend $p = 0.15$); the cross-group difference is null ($0.06$, s.e.\ $0.07$, $p = 0.40$ from a pooled interacted model). The by-formula IME contrast reported in earlier drafts was an artifact of unannualized reporting periods; with the Poisson null (\cref{subsec:mechanisms}) there is no credible payment gradient. Green circles (years $-10$ to $-1$) show pre-expansion coefficients; dark red circles (years $0$ to $+5$) show post-expansion effects. Shaded bands are 95 percent confidence intervals. Regressions include hospital and year fixed effects and are unweighted. Standard errors are clustered at the state level.}}
-\end{figure}
-
-\begin{figure}[H]
-    \caption{Decomposition of the DGME Payment Response: Resident FTEs by State Medicaid GME Formula}
-    \label{afig:fs_ftes}
-    \centering
-    \begin{subfigure}{\linewidth}
-        \centering
-        \includegraphics[width=0.75\linewidth]{figures/appx-firststage-dgmeftes-volume.pdf}
-        \caption{Volume-Responsive GME States}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{\linewidth}
-        \centering
-        \includegraphics[width=0.75\linewidth]{figures/appx-firststage-dgmeftes-nonresp.pdf}
-        \caption{Non-Responsive GME States (Fixed/None)}
-    \end{subfigure}
-\caption*{\footnotesize{\textit{Notes:} The figure decomposes the Direct GME payment response in \cref{afig:fs_dgme}: the outcome is the inverse hyperbolic sine of cost-report DGME resident FTEs per teaching hospital, so coefficients approximate proportional changes in the number of residents hospitals report for payment purposes. With cost-report periods annualized by months covered, resident FTEs move in \emph{neither} arm: the volume-responsive average post effect is $0.07$ (s.e.\ $0.08$; joint $p = 0.46$; pre-trend $p = 0.005$) and the non-responsive effect is $0.01$ (s.e.\ $0.08$; joint $p = 0.05$; pre-trend $p = 0.76$); the cross-group difference is null ($0.05$, s.e.\ $0.07$, $p = 0.45$). The $19$ percent volume-arm FTE rise reported in earlier drafts was an artifact of unannualized reporting periods; on the linked NRMP--cost-report sample the FTE response is likewise absent (\cref{subsec:extensive}). Green circles (years $-10$ to $-1$) show pre-expansion coefficients; dark red circles (years $0$ to $+5$) show post-expansion effects. Shaded bands are 95 percent confidence intervals. Estimates come from CMS Medicare hospital cost reports at the hospital--fiscal-year level with never-expansion states as the comparison group. Regressions include hospital and year fixed effects and are unweighted. Standard errors are clustered at the state level.}}
-\end{figure}
-
-\begin{figure}[H]
-    \caption{Decomposition of the DGME Payment Response: Payment per Resident FTE by State Medicaid GME Formula}
-    \label{afig:fs_perfte}
-    \centering
-    \begin{subfigure}{\linewidth}
-        \centering
-        \includegraphics[width=0.75\linewidth]{figures/appx-firststage-dgmeperfte-volume.pdf}
-        \caption{Volume-Responsive GME States}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{\linewidth}
-        \centering
-        \includegraphics[width=0.75\linewidth]{figures/appx-firststage-dgmeperfte-nonresp.pdf}
-        \caption{Non-Responsive GME States (Fixed/None)}
-    \end{subfigure}
-\caption*{\footnotesize{\textit{Notes:} The figure completes the decomposition in \cref{afig:fs_ftes}: the outcome is the inverse hyperbolic sine of DGME payment per resident FTE (hospitals with positive FTEs only). Per-FTE payments do not rise in either group: the average post effect is $-0.08$ in volume-responsive states (s.e.\ $0.06$; joint $p = 0.53$) and $+0.01$ in non-responsive states (s.e.\ $0.05$; joint $p = 0.43$; pre-trend $p = 0.10$); the cross-group difference is $-0.09$ (s.e.\ $0.04$, $p = 0.03$). The volume-responsive panel exhibits a differential pre-trend (pre-trend $p < 0.001$), so its level should be read with caution; with the annualized FTE panel showing no quantity response either (\cref{afig:fs_ftes}), the decomposition no longer supports a payment mechanism in any direction. Green circles (years $-10$ to $-1$) show pre-expansion coefficients; dark red circles (years $0$ to $+5$) show post-expansion effects. Shaded bands are 95 percent confidence intervals. Estimates come from CMS Medicare hospital cost reports at the hospital--fiscal-year level with never-expansion states as the comparison group. Regressions include hospital and year fixed effects and are unweighted. Standard errors are clustered at the state level.}}
-\end{figure}
-
-\begin{figure}[H]
-    \caption{Robustness to Not-Yet-Treated Controls: Effect of Medicaid Expansion on Matched Residency Positions per 100,000 Population}
-    \label{afig:notyet}
-    \centering
-      \includegraphics[width=\linewidth]{figures/appx-notyet.pdf}
-    \hfill
-\caption*{\footnotesize{\textit{Notes:} The figure re-estimates the main event study after dropping never-expansion states, so identification rests solely on variation in the timing of expansion among eventually-treated states (the not-yet-treated design). The outcome is matched positions per 100,000 contemporary (year-varying) population. Because the last-treated cohort has no valid comparison at horizon $+5$ under the not-yet-treated design, the event study is estimated over horizons $0$ to $+4$. The average post-expansion effect is $-0.043$ (a $16.6$ percent decline relative to the pre-expansion mean of $0.26$; s.e.\ $0.020$)---larger than the full-sample effect---but the ten-period window reveals what a five-period window could not: the design's pre-expansion coefficients fail the pre-trends test decisively ($p < 0.001$), so we no longer treat the timing-only estimate as the cleaner alternative and rely on the never-expansion comparison in the main text. Earlier drafts reported this design favorably on a five-period window; the correction is an example of what the longer panel buys. Green circles (years $-10$ to $-1$) show pre-expansion coefficients; dark red circles (years $0$ to $+4$) show post-expansion effects; the dashed red line marks the average post-expansion effect. Shaded bands are 95 percent confidence intervals. Regressions include hospital and year fixed effects and weight by 2010 state population. Standard errors are clustered at the state level.}}
-\end{figure}
-
-\begin{figure}[H]
-    \caption{Balanced-Cohort Event Study: 2014 Adopters Only}
-    \label{afig:cohort2014}
-    \centering
-      \includegraphics[width=\linewidth]{figures/appx-cohort2014.pdf}
-    \hfill
-\caption*{\footnotesize{\textit{Notes:} The figure re-estimates the main event study restricting treatment to the 2014 expansion cohort (the largest wave), with never-expansion states as the comparison group, so that every event-time coefficient is identified from the same fixed set of treated states. The outcome is matched positions per 100,000 contemporary (year-varying) population. The average post-expansion effect is $-0.014$ (a $5.7$ percent decline relative to the pre-expansion mean of $0.24$; s.e.\ $0.028$; joint $p = 0.02$), following ten flat pre-expansion coefficients (pre-trend $p = 0.37$)---the single-cohort design reproduces the headline almost exactly. Because cohort composition is held fixed, the widening path here reflects genuine dynamics rather than the changing composition of cohorts across horizons. Green circles (years $-10$ to $-1$) show pre-expansion coefficients; dark red circles (years $0$ to $+5$) show post-expansion effects; the dashed red line marks the average post-expansion effect. Shaded bands are 95 percent confidence intervals. Regressions include hospital and year fixed effects and weight by 2010 state population. Standard errors are clustered at the state level.}}
-\end{figure}
-
-\begin{figure}[H]
-    \caption{Leave-One-State-Out Estimates of the Headline Effect}
-    \label{afig:loo}
-    \centering
-      \includegraphics[width=0.8\linewidth]{figures/appx-loo.pdf}
-    \hfill
-\caption*{\footnotesize{\textit{Notes:} The figure plots the average post-expansion effect on matched positions per 100,000 contemporary (year-varying) population, re-estimated after dropping each state in turn---treated states (circles) and control states (triangles)---with 95 percent confidence intervals. The dashed maroon line marks the full-sample estimate ($-0.014$); the thin black line marks zero. The estimate is not robust to the largest states in either direction: dropping California flips its sign (to $+0.018$), and dropping Texas moves it to $-0.048$. This instability is itself informative---it is why the paper's headline claim is a null on the intake margin rather than a magnitude(\cref{subsec:inference}). Regressions include hospital and year fixed effects and weight by 2010 state population.}}
-\end{figure}
-
-\begin{figure}[H]
-    \caption{HonestDiD Sensitivity to Violations of Parallel Trends}
-    \label{afig:honest}
-    \centering
-    \begin{subfigure}{0.48\linewidth}
-        \centering
-        \includegraphics[width=\linewidth]{figures/appx-honestdid-headline.pdf}
-        \caption{Headline (per 100,000, year-varying)}
-        \label{afig:honest:head}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{0.48\linewidth}
-        \centering
-        \includegraphics[width=\linewidth]{figures/appx-honestdid-nonresp.pdf}
-        \caption{Non-Responsive States}
-        \label{afig:honest:nonresp}
-    \end{subfigure}
-    \begin{subfigure}{0.48\linewidth}
-        \centering
-        \includegraphics[width=\linewidth]{figures/appx-honestdid-urban.pdf}
-        \caption{Urban Hospitals}
-        \label{afig:honest:urban}
-    \end{subfigure}
-\caption*{\footnotesize{\textit{Notes:} The figure reports \textcite{rambachan2023more} sensitivity analysis for the average post-expansion effect on matched positions per 100,000 contemporary population, under the relative-magnitudes restriction $\Delta^{RM}(\bar{M})$, which bounds the post-period differential trend by $\bar{M}$ times the largest pre-period differential trend. Each panel plots the robust 95 percent confidence interval for the average post ATT as $\bar{M}$ increases. For the headline effect, the non-responsive mechanism panel, and the urban subsample, the robust confidence interval includes zero even at $\bar{M} = 0$ (exact parallel trends), confirming that the average magnitude is not distinguishable from zero at conventional levels; what the design supports is the sign and the growing dynamic path of the effect, together with the clustered joint tests. The leftmost interval in each panel is the original CI. Estimates use the Borusyak, Jaravel, and Spiess (2024) event-study coefficients with state-clustered standard errors.}}
-\end{figure}
-
-\begin{figure}[H]
-    \caption{State-Level Training Totals: Event Study Including the Entry Margin}
-    \label{afig:statetotal}
-    \centering
-      \includegraphics[width=0.85\linewidth]{figures/appx-statetotal.pdf}
-    \hfill
-\caption*{\footnotesize{\textit{Notes:} The figure aggregates matched positions to state-level totals per 100{,}000 contemporary population---the object that correctly includes the entry margin, since an entrant institution's pre-entry contribution to its state's total is genuinely zero---and re-estimates the headline event study with the state as the unit ($51$ states). The average post-expansion effect is $+0.58$ per 100{,}000 (s.e.\ $0.42$; $+6.7$ percent of the pre-expansion mean; joint $p = 0.10$); restricting the totals to always-active institutions gives $+11.3$ percent (joint $p = 0.34$). The state-level pre-trend test fails, so the magnitude should be read with caution; the sign contrast with the intake-margin estimates is the robust object (\cref{subsec:extensive}). Estimates use the imputation estimator of Borusyak, Jaravel, and Spiess (2024) with state and year fixed effects, 2010-population weights, and state-clustered standard errors. Green circles show pre-expansion coefficients; dark red circles show post-expansion effects; shaded bands are 95 percent confidence intervals.}}
-\end{figure}
-
-\begin{figure}[H]
-    \caption{State Totals Excluding Single-Accreditation Migrants}
-    \label{afig:statetotal-nosas}
-    \centering
-      \includegraphics[width=0.85\linewidth]{figures/appx-statetotal-nosas.pdf}
-    \hfill
-\caption*{\footnotesize{\textit{Notes:} The figure re-estimates the state-level total event study of \cref{afig:statetotal} after removing all matched positions at the 100 post-2010 entrant institutions classified as AOA-to-ACGME Single Accreditation System migrants (\cref{sec:data}), so the totals reflect existing institutions plus genuinely new entrants only. The annotation box reports the average post-expansion effect, its percent-of-baseline equivalent, the joint post-period $p$-value, and the ten-period pre-trends $p$-value; the corresponding unweighted estimate appears in \cref{tab:entryclass}. The non-declining state total is not an artifact of the accreditation transition. Estimates use the imputation estimator of Borusyak, Jaravel, and Spiess (2024) with state and year fixed effects, 2010-population weights, and state-clustered standard errors. Green circles show pre-expansion coefficients; dark red circles show post-expansion effects; shaded bands are 95 percent confidence intervals. Data: NRMP Main Residency Match reports; ACGME Accreditation Data System.}}
-\end{figure}
-
-\begin{figure}[H]
-    \caption{Genuine-Entrant Capacity: Event Study}
-    \label{afig:entry-genuine}
-    \centering
-      \includegraphics[width=0.85\linewidth]{figures/appx-entry-genuine.pdf}
-    \hfill
-\caption*{\footnotesize{\textit{Notes:} The figure estimates the state-level event study for matched positions per 100{,}000 contemporary population at genuinely new post-2010 entrant institutions only---the direct test of whether Medicaid expansion induced new sponsors to enter training provision (\cref{subsec:extensive}). Because pre-expansion capacity at post-2010 entrants is near zero by construction, effects are read in levels; the annotation box reports the average post-expansion effect, joint post-period $p$-value, and ten-period pre-trends $p$-value, and the unweighted counterpart appears in \cref{tab:entryclass}. Estimates use the imputation estimator of Borusyak, Jaravel, and Spiess (2024) with state and year fixed effects, 2010-population weights, and state-clustered standard errors; entry estimates are reported under clustered inference only (\cref{subsec:inference}). Green circles show pre-expansion coefficients; dark red circles show post-expansion effects; shaded bands are 95 percent confidence intervals. Data: NRMP Main Residency Match reports; ACGME Accreditation Data System.}}
-\end{figure}
-
-\begin{figure}[H]
-    \caption{Denominator Diagnostics: Alternative Deflators and the Population Outcome}
-    \label{afig:deflators}
-    \centering
-    \begin{subfigure}{0.48\linewidth}
-        \centering
-        \includegraphics[width=\linewidth]{figures/appx-logpop-outcome.pdf}
-        \caption{Log contemporary state population as outcome}
-        \label{afig:deflators:logpop}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{0.48\linewidth}
-        \centering
-        \includegraphics[width=\linewidth]{figures/appx-deflator-a1864.pdf}
-        \caption{Matched per 100,000 aged 18--64}
-        \label{afig:deflators:a1864}
-    \end{subfigure}
-    \begin{subfigure}{0.48\linewidth}
-        \centering
-        \includegraphics[width=\linewidth]{figures/appx-deflator-fpl150.pdf}
-        \caption{Matched per 100,000 below 150\% FPL}
-        \label{afig:deflators:fpl}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{0.48\linewidth}
-        \centering
-        \includegraphics[width=\linewidth]{figures/appx-deflator-gdp.pdf}
-        \caption{Matched per \$billion state GDP}
-        \label{afig:deflators:gdp}
-    \end{subfigure}
-\caption*{\footnotesize{\textit{Notes:} The figure reports the denominator diagnostics discussed in \cref{subsec:inference}. Panel~(a) uses the log of contemporary state population itself as the event-study outcome: the denominator of the headline ratio trends differentially around expansion, in the direction that biases against finding a decline in per-capita training. Panels~(b)--(d) re-estimate the headline event study with matched positions deflated by three alternative scales: the state population aged 18--64 and the population below 150 percent of the federal poverty line (both from the American Community Survey, available 2010--2019), and current-dollar state GDP from the Bureau of Economic Analysis regional accounts (SAGDP2, available for the full 2000--2019 panel)---the non-demographic scale that is not mechanically post-treatment through coverage-induced migration or income effects. Each panel's annotation box reports the average post-expansion effect, its percent-of-baseline equivalent, the joint post-period $p$-value, and the ten-period pre-trends $p$-value. The two demographic deflators fail their pre-trends tests; the GDP deflator passes and, together with the contemporary-population headline, brackets zero. Estimates use the imputation estimator of Borusyak, Jaravel, and Spiess (2024) with hospital and year fixed effects, 2010-population weights, and state-clustered standard errors. Green circles show pre-expansion coefficients; dark red circles show post-expansion effects; shaded bands are 95 percent confidence intervals.}}
-\end{figure}
-
-\begin{figure}[H]
-    \caption{Pre-ACA Placebo: Expansion Dates Shifted Back Ten Years, 2000--2013 Sample}
-    \label{afig:placebo}
-    \centering
-    \begin{subfigure}{\linewidth}
-        \centering
-        \includegraphics[width=0.8\linewidth]{figures/appx-placebo-preaca.pdf}
-        \caption{Institution level (activity-window coding)}
-        \label{afig:placebo:inst}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{\linewidth}
-        \centering
-        \includegraphics[width=0.8\linewidth]{figures/appx-placebo-statetotal.pdf}
-        \caption{State-level totals (entry margin included)}
-        \label{afig:placebo:state}
-    \end{subfigure}
-\caption*{\footnotesize{\textit{Notes:} The figure assigns each expansion state a placebo expansion ten years before its actual one (a 2014 adopter receives a placebo date of 2004) and re-estimates the event study on 2000--2013 data only, so no real treatment enters the sample; never-expansion states serve as controls. If differential regional trends in training capacity---rather than expansion itself---drove the post-2014 estimates, the same pattern should appear around the placebo dates. It does not: at the institution level (panel~a) the average placebo effect is $-0.011$ per 100{,}000 (s.e.\ $0.013$; joint $p = 0.54$) after flat placebo pre-trends ($p = 0.71$), and at the state level (panel~b) it is $+0.25$ (s.e.\ $0.18$; joint $p = 0.32$; pre-trend $p = 0.60$). Sample, outcome construction, weights, estimator, and clustering are identical to the headline design (\cref{fig5}), with four placebo pre-periods and up to six placebo post-periods (later cohorts contribute fewer horizons). Green circles show placebo pre-period coefficients; dark red circles show placebo post-period effects; shaded bands are 95 percent confidence intervals.}}
-\end{figure}
-
 \newpage
+
+\section{The Medicaid GME Formula Classification}\label{appendix:gmeclass}
+
+The mechanism analysis in \cref{subsec:mechanisms} classifies each state by whether its Medicaid program makes graduate medical education payments through a formula that scales with Medicaid patient volume, so that a coverage expansion mechanically raises GME revenue. We code the payment rules in force during the 2014--2019 treatment window from the AAMC fifty-state survey of \textcite{henderson2016}, and we release the state-by-state coding file, with source notes, in the replication package. Five states required judgment calls (Maryland, Minnesota, Montana, Iowa, and New Mexico); \cref{subsec:mechanisms} shows the cross-arm difference is robust to flipping each of them.
+
+California carries the largest weight of any state in the estimation, and its coding as non-paying deserves an explicit defense. Medi-Cal made no fee-for-service GME payments during the study window, which is the basis of the survey coding. California's state GME support instead ran through appropriated grant programs: Song-Brown, funded from the state general fund and small before a one-time \$100 million augmentation beginning in fiscal year 2017--18, and CalMedForce, funded at roughly \$40 million per year from Proposition 56 tobacco-tax revenue with first grants in 2018--19 \autocite{chcf2024, lao2019}. Neither program's funding moves with Medicaid enrollment or utilization; both are fixed appropriations allocated by grant competition. Nor did managed care embed a volume-scaled GME formula: capitation rates paid to Medi-Cal plans carry no identifiable GME component tied to the training hospital, and supplemental support for the designated public hospitals flowed through waiver-financed pools budgeted against uncompensated care rather than resident counts or Medicaid discharge volume. Timing reinforces the coding: the two channels that did expand state GME dollars begin in 2017--2019, late in the post window, and are not Medicaid-financed, so if anything they push against finding a contraction in California and make the non-paying coding conservative for the mechanism test.
+
+The residual concern is that the waiver pools functioned as de facto volume-responsive GME support, in which case California would be misclassified. The leave-one-out estimates in \cref{subsec:mechanisms} bound how much this matters: dropping California flips the sign of the cross-arm difference, which is why we rest no mechanism claim on the classification.
+
 \pagebreak

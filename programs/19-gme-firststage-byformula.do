@@ -10,8 +10,8 @@
 * This re-runs the DGME and IME event studies from script 18 separately for:
 *   - volume-responsive expansion states + never-expansion controls
 *   - non-responsive (fixed/none) expansion states + never-expansion controls
-* Classification: gme_formula (2012 / Henderson 2013 pre-period baseline),
-* merged from data/raw/gme_formula_classification.csv (as in the archived formula-mechanism script).
+* Classification: gme_formula_2015 (2015 payment rules / Henderson 2016 AAMC survey),
+* merged from data/raw/gme_formula_classification.csv.
 *
 * Design mirrors 16: did_imputation (BJS 2024), hospital + fiscal-year FE,
 * cluster by state, UNWEIGHTED. Figures 31-34; summary CSV.
@@ -82,12 +82,12 @@ label var asinh_dgme_ftes   "DGME Resident FTEs (asinh)"
 label var asinh_dgme_perfte "DGME Payment per FTE (asinh $)"
 
 * -------------------------------------------------------------------------
-* Merge the Medicaid GME formula classification (2012 baseline; as in 13)
+* Merge the Medicaid GME formula classification (2015 payment rules)
 * -------------------------------------------------------------------------
 preserve
     import delimited "${rawdir}/gme_formula_classification.csv", clear ///
         varnames(1) stringcols(_all)
-    keep state gme_formula
+    keep state gme_formula_2015
     replace state = strtrim(upper(state))
     tempfile gme
     save `gme'
@@ -95,8 +95,8 @@ restore
 replace state = strtrim(upper(state))
 merge m:1 state using `gme', keep(master match) nogen
 
-gen byte gme_vol    = (gme_formula == "volume")
-gen byte gme_notvol = inlist(gme_formula, "fixed", "none")
+gen byte gme_vol    = (gme_formula_2015 == "volume")
+gen byte gme_notvol = inlist(gme_formula_2015, "fixed", "none")
 
 di as text "Treated hospital-years by volume-responsiveness (1 = volume):"
 tab gme_vol if treated_state == 1 & (gme_vol == 1 | gme_notvol == 1)
@@ -290,6 +290,63 @@ preserve
 use "`pp_file'", clear
 list, clean noobs
 export delimited using "${tabdir}/ppml-payments-summary.csv", replace
+restore
+
+* -------------------------------------------------------------------------
+* Log on the positive subsample + extensive-margin LPM (static treated-post).
+* Decomposes the payment response into an intensive margin identified on
+* hospital-years with positive payments (logs, unit-invariant) and an
+* extensive margin (any positive payment). Same fixed effects, sample
+* restriction, and clustering as the PPML block above.
+* -------------------------------------------------------------------------
+tempname lp
+tempfile lp_file
+postfile `lp' str20 outcome str12 spec double b se p n_obs using "`lp_file'", replace
+
+use "`master'", clear
+gen byte tp = treated_state == 1 & fiscal_year >= year_expanded
+gen byte tp_vol = tp * gme_vol
+keep if treated_state == 0 | gme_vol == 1 | gme_notvol == 1
+foreach v in dgme_payment ime_payment {
+    quietly gen double log_`v' = ln(`v') if `v' > 0
+    quietly gen byte   any_`v' = (`v' > 0) if !missing(`v')
+}
+
+foreach outcome in dgme_payment ime_payment {
+    di _n "========== LOG-POSITIVE: `outcome' (pooled) =========="
+    capture noisily reghdfe log_`outcome' tp, absorb(provider_numeric_id fiscal_year) ///
+        vce(cluster state_id)
+    if (_rc == 0) post `lp' ("`outcome'") ("log_pooled") (_b[tp]) (_se[tp]) ///
+        (2*normal(-abs(_b[tp]/_se[tp]))) (e(N))
+    else post `lp' ("`outcome'") ("log_pooled") (.) (.) (.) (.)
+
+    di _n "========== LOG-POSITIVE: `outcome' (cross-arm interaction) =========="
+    capture noisily reghdfe log_`outcome' tp tp_vol, absorb(provider_numeric_id fiscal_year) ///
+        vce(cluster state_id)
+    if (_rc == 0) post `lp' ("`outcome'") ("log_vol_diff") (_b[tp_vol]) (_se[tp_vol]) ///
+        (2*normal(-abs(_b[tp_vol]/_se[tp_vol]))) (e(N))
+    else post `lp' ("`outcome'") ("log_vol_diff") (.) (.) (.) (.)
+
+    di _n "========== EXTENSIVE MARGIN: any `outcome' (pooled) =========="
+    capture noisily reghdfe any_`outcome' tp, absorb(provider_numeric_id fiscal_year) ///
+        vce(cluster state_id)
+    if (_rc == 0) post `lp' ("`outcome'") ("ext_pooled") (_b[tp]) (_se[tp]) ///
+        (2*normal(-abs(_b[tp]/_se[tp]))) (e(N))
+    else post `lp' ("`outcome'") ("ext_pooled") (.) (.) (.) (.)
+
+    di _n "========== EXTENSIVE MARGIN: any `outcome' (cross-arm interaction) =========="
+    capture noisily reghdfe any_`outcome' tp tp_vol, absorb(provider_numeric_id fiscal_year) ///
+        vce(cluster state_id)
+    if (_rc == 0) post `lp' ("`outcome'") ("ext_vol_diff") (_b[tp_vol]) (_se[tp_vol]) ///
+        (2*normal(-abs(_b[tp_vol]/_se[tp_vol]))) (e(N))
+    else post `lp' ("`outcome'") ("ext_vol_diff") (.) (.) (.) (.)
+}
+
+postclose `lp'
+preserve
+use "`lp_file'", clear
+list, clean noobs
+export delimited using "${tabdir}/logpositive-payments-summary.csv", replace
 restore
 
 postclose `fs'

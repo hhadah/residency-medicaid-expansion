@@ -40,5 +40,6 @@ source(file.path(programs,"12-descriptive-figures.R"))     # desc-timing, cohort
 # Stata analysis (scripts 13-36): run programs/99-run-all-analysis.do
 # AFTER the Stata suite has produced its summary and RI CSVs, run:
 #   python3 programs/37-multiple-testing-qvalues.py  # dual-standard FDR q-values + forest plot
+#   Rscript programs/40-make-payment-decomposition-table.R  # appendix payment-decomposition table
 
 print("All scripts executed successfully.")

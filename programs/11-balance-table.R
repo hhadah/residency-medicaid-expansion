@@ -41,7 +41,7 @@ spec_map <- read_dta(here("data", "raw", "program_simplified.dta")) |>
 gme <- read_csv(here("data", "raw", "gme_formula_classification.csv"),
                 show_col_types = FALSE) |>
   mutate(state = toupper(trimws(state))) |>
-  select(state, gme_formula)
+  select(state, gme_formula = gme_formula_2015)
 
 # --- specialty-program-level 2010 slice (fill share + primary-care share) ----
 spec10 <- wide |>

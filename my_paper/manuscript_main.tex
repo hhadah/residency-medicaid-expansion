@@ -10,105 +10,11 @@ Whether policies designed to expand physician supply reliably produce these heal
 
 International evidence introduces important qualifications. \textcite{carrillo2019} evaluate a Brazilian initiative to increase primary care physician supply and find that while the program raised the volume of physician visits, it did not improve infant health outcomes, a pattern consistent with physicians substituting for nurses rather than generating new clinical value. A related evaluation of Brazil's More Doctors Program finds increases in healthcare utilization and reductions in preventable hospitalizations, though all-cause mortality remained unchanged \autocite{mattos2019}. In Japan, \textcite{iizuka2016} show that a national residency reform intended to rationalize training pathways had the unintended consequence of drawing physicians away from rural areas, contributing to hospital closures as institutions faced higher wage pressures to attract and retain residents. Taken together, these experiences indicate that expanding physician training capacity is a necessary but not sufficient condition for improving health: the translation from training slots to health outcomes depends on where newly trained physicians choose to practice, the complementary inputs available in those settings, and the financial incentives governing provider behavior.
 
-We answer this question using the residency programs that fill their positions
-through the national match. The National Resident Matching Program
-(NRMP) records the number of positions every program offers and the number it
-fills, which we link to the staggered timing of state Medicaid expansions under
-the Affordable Care Act. Our panel spans two decades, 2000 to 2019: the 2000 to
-2009 match results are newly digitized from archival NRMP results books, so
-every event study in the paper displays \emph{ten} pre-expansion periods.
-Because states expanded Medicaid in different years beginning in 2014, we
-estimate the effect with a staggered difference-in-differences event study,
-using the heterogeneity-robust imputation estimator of
-\textcite{borusyak2024revisiting} and scaling matched positions by contemporary
-state population. Three features of the data construction turn out to be
-first-order, and we treat them as part of the paper's contribution. First, we
-build a crosswalk from NRMP sponsoring institutions to Medicare provider numbers,
-so that match intake and cost-report resident counts can be compared on the same
-institutions with the same weights. Second, we distinguish institution-years in
-which a sponsor was absent from the NRMP report from institution-years with
-genuinely zero positions---a distinction a balanced panel silently erases, and
-one that changes the answer. Third, we classify every institution that enters
-the NRMP after 2010 using the Accreditation Council for Graduate Medical
-Education's (ACGME) public records of the osteopathic single-accreditation
-transition (2015--2020). This classification separates genuinely new sponsors
-from pre-existing AOA-accredited sponsors whose programs became visible in
-match data when their accreditation changed. The distinction matters for any
-study that uses post-2015 NRMP or ACGME counts as an outcome.
+Did ACA Medicaid expansion change the number of residency positions hospitals offer and fill? We answer it using the residency programs that fill their positions through the national match. The National Resident Matching Program (NRMP) records the number of positions every program offers and the number it fills, which we link to the staggered timing of state Medicaid expansions under the Affordable Care Act. Our panel spans two decades, 2000 to 2019. Because states expanded Medicaid in different years beginning in 2014, we estimate the effect with a staggered difference-in-differences event study, using the imputation estimator of \textcite{borusyak2024revisiting}. 
 
-Our central finding is that training supply did not respond to expansion. At
-existing training institutions---the intake margin---expansion is followed by
-an average decline of $0.014$ matched positions per 100{,}000 population,
-about $5.7$ percent of the pre-expansion mean. This estimate is statistically indistinguishable from
-zero (95 percent confidence interval $[-0.066, +0.037]$), and the ten
-pre-expansion coefficients are jointly flat ($p = 0.36$). Offered positions
-barely move ($-3$ percent, $p = 0.21$), so the margin at issue is slot
-creation rather than unfilled slots. The entry margin shows the same pattern
-once we account for the accreditation transition. Of the $201$ sponsoring
-institutions that enter the NRMP after 2010, our classification shows that
-roughly half are pre-existing AOA-accredited sponsors that migrated under the
-single-accreditation transition; among expansion-state entrants in the
-2016--2019 window, the share is $63$ percent. Genuinely new sponsors show no
-differential entry response to expansion ($p = 0.19$ weighted, $p = 0.34$
-unweighted), and the apparent growth in entry is concentrated in the
-migrating institutions. State-level training totals, which include the entry
-margin, do not decline after expansion, with or without the migrating
-institutions. A placebo that shifts every state's expansion back ten years,
-estimated on pre-ACA data alone, comes back null. Because treatment is
-assigned at the state level, few-cluster randomization inference, wild
-cluster bootstrap, and the \textcite{rambachan2023more} sensitivity analysis
-leave every individual estimate imprecise, and we report those standards
-uniformly. The consistent pattern across margins---flat intake at existing institutions, no
-genuine entry response, and non-declining state totals---indicates that the
-training pipeline did not respond to the largest insurance expansion in half
-a century.
+Our central finding is that training supply did not respond to expansion. At existing training institutions---the intake margin---expansion is followed by an average decline of $0.014$ matched positions per 100{,}000 population, about $5.7$ percent of the pre-expansion mean. This estimate is statistically indistinguishable from zero. Offered positions barely move ($-3$ percent, $p = 0.21$), so the margin at issue is slot creation rather than unfilled slots. A flat intake margin could still conceal a supply response if expansion induced hospitals that had never trained residents to open programs, and the raw match data appear to show exactly that: $201$ sponsoring institutions enter the NRMP after 2010, disproportionately in expansion states. Most of that entry, however, is an artifact of accreditation reform rather than new training capacity. Our classification shows that roughly half of the post-2010 entrants are pre-existing American Osteopathic Association (AOA)-accredited sponsors---institutions that were already training residents under osteopathic accreditation and that appear in the match only because the single-accreditation transition moved them into the NRMP after 2015. Among expansion-state entrants in the 2016--2019 window, the share is $63$ percent, because osteopathic training was historically concentrated in states that expanded Medicaid. Once entrants are classified, genuinely new sponsors show no differential entry response to expansion. State-level training totals, which include the entry margin, do not decline after expansion, with or without the migrating institutions. A placebo that shifts every state's expansion back ten years, estimated on pre-ACA data alone, comes back null. Because treatment is assigned at the state level, few-cluster randomization inference, wild cluster bootstrap, and the \textcite{rambachan2023more} sensitivity analysis leave every individual estimate imprecise, and we report those standards uniformly. The consistent pattern across margins---flat intake at existing institutions, no genuine entry response, and non-declining state totals---indicates that the training pipeline did not respond to the largest insurance expansion in half a century.
 
-We examined---and ultimately reject as fragile---a financing mechanism that
-earlier drafts advanced. States whose Medicaid graduate medical education (GME)
-payments scale with patient volume had a direct financial incentive to expand
-slots when expansion raised Medicaid volume; states with fixed or no volume-based
-payments did not. Under the 2012 formula classification, the data appear to
-support this channel: positions fall in non-responsive states and rise in
-volume-responsive ones (cross-group difference $0.089$ per
-100{,}000, $p < 0.001$)---but the volume-responsive arm fails its ten-period
-pre-trends test, and our own classification file records that by 2015 New
-York, Illinois, and three smaller states had adopted volume-scaled formulas, so
-the 2012 vintage misclassifies the post period. Under the corrected
-classification the contrast shrinks by half; dropping California---coded
-non-responsive because Medi-Cal pays no fee-for-service GME---flips its sign;
-and the payment-side evidence does not survive scrutiny: the cross-arm
-difference in cost-report payments is imprecise in the asinh specifications
-referees rightly distrust \autocite{chen2024logs}, and Poisson estimation in
-levels finds no payment response at all (pooled effect $-3$ percent,
-$p = 0.57$). We conclude that the cross-formula contrast is a
-California-versus-everyone comparison, and we report it as a candid negative
-result rather than a mechanism.
-
-Our contribution is threefold. First, we provide the first evidence on
-whether a coverage expansion grows the physician training pipeline. We find
-that it does not: intake at existing institutions is flat, genuinely new entry does not
-respond, and state totals do not decline. This finding matters for policy
-because the insured population and the demand for physicians are both
-growing, and projections of physician shortages assume that training will
-expand to meet them. Our results indicate that coverage policy alone does not
-generate that expansion; the policies that moved training capacity over this
-period were direct interventions rather than coverage-induced changes in
-hospital finances. Second, the decomposition reconciles the hospital-level
-and state-level evidence that previously pointed in opposite directions,
-including the state-level aggregates in \textcite{ang_beniwal2026}. Third, we
-build and release the data infrastructure that makes the analysis possible:
-an NRMP-institution-to-Medicare-provider crosswalk, an entry-exit-corrected
-institution panel, a two-vintage classification of state Medicaid GME
-formulas, and a classification of post-2010 NRMP entrants that separates
-genuine entry from the single-accreditation transition. Throughout, we bring
-modern few-cluster and pre-trend-sensitivity tools to bear and report what
-they do and do not support.
-
-The remainder of the paper proceeds as follows. \cref{sec:background} describes the
-institutional setting; \cref{sec:model} develops the conceptual framework;
-\cref{sec:data} and \cref{sec:emp} present the data and empirical strategy;
-\cref{sec:res} reports the main results and the financing mechanism;
-\cref{sec:checks} presents robustness; and \cref{sec:conc} concludes.
+Our contribution is threefold. First, we provide the first evidence on whether a coverage expansion grows the physician training pipeline. We find that it does not: intake at existing institutions is flat, genuinely new entry does not respond, and state totals do not decline. This finding matters for policy because the insured population and the demand for physicians are both growing, and projections of physician shortages assume that training will expand to meet them. Our results indicate that coverage policy alone does not generate that expansion; the policies that moved training capacity over this period were direct interventions rather than coverage-induced changes in hospital finances. Second, the decomposition reconciles the hospital-level and state-level evidence that previously pointed in opposite directions, including the state-level aggregates in \textcite{ang_beniwal2026}. Third, we built the data infrastructure that makes the analysis possible by digitizing the NRMP match data.
 
 \section{Background}\label{sec:background}
 
@@ -118,13 +24,13 @@ Understanding how Medicaid expansion may have altered hospital training decision
 
 Prior to the Affordable Care Act (ACA), approximately 35.6 million non-elderly adults in the United States lacked health insurance \autocite{vistnes2019}. Teaching and safety-net hospitals absorbed the resulting uncompensated care costs through commercial cross-subsidization and federal DSH payments, effectively operating as insurers of last resort at an estimated cost of roughly \$800 per uninsured individual annually \autocite{garthwaite2018, lewin2000}.
 
-The ACA extended Medicaid eligibility to nearly all adults with incomes at or below 138 percent of the federal poverty level. Following \textit{NFIB v.\ Sebelius} (2012), adoption was voluntary, producing the staggered rollout that underlies the identification strategy in this paper. Twenty-five states and the District of Columbia expanded effective January 2014; additional states followed later in 2014 and in 2015, 2016, and 2019, while seventeen had not expanded as of 2019 \autocite{kff2024}.\footnote{Several states adopted expansion after 2019, but this paper's outcome data end in 2019, which captures the first five post-expansion years for early adopters; the panel begins in 2000, giving ten pre-expansion years.} The federal government financed the newly eligible population at 100 percent through 2016, phasing down to a permanent 90 percent match by 2020, well above the standard federal medical assistance percentage (FMAP) of 57 to 63 percent. A large literature documents the resulting gains in coverage \autocite{courtemanche2016, glied2017, kaestner2017}, health outcomes \autocite{courtemanche2018, sommers2015, sommers2017, miller2021}, and healthcare utilization \autocite{courtemanche2017, kobayashi2019, nikpay2017}. These studies focus on demand-side outcomes; the supply-side consequences for physician training capacity are the focus of this paper.
+The ACA extended Medicaid eligibility to nearly all adults with incomes at or below 138 percent of the federal poverty level. Following \runcite{nfib_v_sebelius_2012}, adoption was voluntary, producing the staggered rollout that underlies the identification strategy in this paper.\footnote{The Supreme Court held that conditioning all federal Medicaid funds on adoption of the expansion was unconstitutionally coercive \autocite{nfib_v_sebelius_2012}. Expansion thus became a state option rather than a requirement, generating the staggered adoption exploited here.} Twenty-five states and the District of Columbia expanded effective January 2014; additional states followed later in 2014 and in 2015, 2016, and 2019, while seventeen had not expanded as of 2019 \autocite{kff2024}.\footnote{Several states adopted expansion after 2019, but this paper's outcome data end in 2019, which captures the first five post-expansion years for early adopters; the panel begins in 2000, giving ten pre-expansion years.} The federal government financed the newly eligible population at 100 percent through 2016, phasing down to a permanent 90 percent match by 2020, well above the standard federal medical assistance percentage (FMAP) of 57 to 63 percent. A large literature documents the resulting gains in coverage \autocite{courtemanche2016, glied2017, kaestner2017}, health outcomes \autocite{courtemanche2018, sommers2015, sommers2017, miller2021}, and healthcare utilization \autocite{courtemanche2017, kobayashi2019, nikpay2017}. These studies focus on demand-side outcomes; the supply-side consequences for physician training capacity are the focus of this paper.
 
 The hospital-level financial consequences of expansion are well documented. \textcite{dranove2016} find that uncompensated care fell from 4.1 to 3.1 percent of operating expenses at hospitals in expansion states, with the largest reductions at safety-net institutions. \textcite{blavin2016} finds corresponding improvements in operating margins. These revenue gains, however, exist in direct tension with the ACA's concurrent reductions to DSH allotments, which are calculated as a function of uncompensated care volume and decline automatically as the uninsured share falls. Critically, following \textit{NFIB v.\ Sebelius}, hospitals in non-expansion states faced mandated DSH cuts while continuing to absorb high uncompensated care volumes, creating a pronounced fiscal asymmetry \autocite{linehan2013,ossei-owusu2017}. The net revenue effect of expansion at any given hospital therefore depends on its pre-expansion patient mix, its state's DSH formula, and the generosity of state Medicaid GME funding.
 
 The ACA also incorporated targeted physician workforce provisions. \textcite{heisler2013} catalogs these, including Medicare payment adjustments, new GME funding streams, and the redistribution of unused Medicare residency slots under Section 5503 to hospitals in areas with documented physician shortages, with a statutory requirement that 75 percent of reallocated slots support primary care or general surgery training. \textcite{mcnamara2025a} find that these cap changes increased program size, and \textcite{mcnamara2025b} show that Section 5503 raised primary care physician supply by 5.2 percent in treated areas. These GME-targeted interventions confirm that the legislative environment surrounding Medicaid expansion was actively attempting to expand the training pipeline, making it essential to isolate any effect attributable to the Medicaid coverage channel specifically.
 
-Never-expansion states also changed their GME policies during this period. Several of the largest ran state programs that operate through the same hospital-financing channel this paper studies, but without a coverage change. Florida created the Statewide Medicaid Residency Program effective July 2013. The program appropriates roughly \$80 million per year in recurring state and federal funds and allocates payments to hospitals based on their shares of statewide residents and Medicaid inpatient reimbursement \autocite{oppaga2023}. Texas set a statutory target of 1.1 first-year residency positions per in-state medical graduate in 2011 and, beginning with a \$14 million appropriation in 2013, funded a growing series of GME expansion grants through its Higher Education Coordinating Board \autocite{thecb2024}. Georgia and Tennessee operated smaller programs of the same type, and Section 5503's redistribution of unused Medicare slots also favored hospitals in Southern non-expansion states \autocite{mcnamara2025b}. These policies bias the institution-level comparison toward finding a contraction in expansion states: if control-state training grew because of these programs, part of any measured decline at existing institutions in expansion states reflects control-state growth rather than expansion-state contraction. \cref{subsec:inference} addresses this concern with leave-one-out estimation over control states and a specification that excludes the four control states with the largest competing programs.
+Never-expansion states also changed their GME policies during this period. Several of the largest ran state programs that operate through the same hospital-financing channel this paper studies, but without a coverage change. Florida created the Statewide Medicaid Residency Program effective July 2013. The program appropriates roughly \$80 million per year in recurring state and federal funds and allocates payments to hospitals based on their shares of statewide residents and Medicaid inpatient reimbursement \autocite{oppaga2023}. Texas set a statutory target of 1.1 first-year residency positions per in-state medical graduate in 2011 and, beginning with a \$14 million appropriation in 2013, funded a growing series of GME expansion grants through its Higher Education Coordinating Board \autocite{thecb2024}. Georgia and Tennessee operated smaller programs of the same type, and Section 5503's redistribution of unused Medicare slots also favored hospitals in Southern non-expansion states \autocite{mcnamara2025b}. These policies bias the institution-level comparison toward finding a contraction in expansion states: if control-state training grew because of these programs, part of any measured decline at existing institutions in expansion states reflects control-state growth rather than expansion-state contraction.
 
 Evidence from earlier public insurance expansions establishes that coverage expansions can shift physician supply through institutional channels. \textcite{garthwaite2012} shows that the CHIP expansion changed physician behavior on both the participation and hours margins---the closest antecedent to our question of how a coverage expansion feeds back into the supply side of medicine---and \textcite{barnes2023} document that public insurance expansions raise labor demand in physician practices. \textcite{qian2024} shows that 1980s Medicaid expansions for pregnant women increased OBGYN counts in low-income counties, and \textcite{huh2024} find these effects were persistent and driven by early-career physicians. \textcite{baker2000} shows that Medicaid demand shocks were absorbed primarily through public hospitals and clinics rather than private practices, a pattern directly relevant here given that hospitals control residency slot capacity. For the ACA expansion itself, \textcite{neprash2021} find increases in Medicaid participation and payer-mix shifts in primary care with little change in physician labor supply, and \textcite{candon2018} document that appointment availability for Medicaid patients tracks fee levels---both underscoring that the accommodation of new coverage runs through institutions rather than individual physicians. Because Medicaid pays physicians well below Medicare in most states \autocite{zuckerman2021}, the revenue consequences of expansion for teaching hospitals depend on volume as much as price, which is why the financing formulas described below matter.
 
@@ -142,173 +48,40 @@ Expansion of existing programs is constrained by the Balanced Budget Act of 1997
 
 \subsubsection{GME Funding}\label{sec:gme_funding}
 
-GME in the United States is financed through a multi-payer system including Medicare, Medicaid, the Health Resources and Services Administration (HRSA), the Veterans Health Administration (VHA), and the Department of Defense (DoD) \autocite{he2021}. Medicare is the dominant source, providing Direct (DGME) and Indirect Medical Education (IME) payments totaling approximately \$16.2 billion in fiscal year 2020 \autocite{crs2022}; whether these subsidies determine the level of training, or instead accrue to hospitals training residents they would fund anyway, is a long-standing question \autocite{newhouse2001paying, nicholson2002physician}, and \textcite{medpac2023} reviews the current policy debate. Its payment \emph{formula} is fixed in federal statute, so Medicaid expansion does not change Medicare GME rules directly; realized Medicare payments can nonetheless move with a hospital's resident counts and the patient-share terms of the formula, which is why we treat measured payments as an equilibrium outcome rather than a mechanical transfer when we use them as evidence on the financing channel (\cref{subsec:mechanisms}). Medicaid GME ranks second at \$7.39 billion in 2022, up from \$3.78 billion in 2009 \autocite{henderson2021, henderson2023}, but unlike Medicare it is entirely state-determined. States vary substantially in whether they fund GME at all, in payment generosity, and in formula design \autocite{eden2014, henderson2013, henderson2016, henderson2021, henderson2023, ncsl2024}. Some operate volume-responsive systems that scale payments with Medicaid patient volume; others use fixed per-resident amounts, managed care capitation rates, or direct grants. Federal matching amplifies all state payments, so state-level formula design choices have outsized consequences for teaching hospital resources. In states with volume-responsive formulas, expansion mechanically raises Medicaid patient volume and triggers GME revenue increases without additional legislation. In states with fixed formulas, the same volume gain generates no incremental GME revenue. This cross-state variation is a key source of identifying variation in the mechanism analysis. HRSA's Children's Hospital GME and Teaching Health Center GME programs provide additional targeted support for pediatric and primary care training, insulating those programs from the operating margin pressures that affect procedurally intensive specialties \autocite{he2021}.
-
-\subsection{Hospital Heterogeneity and Differential Medicaid Exposure}\label{sec:heterogeneity_background}
-
-A companion paper by one of us, \textcite{ang_beniwal2026}, studies the same
-policy using state-level residency match counts and reaches what initially
-looks like the opposite conclusion: that expansion \emph{increased} GME
-funding and expanded training capacity, particularly at urban hospitals. At
-the state level, however, the design has only fifty-one units, and the
-resulting estimates are too imprecise to pin down the training response. The
-institution-level panel we construct addresses this limitation. The two
-papers also differ in outcome construction and estimator,
-and earlier drafts of this paper papered over the tension with the word
-``complementing.'' We now believe the two findings are the
-two halves of one decomposition: state aggregates include the entry margin,
-which rose largely because the single-accreditation transition moved
-pre-existing osteopathic capacity into the data, while a balanced institution
-panel isolates existing institutions, whose intake was roughly flat.
-\cref{subsec:extensive} makes this reconciliation explicit, and the concluding
-section states which estimate a policymaker should use for which question.\footnote{The companion paper's outcome definition, data
-source, sample and years, estimator, and point estimate with its standard error
-are summarized alongside ours in \cref{subsec:extensive}. [The companion draft's
-headline estimate and standard error are to be inserted from the current version
-of \textcite{ang_beniwal2026}.]} Whether aggregate effects reflect concentrated
-responses at specific institutions or diffuse adjustments across the population
-is exactly the question the decomposition answers. This section characterizes the
-dimensions of heterogeneity most relevant to predicting differential responses.
-
-Pre-expansion Medicaid exposure is the most direct dimension. High-Medicaid-share hospitals stand to gain the most from expansion through increased billable volume and, in volume-responsive states, larger GME add-on payments. However, these institutions also carried the largest uninsured populations that generate DSH allotments, which are automatically reduced as uninsured volume falls. As \textcite{dranove2016} show, the largest uncompensated care reductions post-expansion occurred at safety-net hospitals, meaning the net revenue effect depends critically on state DSH and GME formula design.
-
-Hospital ownership structure affects investment behavior and responses to public policy. \textcite{duggan2000} finds that private hospitals respond more aggressively than government-owned hospitals to Medicaid payment incentives, repositioning their patient mix in response to financial signals. In the training context, public and nonprofit hospitals may invest in residency capacity even without immediate financial returns, while for-profit institutions are more likely to condition expansion on realized revenue gains. Large academic medical centers with diversified revenue streams are better positioned to absorb above-cap training costs than community teaching hospitals on narrower margins.
-
-Teaching intensity at baseline reflects the extent of fixed investments already made in residency infrastructure. Hospitals with higher pre-expansion resident-to-bed ratios face lower marginal costs of expansion and are more likely to respond to revenue improvements with additional slots. Hospitals with minimal training history face high entry costs that may prevent expansion even when revenues improve. Finally, urban hospitals benefit from deeper physician labor markets for faculty recruitment and attract more competitive applicant pools, while rural and micropolitan hospitals face structural constraints on both margins that limit their ability to translate financial gains into training capacity.
+GME in the United States is financed through a multi-payer system including Medicare, Medicaid, the Health Resources and Services Administration (HRSA), the Veterans Health Administration (VHA), and the Department of Defense (DoD) \autocite{he2021}. Medicare is the dominant source, providing Direct (DGME) and Indirect Medical Education (IME) payments totaling approximately \$16.2 billion in fiscal year 2020 \autocite{crs2022}; whether these subsidies determine the level of training, or instead accrue to hospitals training residents they would fund anyway, is a long-standing question \autocite{newhouse2001paying, nicholson2002physician}, and \textcite{medpac2023} reviews the current policy debate. Its payment \emph{formula} is fixed in federal statute, so Medicaid expansion does not change Medicare GME rules directly; realized Medicare payments can nonetheless move with a hospital's resident counts and the patient-share terms of the formula, which is why we treat measured payments as an equilibrium outcome rather than a mechanical transfer when we use them as evidence on the financing channel. Medicaid GME ranks second at \$7.39 billion in 2022, up from \$3.78 billion in 2009 \autocite{henderson2021, henderson2023}, but unlike Medicare it is entirely state-determined. States vary substantially in whether they fund GME at all, in payment generosity, and in formula design \autocite{eden2014, henderson2016, henderson2021, henderson2023, ncsl2024}. Some operate volume-responsive systems that scale payments with Medicaid patient volume; others use fixed per-resident amounts, managed care capitation rates, or direct grants. Federal matching amplifies all state payments, so state-level formula design choices have outsized consequences for teaching hospital resources. In states with volume-responsive formulas, expansion mechanically raises Medicaid patient volume and triggers GME revenue increases without additional legislation. In states with fixed formulas, the same volume gain generates no incremental GME revenue. This cross-state variation is a key source of identifying variation in the mechanism analysis. HRSA's Children's Hospital GME and Teaching Health Center GME programs provide additional targeted support for pediatric and primary care training, insulating those programs from the operating margin pressures that affect procedurally intensive specialties \autocite{he2021}.
 
 \section{Conceptual Framework}\label{sec:model}
 
-It helps to fix ideas with a simple way of thinking about how residency positions
-are determined. Residency training has two sides: hospitals decide how many positions
-to create and fund, and medical graduates apply to fill them. The number of residents
-a hospital actually trains is the smaller of the two---the positions it offers, or the
-applicants willing to take them.
+It helps to fix ideas with a simple way of thinking about how residency positions are determined. Residency training has two sides: hospitals decide how many positions to create and fund, and medical graduates apply to fill them. The number of residents a hospital actually trains is the smaller of the two---the positions it offers, or the applicants willing to take them.
 
-In practice, the offering side is what usually binds. In our data, the large majority
-of programs---$82$ percent overall, $80$ percent in expansion states and $87$ percent
-in never-expansion states---fill every position they offer
-(\cref{tab:sumstats}). For the typical
-program, then, the number of residents trained is set by how many positions the
-hospital is willing and able to fund, not by a shortage of applicants; the roughly
-one program in five with unfilled positions is a real margin, but a minority one. The
-question that matters is therefore what governs a hospital's decision to fund
-positions in the first place.
+In practice, the offering side is what usually binds. In our data, the large majority of programs---$82$ percent overall, $80$ percent in expansion states and $87$ percent in never-expansion states---fill every position they offer (\cref{tab:sumstats}). For the typical program, then, the number of residents trained is set by how many positions the hospital is willing and able to fund, not by a shortage of applicants; the roughly one program in five with unfilled positions is a real margin, but a minority one. The question that matters is therefore what governs a hospital's decision to fund positions in the first place.
 
-That decision is, above all, financial. Medicare pays for residents only up to a cap
-set in 1997; beyond that cap, a hospital must cover the full cost of each additional
-position---salary, benefits, and faculty supervision---out of its own operating
-budget. The marginal position is thus a discretionary expense that a hospital will
-sustain only if its finances allow, propped up by a mix of Medicare and Medicaid
-education payments and the disproportionate-share and uncompensated-care funds that
-help keep teaching hospitals afloat.
+That decision is, above all, financial. Medicare pays for residents only up to a cap set in 1997; beyond that cap, a hospital must cover the full cost of each additional position---salary, benefits, and faculty supervision---out of its own operating budget. The marginal position is thus a discretionary expense that a hospital will sustain only if its finances allow, propped up by a mix of Medicare and Medicaid education payments and the disproportionate-share and uncompensated-care funds that help keep teaching hospitals afloat.
 
-The same financial calculus operates on a second margin the literature usually
-ignores: \emph{entry}. An institution that does not yet train residents faces
-the accreditation process and start-up costs described in
-\cref{sec:program_expansion}---sunk investments committed years before the
-first resident arrives---so the entry decision responds to durable changes in
-the financial environment, not transitory ones. A policy that changes hospital
-finances can therefore move training capacity in two distinct ways: existing
-sponsors adjust the positions they fund, and new sponsors decide whether the
-now-different environment justifies starting a program. Nothing in the
-framework requires the two margins to move together; a shock could leave
-intake at existing institutions unchanged while accelerating (or deterring) entry, in which
-case aggregate capacity changes would appear only in totals that include
-entrants, and hospital panels restricted to existing institutions would miss
-them entirely.
+The same financial calculus operates on a second margin the literature usually ignores: \emph{entry}. An institution that does not yet train residents faces the accreditation process and start-up costs so the entry decision responds to durable changes in the financial environment, not transitory ones. A policy that changes hospital finances can therefore move training capacity in two distinct ways: existing sponsors adjust the positions they fund, and new sponsors decide whether the now-different environment justifies starting a program. Nothing in the framework requires the two margins to move together; a shock could leave intake at existing institutions unchanged while accelerating (or deterring) entry, in which case aggregate capacity changes would appear only in totals that include entrants, and hospital panels restricted to existing institutions would miss them entirely.
 
-Medicaid expansion changes this financial picture, but not in a single direction. On
-one hand, it turns previously uninsured patients into paying---if low-margin---Medicaid
-patients, which improves revenue. On the other, it reduces the uncompensated-care
-payments that are tied to the size of the uninsured population, which cuts the other
-way. Whether a given hospital ends up with more or less room to fund positions depends
-on its patient mix and on how its state pays for graduate medical education
-(\cref{sec:aca}). The framework therefore delivers one clear prediction---that
-Medicaid expansion changes residency training by changing hospital
-finances---while leaving both the \emph{direction} of the change and the
-\emph{margin} on which it operates (intake at existing institutions versus entry) to be
-settled empirically (\cref{subsec:extensive,subsec:mechanisms}).
+Medicaid expansion changes this financial picture, but not in a single direction. On one hand, it turns previously uninsured patients into paying---if low-margin---Medicaid patients, which improves revenue. On the other, it reduces the uncompensated-care payments that are tied to the size of the uninsured population, which cuts the other way. Whether a given hospital ends up with more or less room to fund positions depends on its patient mix and on how its state pays for graduate medical education. The framework therefore delivers one clear prediction---that Medicaid expansion changes residency training by changing hospital finances---while leaving both the \emph{direction} of the change and the \emph{margin} on which it operates (intake at existing institutions versus entry) to be settled empirically.
 
 \section{Data}\label{sec:data}
 
-We use data from the NRMP Main Residency Match covering 2000 to 2019. The 2010
-to 2019 years come from the NRMP's published data reports \autocite{nrmp2010,
-nrmp2011, nrmp2012, nrmp2013, nrmp2014, nrmp2015, nrmp2016, nrmp2017, nrmp2018,
-nrmp2019}; the 2000 to 2009 years are newly digitized from the NRMP's archival
-results books using an OCR pipeline we built for this paper and validated
-against the overlapping institutional identifiers in the published series. The
-reports document, at the program level, positions offered, positions filled,
-match outcomes, and fill rates, disaggregated by specialty. We identify the
-sponsoring institution for each program using the leading digits of the NRMP
-program code, which correspond to a unique hospital or training institution.
-Aggregating programs to the institution level yields a panel of $1{,}234$
-sponsoring institutions over twenty years. Panel construction handles the
-extensive margin explicitly: an institution-year in which the sponsor does not
-appear in the NRMP report is recorded as \emph{missing}, not zero, outside the
-window between the institution's first and last observed activity, so entry and
-exit are never conflated with capacity changes at existing institutions (a distinction that
-turns out to be first-order; \cref{subsec:extensive}).
+We use data from the NRMP Main Residency Match covering 2000 to 2019. The 2010 to 2019 years come from the NRMP's published data reports \autocite{nrmp2000, nrmp2001,nrmp2002, nrmp2003, nrmp2004, nrmp2005, nrmp2006, nrmp2006, nrmp2007, nrmp2008, nrmp2009, nrmp2010, nrmp2011, nrmp2012, nrmp2013, nrmp2014, nrmp2015, nrmp2016, nrmp2017, nrmp2018, nrmp2019}. The reports document, at the program level, positions offered, positions filled, match outcomes, and fill rates, disaggregated by specialty. We identify the sponsoring institution for each program using the leading digits of the NRMP program code, which correspond to a unique hospital or training institution. Aggregating programs to the institution level yields a panel of $1{,}234$ sponsoring institutions over twenty years. Panel construction handles the extensive margin explicitly: an institution-year in which the sponsor does not appear in the NRMP report is recorded as \emph{missing}, not zero, outside the window between the institution's first and last observed activity, so entry and exit are never conflated with capacity changes at existing institutions.
 
-Entry into the NRMP requires careful measurement because of the osteopathic
-single-accreditation transition. Between July 2015 and June 2020, residency
-programs accredited by the American Osteopathic Association (AOA) moved to
-ACGME accreditation, and their sponsoring institutions entered the NRMP Main
-Match. These institutions trained residents before the transition; their
-appearance in match data reflects a change in accreditation rather than new
-training capacity. We therefore classify each of the $201$ institutions that
-first appear in the match after 2010 as either a genuinely new sponsor or a
-pre-existing AOA-accredited sponsor. The classification matches entrant
-institutions, within state, against the ACGME Accreditation Data System's
-public list of all $743$ programs that applied for accreditation under the
-Single Accreditation System, including programs that later withdrew. The
-matching uses Jaro--Winkler string distance with several adjustments: we
-expand common abbreviations, split compound school/hospital sponsor names,
-extract acronyms, apply a token-overlap rule for renamed hospital systems,
-and classify sponsors with osteopathic consortium (OPTI) names directly. We
-resolve the remaining ambiguous cases by hand using institutional histories,
-and we release the adjudication file with the replication package. Of the
-$201$ post-2010 entrants, $100$ are single-accreditation migrants and $101$
-are genuinely new sponsors. \cref{subsec:extensive} shows that the two groups
-behave very differently around expansion.
+Entry into the NRMP requires careful measurement because of the osteopathic single-accreditation transition. Between July 2015 and June 2020, residency programs accredited by the American Osteopathic Association (AOA) moved to ACGME accreditation, and their sponsoring institutions entered the NRMP Main Match. These institutions trained residents before the transition; their appearance in match data reflects a change in accreditation rather than new training capacity. We therefore classify each of the $201$ institutions that first appear in the match after 2010 as either a genuinely new sponsor or a pre-existing AOA-accredited sponsor. The classification matches entrant institutions, within state, against the ACGME Accreditation Data System's public list of all $743$ programs that applied for accreditation under the Single Accreditation System, including programs that later withdrew. The matching uses Jaro--Winkler string distance with several adjustments: we expand common abbreviations, split compound school/hospital sponsor names, extract acronyms, apply a token-overlap rule for renamed hospital systems, and classify sponsors with osteopathic consortium (OPTI) names directly. We resolve the remaining ambiguous cases by hand using institutional histories, and we release the adjudication file with the replication package. Of the $201$ post-2010 entrants, $100$ are single-accreditation migrants and $101$ are genuinely new sponsors. 
 
-Specialty-level analyses
-use the same panel aggregated to institution-by-specialty-group cells. Because
-specialty-specific counts are conditional on a hospital sponsoring a program in
-that specialty, the pre-expansion means and per-program magnitudes reported by
-specialty and by hospital location need not sum to the all-specialty aggregate.
+Specialty-level analyses use the same panel aggregated to institution-by-specialty-group cells. Because specialty-specific counts are conditional on a hospital sponsoring a program in that specialty, the pre-expansion means and per-program magnitudes reported by specialty and by hospital location need not sum to the all-specialty aggregate.
 
-The primary outcome is matched positions per 100,000 population: the total number of positions filled at a given hospital in a given year, divided by the state population and scaled to a per-100,000 basis. Population data are from the U.S.\ Census Bureau. We analyze both the aggregate total across all specialties and specialty-specific counts. Heterogeneity by hospital type is examined in \cref{subsec:location}. \cref{tab:sumstats} reports baseline (2010) summary statistics by expansion status: expansion and never-expansion states host programs of similar size, fill rates, rural composition, and specialty mix, though expansion states train substantially more physicians per capita---a level difference the program fixed effects absorb.
+The primary outcome is matched positions per 100,000 population: the total number of positions filled at a given hospital in a given year, divided by the state population and scaled to a per-100,000 basis. Population data are from the U.S.\ Census Bureau. We analyze both the aggregate total across all specialties and specialty-specific counts. \cref{tab:sumstats} reports baseline (2010) summary statistics by expansion status: expansion and never-expansion states host programs of similar size, fill rates, rural composition, and specialty mix, though expansion states train substantially more physicians per capita---a level difference the program fixed effects absorb.
 
 When the NRMP lists multiple specialties for a single program (e.g., "Emergency Medicine/ Anesthesiology"), slots are assigned to the first-listed specialty prior to aggregation to the hospital level. Because specialty models are estimated independently, this convention affects only the first-listed specialty's counts; the second specialty's count is unchanged. As a robustness check, we also allocate a slot to each listed specialty, which increases counts only for second-listed specialties.
 
-\cref{fig1} summarizes the
-treatment structure of the panel, displaying each state's expansion status in
-every sample year. Treatment is the host state's adoption of Medicaid
-expansion. States expanded in distinct waves: twenty-six states and the
-District of Columbia expanded in 2014, and later adopters followed in 2015,
-2016, and 2019. Seventeen states never expanded over the sample period, and
-hospitals in those states serve as the comparison group. This staggered
-rollout is the source of identifying variation for the event-study design
-described in \cref{sec:emp}.
+A second dataset measures the financial side of training. From the Centers for Medicare and Medicaid Services' annual Graduate Medical Education files---extracted from the Medicare hospital cost reports---we assemble a hospital-by-fiscal-year panel of $1{,}933$ teaching hospitals covering fiscal years 2000 through 2023, identified by Medicare provider number. The files report each hospital's Direct GME and Indirect Medical Education payments, resident full-time-equivalent counts, and resident caps. Because cost-reporting periods do not always span twelve months, we annualize all payment and FTE amounts by months covered and sum multiple reports filed by the same provider within a fiscal year. These are \emph{Medicare} payments---a proxy for training-related revenue rather than a direct measure of the state Medicaid GME payments at the center of the financing mechanism (\cref{subsec:mechanisms})---and we use them for the payment event studies and, through a crosswalk from NRMP sponsoring institutions to Medicare provider numbers ($683$ linked institutions), for the analyses that measure match intake and cost-report resident stocks on the same institutions (\cref{subsec:linked}).
 
-\cref{fig2,fig3} plot the raw evolution of matched positions by
-expansion cohort, in totals and on a per-100{,}000 basis, where a cohort is defined
-by the calendar year in which a hospital's state expanded Medicaid. These series
-are purely descriptive and are not adjusted for fixed effects or covariates; they
-show that matched positions trend upward across all cohorts over the sample period,
-with treated and never-expansion hospitals moving broadly in parallel prior to
-expansion. The event-study estimates in \cref{sec:res} isolate the change
-in these trajectories attributable to expansion.
+\cref{fig1} summarizes the treatment structure of the panel, displaying each state's expansion status in every sample year. Treatment is the host state's adoption of Medicaid expansion. States expanded in distinct waves: twenty-six states and the District of Columbia expanded in 2014, and later adopters followed in 2015, 2016, and 2019. Seventeen states never expanded over the sample period, and hospitals in those states serve as the comparison group. This staggered rollout is the source of identifying variation for the event-study design described in \cref{sec:emp}.
 
-Finally, \cref{fig4} situates residency positions within the aggregate
-physician workforce. Using the American Community Survey, it plots the cumulative
-growth since 2001 in physicians per 100{,}000 population against growth in total
-population, each indexed to its 2001 value. Over nearly two decades physicians per
-100{,}000 have risen at roughly the same pace as the population itself. Because the
-long-run supply of physicians is shaped upstream by the number of residency
-positions, this near-parallel growth motivates our focus on graduate medical
-education as the margin through which shocks to hospital finances may propagate into
-the physician workforce.
+\cref{fig2,fig3} plot the raw evolution of matched positions by expansion cohort, in totals and on a per-100{,}000 basis, where a cohort is defined by the calendar year in which a hospital's state expanded Medicaid. These series are purely descriptive and are not adjusted for fixed effects or covariates; they show that matched positions trend upward across all cohorts over the sample period, with treated and never-expansion hospitals moving broadly in parallel prior to expansion.
+
+Finally, \cref{fig4} situates residency positions within the aggregate physician workforce. Using the American Community Survey, it plots the cumulative growth since 2001 in physicians per 100{,}000 population against growth in total population, each indexed to its 2001 value. Over nearly two decades physicians per 100{,}000 have risen at roughly the same pace as the population itself. Because the long-run supply of physicians is shaped upstream by the number of residency positions, this near-parallel growth motivates our focus on graduate medical education as the margin through which shocks to hospital finances may propagate into the physician workforce.
+
 \section{Empirical Strategy}\label{sec:emp}
 In this paper, we estimate the dynamic effects of Medicaid expansion on the number of matched residency spots at a hospital per 100,000 state population using the imputation estimator developed by \textcite{borusyak2024revisiting}. This approach addresses the biases that arise when using conventional two-way fixed effects (TWFE) estimators in settings with staggered adoption difference-in-differences designs \autocite{goodman2021difference, sun2021estimating,de2020two,roth2023s,de2023two}. We now discuss the model, identification assumptions, and estimation approach.
 	
@@ -319,27 +92,9 @@ Let $Y_{ist}$ denote the number of matched residency spots per 100,000 state pop
 \end{equation}
 where $\lambda_i$ represents hospital fixed effects, and $\gamma_t$ are time fixed effects. $D_{ist}$ is an indicator equal to one if Medicaid was expanded in state $s$ at time $t$, and $\tau_{ist}$ represents the fully heterogeneous treatment effect for hospital $i$ at time $t$. In equation \eqref{staggeredmodel}, for each hospital, the data contains an activation date, $E_i$, when $D_{ist}$ switches from $0$ to $1$. This specification allows treatment effects to vary arbitrarily across hospitals and time periods without imposing parametric restrictions.
  
-Our identification strategy leverages the staggered roll-out of Medicaid expansion across states between 2014 and 2019. The model in equation \eqref{staggeredmodel} is generated from three main assumptions on potential outcomes and causal effects. First, the parallel trends assumption requires that, absent Medicaid expansion, the number of matched residency spots per 100,000 state population would have evolved similarly between hospitals; because ours is an event-study design, we assess this assumption directly by testing for differential pre-expansion trends below. Second, we assume no anticipation---that Medicaid expansion did not affect the number of matched spots per 100,000 state population before the law's actual implementation in each state. This assumption is plausible in our setting: expansion timing was set by state-level political processes following \textit{NFIB v.\ Sebelius} rather than by the training decisions of individual hospitals, and the multi-year lead times required to create or expand a residency program (\cref{sec:program_expansion}) make preemptive adjustment unlikely.
+Our identification strategy leverages the staggered roll-out of Medicaid expansion across states between 2014 and 2019. The model in equation \eqref{staggeredmodel} is generated from three main assumptions on potential outcomes and causal effects. First, the parallel trends assumption requires that, absent Medicaid expansion, the number of matched residency spots per 100,000 state population would have evolved similarly between hospitals; because ours is an event-study design, we assess this assumption directly by testing for differential pre-expansion trends below. Second, we assume no anticipation---that Medicaid expansion did not affect the number of matched spots per 100,000 state population before the law's actual implementation in each state. This assumption is plausible in our setting: expansion timing was set by state-level political processes following \textit{NFIB v.\ Sebelius} rather than by the training decisions of individual hospitals, and the multi-year lead times required to create or expand a residency program make preemptive adjustment unlikely.
 
-A further assumption implicit in equation \eqref{staggeredmodel} is that potential
-outcomes are unaffected by other states' treatment---the stable unit treatment value
-assumption (SUTVA). It deserves explicit discussion here because residency positions
-are filled through a single national clearinghouse: if expansion leads treated-state
-programs to offer fewer positions, some applicants who would have matched there may
-instead match at programs in non-expansion states, mechanically raising outcomes in
-the comparison group. Spillovers of this form would inflate the treated--control gap,
-so our estimates should be read as an upper bound (in magnitude) on the per-state
-effect of expansion. Two features of the setting limit the scope for such
-interference. First, the relevant absorption margin is slack in the \emph{comparison}
-group, where $87$ percent of programs fill every position they offer
-(\cref{tab:sumstats}; the expansion-state rate is $80$ percent), so comparison-state
-programs can absorb displaced applicants only where slack exists. Second, and more important, the number
-of positions a program \emph{offers} (its quota) is set by hospital funding decisions
-before the match algorithm runs and cannot be inflated by the equilibrium reallocation
-of applicants. The offered-positions result in \cref{subsec:main} is therefore the
-interference-robust object in our analysis: that quotas contract alongside matched
-positions indicates the effect reflects capacity decisions rather than an artifact of
-match-market reallocation across state lines.
+A further assumption implicit in equation \eqref{staggeredmodel} is that potential outcomes are unaffected by other states' treatment---the stable unit treatment value assumption (SUTVA). It deserves explicit discussion here because residency positions are filled through a single national clearinghouse: if expansion leads treated-state programs to offer fewer positions, some applicants who would have matched there may instead match at programs in non-expansion states, mechanically raising outcomes in the comparison group. Spillovers of this form would inflate the treated--control gap, so our estimates should be read as an upper bound (in magnitude) on the per-state effect of expansion. Two features of the setting limit the scope for such interference. First, the relevant absorption margin is slack in the \emph{comparison} group, where $87$ percent of programs fill every position they offer (\cref{tab:sumstats}; the expansion-state rate is $80$ percent), so comparison-state programs can absorb displaced applicants only where slack exists. Second, and more important, the number of positions a program \emph{offers} (its quota) is set by hospital funding decisions before the match algorithm runs and cannot be inflated by the equilibrium reallocation of applicants. 
  
 Finally, we impose a model of unrestricted causal effects, referred to as the ``null model'' in \textcite{borusyak2024revisiting}. In this case, the target estimand (parameter of interest) is the dynamic average treatment effect on the treated (ATT) $h$ periods (horizons) since the treatment for a given $h\ge 0$:
 \begin{equation}\label{estimand}
@@ -374,610 +129,94 @@ To conduct the pre-trends test, one needs to choose an alternative model for the
 \section{Results}\label{sec:res}
 
 \subsection{Main Effect of Medicaid Expansion on Residency Positions}\label{subsec:main}
+ 
+\cref{fig5} plots the dynamic treatment effects from the imputation estimator of \textcite{borusyak2024revisiting}, with the outcome measured as matched positions per 100{,}000 contemporary state population at existing institutions.\footnote{Outcomes outside an institution's activity window---the span from its first to its last year with positive positions---are coded as missing rather than zero, so identification comes only from changes at operating institutions.} The average post-expansion effect is $-0.014$ positions per 100{,}000, about $5.7$ percent of the pre-expansion mean of $0.26$. The estimate is statistically indistinguishable from zero. The joint test of the post-expansion coefficients has $p = 0.05$, reflecting a dynamic path that grows more negative over the horizon. The ten pre-expansion coefficients are jointly flat (pre-trend $p = 0.36$): parallel trends hold. Offered positions---the quota programs post before the matching with medical students---barely move: $-0.008$ per 100{,}000, about $3.0$ percent, statistically indistinguishable from zero ($p = 0.21$) with flat pre-trends ($p = 0.39$). Hospitals did not stop posting positions after expansion. Whatever small decline appears in matched positions at existing institutions, the capacity-creation margin the conceptual framework identifies as decisive is quiet. 
 
-\cref{fig5} plots the dynamic treatment effects from the imputation estimator
-of \textcite{borusyak2024revisiting}, with the outcome measured as matched
-positions per 100{,}000 \emph{contemporary} state population at existing
-institutions (activity-window coding, so entry and exit never masquerade as
-capacity changes at those institutions). The average post-expansion effect is $-0.014$
-positions per 100{,}000, about $5.7$ percent of the pre-expansion mean of
-$0.26$. The estimate is statistically indistinguishable from zero on its own
-standard error ($0.026$; 95 percent confidence interval $[-0.066, +0.037]$);
-the joint test of the post-expansion coefficients has $p = 0.05$, reflecting a
-dynamic path that grows more negative over the horizon. The ten pre-expansion
-coefficients are jointly flat (pre-trend $p = 0.36$): parallel trends hold
-over a full decade, not merely the few years most designs can check.
 
-We scale by contemporary rather than fixed population deliberately. Normalizing
-matched positions by year-varying state population nets differential population
-growth out of the outcome; the raw \emph{count} of positions per institution,
-by contrast, exhibits a pronounced differential pre-trend (Appendix~\cref{afig1})
-that confounds a levels interpretation, so we treat levels as evidence on the
-direction of the effect only (see \cref{subsec:inference}). The design that
-restricts identification to variation in the \emph{timing} of expansion among
-adopters (the not-yet-treated design) yields a larger decline ($-16.6$
-percent), but the long panel reveals what a short one could not: its
-pre-expansion coefficients fail the ten-period test decisively
-(Appendix~\cref{afig:notyet}), so we no longer treat it as the cleaner
-alternative and rely on the never-expansion comparison.
-
-Offered positions---the quota programs post before the matching algorithm
-runs, and the margin that is robust to match-market reallocation across state
-lines (\cref{sec:emp})---barely move: $-0.008$ per 100{,}000, about $3.0$
-percent, statistically indistinguishable from zero ($p = 0.21$) with flat
-pre-trends ($p = 0.39$). Hospitals did not stop posting positions after
-expansion. Whatever small decline appears in matched positions at existing
-institutions,
-the capacity-creation margin the conceptual framework identifies as decisive
-is quiet. A Poisson (PPML) specification on the raw matched count---which
-avoids the ratio construction entirely---gives a static post effect of $-5.8$
-percent ($p = 0.07$), the same order of magnitude as the event-study average.
+We scale by contemporary rather than fixed population deliberately. Normalizing matched positions by year-varying state population nets differential population growth out of the outcome; the raw count of positions per institution, by contrast, exhibits a pronounced differential pre-trend (Appendix~\cref{afig1}) that confounds a levels interpretation, so we treat levels as evidence on the direction of the effect only. 
 
 \subsection{The Extensive Margin: Entry, Exit, and the Single Accreditation System}\label{subsec:extensive}
 
-The intake margin is only half of the answer. Of the $1{,}234$ sponsoring
-institutions in the panel, $201$ first appear in the match after 2010---$156$
-of them from 2016 onward, the window of the osteopathic (AOA-to-ACGME)
-single-accreditation transition---and a larger set enters or exits over the
-full twenty years: $43.5$ percent of institution-years fall outside their
-institution's activity window. A panel that zero-fills those years (as an
-earlier draft of this paper did, and as any balanced hospital panel does
-implicitly) mixes the entry margin into the intake-margin estimates; our
-activity-window coding keeps the two margins separate, and this subsection
-reports each. Throughout, we use the entrant classification described in
-\cref{sec:data} to distinguish genuine entry from single-accreditation
-migration.
+The question this subsection answers is: whether expansion induced entry. Of the $1{,}234$ sponsoring institutions in the panel, $201$ first appear in the match after 2010---$156$ of them from 2016 onward, the window of the osteopathic (AOA-to-ACGME) single-accreditation transition. The intake-margin estimates are insensitive to these entrants (\cref{tab:entryclass}): restricting to institutions active over the entire panel gives $-5.5$ percent, excluding all $100$ classified single-accreditation migrants gives $-5.7$ percent (pre-trend $p = 0.38$), and excluding every 2016-and-later entrant gives $-5.2$ percent, all within a standard error of the headline and statistically indistinguishable from zero.
 
-The intake margin is insensitive to how the entry correction is
-implemented. Restricting to institutions active over the entire panel gives
-$-5.5$ percent, excluding all $100$ classified single-accreditation migrants
-gives $-5.7$ percent (pre-trend $p = 0.38$), and excluding every
-2016-and-later entrant (a cruder timing proxy) gives $-5.2$ percent. All
-three estimates are within a standard error of the headline and statistically
-indistinguishable from zero.
+Classifying the entrants changes the interpretation of the entry margin (\cref{tab:entryclass}). By 2019, post-2010 entrants account for $2{,}148$ matched positions in expansion states, but $982$ of those positions ($46$ percent) are at single-accreditation migrants---institutions that trained residents under AOA accreditation before 2015 and became visible in match data when their accreditation changed. Among expansion-state entrants in the 2016--2019 window, $63$ percent are migrants, because osteopathic training was historically concentrated in Michigan, Ohio, Pennsylvania, New York, and New Jersey, all of which expanded Medicaid. Genuine-entrant capacity per 100{,}000 shows no response to expansion: the population-weighted average post-expansion effect is $-0.12$ (s.e.\ $0.15$; joint $p = 0.19$) and the unweighted effect is $+0.02$ (s.e.\ $0.11$; joint $p = 0.34$), both after flat pre-trends (Appendix~\cref{afig:entry-genuine}). Migrant capacity, by contrast, rises strongly in the post period (joint $p < 0.001$)---not a treatment effect, but the national accreditation calendar interacting with the geography of osteopathic training. Flipping all $69$ medium- and low-confidence classification calls simultaneously leaves the genuine-entry estimates null (joint $p = 0.77$ weighted, $0.61$ unweighted) and the intake-margin headline at $-5.6$ percent. We report the entry estimates under clustered inference only because they were not part of the pre-specified randomization-inference family.
 
-Classifying the entrants changes the interpretation of the entry margin
-(\cref{tab:entryclass}). By 2019, post-2010 entrants account for $2{,}148$
-matched positions in expansion states, but $982$ of those positions ($46$
-percent) are at single-accreditation migrants---institutions that trained
-residents under AOA accreditation before 2015 and became visible in match
-data when their accreditation changed. Among expansion-state entrants in the
-2016--2019 window, $72$ of $114$ ($63$ percent) are migrants, compared with
-$19$ of $42$ in never-expansion states. The transition loaded differentially
-onto expansion states because osteopathic training was historically
-concentrated in Michigan, Ohio, Pennsylvania, New York, and New Jersey, all
-of which expanded Medicaid. Estimating the two capacity margins separately at
-the state level shows why the distinction matters. Genuine-entrant capacity
-per 100{,}000 shows no response to expansion: the population-weighted average
-post-expansion effect is $-0.12$ (s.e.\ $0.15$; joint $p = 0.19$) and the
-unweighted effect is $+0.02$ (s.e.\ $0.11$; joint $p = 0.34$), both after
-flat pre-trends. Migrant capacity, by contrast, rises strongly in the post
-period (joint $p < 0.001$). This rise is not a treatment effect; it reflects
-the national accreditation calendar interacting with the geography of
-osteopathic training, and the classification removes it. We report the entry
-estimates under clustered inference only because they were not part of the
-pre-specified randomization-inference family (\cref{subsec:inference}). The
-classification's judgment calls do not drive these results. Re-estimating
-with all $69$ medium- and low-confidence manual classification calls flipped
-simultaneously---the same exercise as the judgment-state flips in
-\cref{subsec:mechanisms}---leaves the genuine-entry estimates null (joint
-$p = 0.77$ weighted, $0.61$ unweighted), the intake-margin headline at $-5.6$
-percent, and the state totals essentially unchanged.
-
-At the state level, where entry belongs in the total, per-capita training
-does not fall after expansion. The population-weighted point estimate is
-positive ($+6.7$ percent; clustered $p = 0.10$;
-Appendix~\cref{afig:statetotal}) but fails its state-level pre-trends test
-($p = 0.0002$). The unweighted estimate is $+4.6$ percent with $p = 0.38$,
-and it is the only entry-inclusive specification in the paper that passes its
-ten-period pre-trends test ($p = 0.17$). Excluding migrant capacity
-changes little: the weighted estimate is $+6.2$ percent and the unweighted
-estimate is $+4.1$ percent (pre-trend $p = 0.16$;
-Appendix~\cref{afig:statetotal-nosas}), so the non-declining state total is
-not an artifact of the accreditation transition. Restricting state totals to
-always-active institutions pushes the weighted estimate higher, again with
-failing pre-trends. The state-level evidence supports the conclusion that
-totals did not decline; it does not establish an increase. Moreover, most of
-the treated-control difference in entry reflects reclassification rather
-than new capacity.
-
-The linked cost-report sample corroborates the intake-margin reading with an
-independent measure of the training stock. Matching NRMP institutions to
-Medicare provider numbers ($683$ linked institutions on the full panel) and
-estimating match intake and annualized cost-report resident FTEs on the same
-rows, weights, and year convention, the two series move together: both decline
-modestly (asinh intake $-2.5$ percent, asinh FTEs $-1.2$ percent), and the
-apparent $19$ percent FTE \emph{rise} in volume-responsive states that emerges
-from the unweighted, unlinked cost-report panel does not appear on the
-comparable sample. The linked-subsample event studies fail their ten-period
-pre-trends tests, with $p$-values at or near zero in every cell, so we do not
-interpret these estimates causally. The reconciliation rests on the two
-series moving together on identical rows, not on either series being
-identified. Stock and flow tell one story once they are measured on the same
-institutions.
-
-The design also supports the check that does the most to rule out slow-moving
-regional confounds---a placebo that assigns each state an expansion ten years
-before its real one and re-estimates on 2000--2013 data alone
-(Appendix~\cref{afig:placebo}). The placebo comes back null at both the
-institution level ($p = 0.54$, flat placebo pre-trends) and the state level
-($p = 0.32$): whatever separates expansion from non-expansion states after
-2014 was not already separating them in the decade before the ACA.
-
-This decomposition also reconciles this paper with its companion.
-\textcite{ang_beniwal2026}, working with state-level residency match counts,
-find point estimates suggesting that expansion increased GME funding and
-expanded training capacity, though with only fifty-one state units those
-estimates are too imprecise to pin down the response. The balanced
-institution panel here appeared to find the opposite. Both are correct about
-their own estimand: state aggregates include the entry margin, which rose
-mechanically as the accreditation transition moved osteopathic capacity into
-the data, while a balanced institution panel weights existing institutions,
-whose intake
-was flat to slightly negative. Our classification shows that the two findings
-differ because the two series include different amounts of migrating
-capacity, not because the underlying training response differs. A policymaker
-asking whether expansion shrank a state's training pipeline should use the
-state-level object; the answer is no. One asking whether expansion grew the
-pipeline should use the classified entry margin; the answer is also no.
+At the state level, where entry belongs in the total, per-capita training does not fall after expansion. The population-weighted point estimate is positive ($+6.7$ percent; clustered $p = 0.10$; Appendix~\cref{afig:statetotal}) but fails its state-level pre-trends test ($p = 0.0002$). The unweighted estimate is $+4.6$ percent with $p = 0.38$, and it is the only entry-inclusive specification in the paper that passes its ten-period pre-trends test ($p = 0.17$). Excluding migrant capacity changes little: the weighted estimate is $+6.2$ percent and the unweighted estimate is $+4.1$ percent (pre-trend $p = 0.16$; Appendix~\cref{afig:statetotal-nosas}), so the non-declining state total is not an artifact of the accreditation transition. The state-level evidence supports the conclusion that totals did not decline; it does not establish an increase. Moreover, most of the treated-control difference in entry reflects reclassification rather than new capacity.
 
 \subsection{Mechanism: The Medicaid GME Financing Channel}\label{subsec:mechanisms}
 
-The framework leaves the sign of the demand shift to the data because expansion
-changes hospital finances in offsetting ways (\cref{sec:aca}): it converts
-uncompensated care into billable Medicaid revenue and, in states whose Medicaid GME
-formulas scale with patient volume, raises GME add-on payments, while the Medicare
-uncompensated-care pool and below-cost Medicaid reimbursement push the other way. We
-isolate the operative channel using cross-state variation in Medicaid GME formula
-design (\cref{sec:gme_funding}): \emph{volume-responsive} states gain GME
-revenue when expansion raises Medicaid volume, whereas \emph{fixed} and non-paying
-states gain none. States are classified from the payment methodology reported in the
-pre-period survey of \textcite{henderson2013}. If the financing channel operates, the
-contraction should be concentrated in the latter group. We present the evidence in
-the order we uncovered it: the 2012-vintage classification produces a striking
-cross-formula contrast, and the balance of this subsection lays it out. We then
-report the diagnostics that overturn it---reclassification to the post-period
-formula rules, leave-one-state-out estimation, and the linked cost-report
-sample---and conclude that the contrast is a California phenomenon rather than a
-mechanism. We keep the full presentation because the negative result is
-informative for the literature that uses these formula classifications.
+The framework leaves the sign of the demand shift to the data because expansion changes hospital finances in offsetting ways: it converts uncompensated care into billable Medicaid revenue and, in states whose Medicaid GME formulas scale with patient volume, raises GME add-on payments, while the Medicare uncompensated-care pool and below-cost Medicaid reimbursement push the other way. We isolate the operative channel using cross-state variation in Medicaid GME formula design: \emph{volume-responsive} states gain GME revenue when expansion raises Medicaid volume, whereas \emph{fixed} and non-paying states gain none. States are classified by the payment rules in force during the 2014--2019 treatment window, from the survey of \textcite{henderson2016}; an exposure-weighted classification that follows each state's rules year by year assigns every expansion state the same arm. Because the rules are measured partly within the treatment window---New York and Illinois, among others, adopted volume-scaled formulas by 2015---the classification is a policy choice rather than a pre-determined trait, and we probe it below by flipping every state whose coding required judgment and by leave-one-state-out estimation. If the financing channel operates, the contraction should be concentrated in the fixed/non-paying group.
 
-As a direct test of the first link in this chain---whether expansion changes the GME
-revenue that funds training---\cref{afig13,afig14} estimate
-the effect of expansion on hospitals' GME payments using Centers for Medicare and Medicaid Services (CMS) Medicare cost-report
-data. In the inverse-hyperbolic-sine specification, expansion appears to raise
-Direct GME payments by roughly $15$ percent (joint $p < 0.01$;
-\cref{afig13}), with a smaller indirect medical education response
-(\cref{afig14}); all cost-report periods are annualized by months covered.
-We flag immediately that this evidence does not survive the
-estimator it should be read with: because payment outcomes have mass at zero,
-asinh coefficients are not unit-invariant \autocite{chen2024logs}, and a
-Poisson (PPML) specification in levels with the same fixed effects and
-clustering finds \emph{no} payment response at all (pooled Direct GME effect
-$-3.4$ percent, $p = 0.57$; indirect payments $-6.0$ percent, $p = 0.38$;
-cross-arm interactions null or wrong-signed). The payment evidence below should
-therefore be read as descriptive of the asinh specification the earlier
-literature uses, not as an established revenue channel.
+As a direct test of the first link in this chain---whether expansion changes the GME revenue that funds training---\cref{afig13,afig14} estimate the effect of expansion on hospitals' GME payments using Centers for Medicare and Medicaid Services (CMS) Medicare cost-report data. In the inverse-hyperbolic-sine specification, expansion appears to raise Direct GME payments by roughly $15$ percent (joint $p < 0.01$; \cref{afig13}), with a smaller indirect medical education response (\cref{afig14}); all cost-report periods are annualized by months covered. We flag immediately that this evidence does not survive decomposition. With mass at zero in the outcome, asinh coefficients are not unit-invariant \autocite{chen2024logs}, so we estimate the two margins the transformation conflates separately: in logs on the hospital-years with positive payments---$98$ percent of the sample for Direct GME---the payment response disappears (Direct GME $-4.3$ percent, $p = 0.57$; indirect payments $-5.7$ percent, $p = 0.55$), and the extensive margin, whether a hospital receives any payment at all, does not move (Appendix~\cref{atab:logpositive}). The payment evidence below should therefore be read as descriptive of the asinh specification the earlier literature uses, not as an established revenue channel.
 
-\cref{fig:mech_gme} reveals a sharp contrast that at first appears consistent
-with the GME-financing channel. In non-responsive (fixed/none) expansion
-states, the average post-expansion effect is $-0.027$ per 100{,}000---a $12.4$
-percent decline relative to the pre-expansion mean of $0.22$ (s.e.\ $0.026$;
-joint $p < 0.01$)---following pre-expansion coefficients that are flat over
-all ten pre-periods (pre-trend $p = 0.82$). In volume-responsive states the
-average post-expansion effect is $+0.061$ per 100{,}000 ($+13.6$ percent
-relative to a pre-expansion mean of $0.45$; s.e.\ $0.029$)---but that panel
-\emph{fails} its ten-period pre-trends test ($p = 0.008$), so its level is
-not interpretable as a treatment effect. A pooled interacted model puts the
-volume-minus-non-responsive difference in average post effects at $0.089$ per
-100{,}000 (clustered $p < 0.001$); under wild cluster bootstrap-$t$ inference
-the difference has $p = 0.04$ under this classification but $p = 0.53$ under
-the corrected classification introduced below.
+\cref{fig:mech_gme} shows the cross-formula comparison. In non-responsive (fixed/none) expansion states, the average post-expansion effect is $-0.035$ per 100{,}000---a $17.8$ percent decline relative to the pre-expansion mean of $0.19$ (s.e.\ $0.025$; joint $p < 0.001$)---following pre-expansion coefficients that are flat over all ten pre-periods (pre-trend $p = 0.78$). In volume-responsive states the average post-expansion effect is $+0.012$ per 100{,}000 ($+3.7$ percent relative to a pre-expansion mean of $0.33$; s.e.\ $0.026$)---but that panel \emph{fails} its ten-period pre-trends test ($p < 0.001$), so its level is not interpretable as a treatment effect. A pooled interacted model puts the volume-minus-non-responsive difference in average post effects at $0.049$ per 100{,}000 (clustered $p < 0.001$). The difference is robust to flipping each of the five states whose coding required judgment, but under wild cluster bootstrap-$t$ inference it has $p = 0.53$.
 
-Two caveats bound how much weight the volume-responsive arm of this comparison can
-bear. First, as just noted, the volume-responsive panel fails its pre-trends
-test, so its point estimate cannot be read as a clean counterfactual
-comparison; we treat it as descriptive. Second, the formula classification is
-a cross-state split, not a randomized one. Appendix~\cref{atab:balance}
-documents baseline (2010) comparability across the two groups of expansion
-states on state-level observables; the population-\emph{weighted}
-program-level baseline differs (roughly $0.49$ versus $0.23$ matched positions
-per 100{,}000), reflecting the concentration of training in a few large
-volume-responsive states rather than state-level imbalance. Given both caveats, the mechanism claim rests on the two legs
-that survive them: the contraction in non-responsive states after flat pre-expansion
-coefficients, and the cross-formula contrast in the payment evidence below.
+Two caveats bound how much weight the volume-responsive arm of this comparison can bear. First, as just noted, the volume-responsive panel fails its pre-trends test, so its point estimate cannot be read as a clean counterfactual comparison; we treat it as descriptive. Second, the formula classification is a cross-state split, not a randomized one. Appendix~\cref{atab:balance} documents baseline (2010) comparability across the two groups of expansion states on state-level observables; the population-\emph{weighted} program-level baseline differs (roughly $0.35$ versus $0.20$ matched positions per 100{,}000), reflecting the concentration of training in a few large volume-responsive states rather than state-level imbalance. Given both caveats, the reduced-form contrast rests on a single leg: the contraction in non-responsive states after flat pre-expansion coefficients. The payment evidence below does not supply a second.
 
-A related concern is correlated policy: the formula classification is a state
-policy choice, and other policies that moved hospital finances around
-expansion---exposure to the ACA's scheduled DSH reductions, hospital provider
-taxes, Medicaid managed-care penetration, overall Medicaid payment
-generosity---could in principle differ across the two groups and generate their
-own cross-arm contrast. Two features of the evidence limit this concern. First,
-the classification is measured in the 2012 pre-period, the groups are balanced on
-baseline observables, and their expansion timing is identical
-(Appendix~\cref{atab:balance}), so a confounding policy would have to operate
-through channels invisible in the baseline comparison. Second, a confounder would
-need to reproduce a specific fingerprint rather than generic fiscal relief:
-volume-responsive states show no slot decline, a $19$ percent rise in cost-report
-resident FTEs, and an IME payment response, while non-responsive states show slot
-declines with flat FTEs---the pattern a volume-scaled training subsidy produces
-and that broad financial improvement does not. (As shown below, the FTE half of
-this fingerprint does not survive estimation on the linked sample.)
+A related concern is correlated policy: the formula classification is a state policy choice, and other policies that moved hospital finances around expansion---exposure to the ACA's scheduled DSH reductions, hospital provider taxes, Medicaid managed-care penetration, overall Medicaid payment generosity---could in principle differ across the two groups and generate their own cross-arm contrast. The groups are balanced on baseline observables and their expansion timing is identical (Appendix~\cref{atab:balance}), so a confounding policy would have to operate through channels invisible in the baseline comparison. The sharper version of the concern is reverse causation in the classification itself: a state that expected expansion to raise Medicaid volume could have adopted a volume-scaled formula for that reason. A cross-state split cannot rule this out, and it is one more reason---alongside the volume arm's pre-trend failure---to read the cross-arm contrast as descriptive rather than causal.
 
-The financing channel makes a sharper prediction about the payment response itself:
-if the mechanism operates, the GME revenue gain from expansion should be
-concentrated in volume-responsive states and largely absent in non-responsive ones.
-Appendix \cref{afig:fs_dgme,afig:fs_ime} assess this by re-estimating the payment
-event study separately by formula design. The measurement caveats are now
-decisive. The payments observable at the hospital level are \emph{Medicare}
-cost-report DGME and IME amounts---a proxy for training-related revenue rather
-than a direct measure of the Medicaid GME channel---and once cost-report
-periods are annualized by months covered (a referee-requested correction that
-turned out to be load-bearing) the cross-arm contrasts vanish: the DGME
-difference is $0.06$ ($p = 0.59$), the IME difference $0.06$ ($p = 0.40$),
-and the resident-FTE difference $0.05$ ($p = 0.45$), with the volume-responsive
-panels failing their ten-period pre-trends tests throughout (DGME
-$p < 0.001$, IME $p < 0.001$). The apparent by-formula payment gradient in
-earlier drafts was an artifact of unannualized reporting periods compounding
-the asinh functional form; the PPML estimates above and the linked-sample
-reconciliation in \cref{subsec:extensive} point the same way.
+The financing channel makes a sharper prediction about the payment response itself: if the mechanism operates, the GME revenue gain from expansion should be concentrated in volume-responsive states and largely absent in non-responsive ones. Appendix \cref{afig:fs_dgme,afig:fs_ime} assess this by re-estimating the payment event study separately by formula design. The measurement caveats are decisive. The payments observable at the hospital level are \emph{Medicare} cost-report DGME and IME amounts---a proxy for training-related revenue rather than a direct measure of the Medicaid GME channel---and once cost-report periods are annualized by months covered, no cross-arm gradient appears: the DGME difference is $-0.02$ ($p = 0.87$), the IME difference $-0.04$ ($p = 0.56$), and the resident-FTE difference $-0.01$ ($p = 0.86$), with both DGME panels failing their ten-period pre-trends tests (volume-responsive $p < 0.001$, non-responsive $p = 0.004$). If expansion financed training through volume-scaled Medicaid GME payments, the revenue gain should be concentrated in volume-responsive states; it is not.
 
-\subsubsection*{Reclassification, leave-one-out, and the linked sample overturn the mechanism}
+The contrast also does not survive leave-one-state-out estimation. Dropping California---coded non-responsive because Medi-Cal pays no fee-for-service GME, a coding we document and defend in Appendix~\cref{appendix:gmeclass}, but a coding on which everything turns---flips the sign of the cross-arm difference (from $+0.049$ to $-0.020$, not significant). The same happens inside the timing-only design ($+0.045$ full sample, $-0.021$ without California). Dropping California also flips the sign of the \emph{headline} intake-margin estimate itself (from $-0.014$ to $+0.018$), underscoring how much of every weighted estimate in this literature is California.
 
-Three diagnostics, each requested by the logic of the design itself, undo this
-reading. First, \emph{reclassification}. Our formula classification file
-records a second vintage reflecting 2015 payment rules, under which New York,
-Illinois, Arizona, Vermont, and Virginia move \emph{into} the volume-responsive
-arm (and North Carolina and Idaho, both non-expansion states, move out). Because
-the treatment window is 2014--2019, the 2015 vintage---not the 2012
-one---describes the rules in force for essentially the entire post period; an
-exposure-weighted time-varying classification coincides with it for every state.
-Under the 2015 vintage the cross-arm difference falls from $0.089$ to $0.049$
-per 100{,}000 (delta-method $p < 0.001$; robust to flipping each of the five
-states whose coding required judgment), and the volume arm continues to fail
-its pre-trends test under either vintage on the ten-period window---the
-instability is not an artifact of one coding.
-
-Second, \emph{leave-one-state-out}. Dropping California---coded non-responsive
-because Medi-Cal pays no fee-for-service GME, a coding we document and defend in
-the appendix, but a coding on which everything turns---flips the sign of the
-2015-vintage cross-arm difference (from $+0.049$ to $-0.020$, not significant).
-The same happens inside the timing-only design ($+0.045$ full sample, $-0.021$
-without California). Dropping California also flips the sign of the
-\emph{headline} intake-margin estimate itself (from $-0.014$ to $+0.018$),
-underscoring how much of every weighted estimate in this literature is
-California. Under wild cluster bootstrap-$t$ inference the 2015-vintage
-difference has $p = 0.53$ (\cref{subsec:inference}).
-
-Third, the \emph{linked sample}. Estimating cost-report resident FTEs and match
-intake on the same institutions with the same weights and year convention, FTEs
-do not rise $19$ percent in volume-responsive states; both series decline
-modestly and together. The FTE fingerprint that anchored the mechanism's
-corroborating evidence is an artifact of comparing a population-weighted NRMP
-panel with an unweighted, differently-sampled cost-report panel---and the PPML
-estimates above indicate the payment response itself is not robust to the
-functional form.
-
-We conclude that the data do not establish a Medicaid GME financing mechanism.
-What they establish is narrower and still useful: the cross-formula contrast in
-published state classifications is dominated by California, and any future work
-splitting states on these classifications should report the reclassified,
-leave-one-out, and Poisson versions of its results.
+We conclude that the data do not establish a Medicaid GME financing mechanism. The cross-arm contrast is generated by a volume arm whose pre-trends fail, is absent from the payment data, and reverses sign without California. What the exercise establishes is narrower and still useful: the cross-formula contrast in published state classifications is dominated by California, and any future work splitting states on these classifications should report the judgment-flip, leave-one-out, and log-level versions of its results.
 
 \subsection{Heterogeneous Effects by Hospital Location}\label{subsec:location}
 
-The intake-margin estimates mask heterogeneity across hospital settings, and
-on the full panel the heterogeneity runs opposite to the shortage-geography
-worry. \cref{fig6} estimates the effect separately for urban and rural
-institutions in two \emph{split-sample} regressions: each group is compared
-only with never-expansion institutions of the same type, and each carries its
-own ten-period pre-trends test. (RUCA classifications are unavailable for
-institutions that exited before 2010 and for Alaska and Hawaii; those
-institutions are excluded from this split only.) For urban institutions, which
-account for the large majority of training volume, the average post-expansion
-effect is $-0.014$ per 100{,}000 (s.e.\ $0.027$; $-5.0$ percent; joint
-$p = 0.03$), though the urban pre-trends test now rejects at the ten-period
-horizon ($p = 0.02$), so the urban path should be read with the same caution
-as the levels evidence. For rural institutions the estimate is \emph{zero} to
-three decimal places ($+0.0001$ per 100{,}000; $+0.1$ percent), against a
-rural baseline of $0.06$ per 100{,}000---rural training at existing institutions simply did
-not move with expansion, though the rural pre-trends test also rejects
-($p = 0.009$). A pooled interacted model puts the urban-minus-rural difference
-at $-0.045$ ($p < 0.001$), but because both split samples fail their own
-pre-trends tests on the long window, we read the location split as
-descriptive: nothing in it suggests expansion drained rural training, and the
-action, such as it is, sits at large urban institutions---which is also where
-the entrant institutions of \cref{subsec:extensive} concentrate.
+The intake-margin estimates mask heterogeneity across hospital settings, and on the full panel the heterogeneity runs opposite to the shortage-geography worry. \cref{fig6} estimates the effect separately for urban and rural institutions in two \emph{split-sample} regressions: each group is compared only with never-expansion institutions of the same type, and each carries its own ten-period pre-trends test. (RUCA classifications are unavailable for institutions that exited before 2010 and for Alaska and Hawaii; those institutions are excluded from this split only.) For urban institutions, which account for the large majority of training volume, the average post-expansion effect is $-0.014$ per 100{,}000 (s.e.\ $0.027$; $-5.0$ percent; joint $p = 0.03$), though the urban pre-trends test now rejects at the ten-period horizon ($p = 0.02$), so the urban path should be read with the same caution as the levels evidence. For rural institutions the estimate is \emph{zero} to three decimal places ($+0.0001$ per 100{,}000; $+0.1$ percent), against a rural baseline of $0.06$ per 100{,}000---rural training at existing institutions simply did not move with expansion, though the rural pre-trends test also rejects ($p = 0.009$). A pooled interacted model puts the urban-minus-rural difference at $-0.045$ ($p < 0.001$), but because both split samples fail their own pre-trends tests on the long window, we read the location split as descriptive: nothing in it suggests expansion drained rural training, and the action, such as it is, sits at large urban institutions.
 
 \subsection{Heterogeneous Effects by Specialty}\label{subsec:specialty}
 
-We next examine whether the intake-margin effect differs across specialties,
-distinguishing primary care (family medicine, internal medicine, and
-pediatrics) from all other specialties, estimated at the
-institution-by-specialty-group level so that each group carries its own unit
-fixed effects. \cref{fig7} presents the estimates. Primary-care intake at
-existing institutions is essentially flat: $-0.001$ per 100{,}000, a $0.9$ percent
-change (s.e.\ $0.014$; joint $p = 0.06$; pre-trend $p = 0.04$). The
-non-primary-care estimate is larger but imprecise: $-0.019$ per 100{,}000, an
-$11.1$ percent decline (s.e.\ $0.017$; joint $p = 0.14$; pre-trend
-$p = 0.01$). Both panels' pre-trends tests reject on the ten-period window, so
-we read the specialty split as suggestive. Its practical content is
-reassuring rather than alarming: the specialty most tied to the shortage
-debate---primary care---shows no intake contraction at all, and the group
-estimates approximately aggregate to the total, resolving an accounting
-inconsistency a referee identified in an earlier draft.
+We next examine whether the intake-margin effect differs across specialties, distinguishing primary care (family medicine, internal medicine, and pediatrics) from all other specialties, estimated at the institution-by-specialty-group level so that each group carries its own unit fixed effects. \cref{fig7} presents the estimates. Primary-care intake at existing institutions is essentially flat: $-0.001$ per 100{,}000, a $0.9$ percent change (s.e.\ $0.014$; joint $p = 0.06$; pre-trend $p = 0.04$). The non-primary-care estimate is larger but imprecise: $-0.019$ per 100{,}000, an $11.1$ percent decline (s.e.\ $0.017$; joint $p = 0.14$; pre-trend $p = 0.01$). Both panels' pre-trends tests reject on the ten-period window, so we read the specialty split as suggestive. Its practical content is reassuring rather than alarming: the specialty most tied to the shortage debate---primary care---shows no intake contraction at all, and the group estimates approximately aggregate to the total.
 
 \section{Robustness Checks}\label{sec:checks}
 
 \subsection{Alternative Difference-in-Differences Estimators}\label{subsec:estimators}
 
-To demonstrate that our findings are not an artifact of the particular estimator
-we adopt, we re-estimate the event study using a suite of recently developed
-difference-in-differences estimators that are robust to treatment-effect
-heterogeneity under staggered adoption. \cref{fig8} compares six
-approaches for matched positions per 100{,}000 contemporary population: two-way
-fixed effects (TWFE), \textcite{borusyak2024revisiting}, \textcite{de2020two},
-\textcite{sun2021estimating}, \textcite{cengiz2019effect}, and
-\textcite{gardner2022two}. Each addresses the ``forbidden comparisons'' that can
-contaminate conventional TWFE estimates under staggered timing through a different
-methodological route. Across estimators, the post-expansion estimates align closely
-in both sign and magnitude, and the pre-expansion coefficients are near zero
-throughout.\footnote{The \textcite{callaway2021difference} estimator is omitted
-from the figure for two reasons: it does not accept the population weights our
-design uses, and its never-treated comparison cells are sparsely populated in
-this sample. Estimated unweighted with the not-yet-treated control group, it
-gives a simple ATT of $-0.005$ per 100{,}000 (s.e.\ $0.007$, $p = 0.46$)---a
-null fully consistent with the intake-margin reading. Differences across
-estimators can arise from the choice of weights used to aggregate group-time
-effects into an overall ATT; see, e.g., \textcite{deb2025aggregating}.} The same robustness holds
-for the levels outcome (Appendix~\cref{afig7}) and the quota outcome
-(Appendix~\cref{afig8}).
+To demonstrate that our findings are not an artifact of the particular estimator we adopt, we re-estimate the event study using a suite of recently developed difference-in-differences estimators that are robust to treatment-effect heterogeneity under staggered adoption. \cref{fig8} compares six approaches for matched positions per 100{,}000 contemporary population: two-way fixed effects (TWFE), \textcite{borusyak2024revisiting}, \textcite{de2020two}, \textcite{sun2021estimating}, \textcite{cengiz2019effect}, and \textcite{gardner2022two}. Each addresses the ``forbidden comparisons'' that can contaminate conventional TWFE estimates under staggered timing through a different methodological route. Across estimators, the post-expansion estimates align closely in both sign and magnitude, and the pre-expansion coefficients are near zero throughout.\footnote{The \textcite{callaway2021difference} estimator is omitted from the figure for two reasons: it does not accept the population weights our design uses, and its never-treated comparison cells are sparsely populated in this sample. Estimated unweighted with the not-yet-treated control group, it gives a simple ATT of $-0.005$ per 100{,}000 (s.e.\ $0.007$, $p = 0.46$)---a null fully consistent with the intake-margin reading. Differences across estimators can arise from the choice of weights used to aggregate group-time effects into an overall ATT; see, e.g., \textcite{deb2025aggregating}.} The same robustness holds for the levels outcome (Appendix~\cref{afig7}) and the quota outcome (Appendix~\cref{afig8}).
 
 \subsection{Unweighted Specifications}\label{subsec:unweighted}
 
-Our baseline specifications weight observations by state population so that the
-estimates summarize the experience of the average resident rather than the
-average institution. Completing the full weighting-by-denominator grid on the
-same panel: the weighted year-varying estimate is $-0.014$ ($-5.7$ percent;
-joint $p = 0.05$; pre-trend $p = 0.36$); the unweighted year-varying estimate
-is $-0.018$ ($-3.1$ percent of a much larger unweighted baseline; joint
-$p = 0.27$; pre-trend $p = 0.37$); the weighted fixed-2010-denominator
-estimate is $-0.047$ ($-18.9$ percent; joint $p = 0.03$) but its pre-trends
-test rejects ($p = 0.04$); and the unweighted fixed-denominator estimate is
-$-0.026$ ($-4.6$ percent; joint $p = 0.18$; pre-trend $p = 0.26$). The
-unweighted point estimates are not attenuated in absolute value; they sit on
-larger baselines and wider standard errors. A state-level collapse (51 units)
-yields a \emph{positive} weighted estimate ($+6.7$ percent, $p = 0.10$, with
-failing state-level pre-trends) and a positive unweighted estimate ($+4.6$
-percent, $p = 0.38$, pre-trend $p = 0.17$---the only entry-inclusive cell of
-the grid that passes its pre-trends test), the entry-margin objects discussed
-in \cref{subsec:extensive}. No cell of the grid supports a precisely estimated
-intake contraction, and the only specifications with positive point
-estimates are the ones that include entry. As \cref{subsec:extensive} shows,
-part of that entry reflects single-accreditation migration rather than
-induced entry.
+Our baseline specifications weight observations by state population so that the estimates summarize the experience of the average resident rather than the average institution. Completing the full weighting-by-denominator grid on the same panel: the weighted year-varying estimate is $-0.014$ ($-5.7$ percent; joint $p = 0.05$; pre-trend $p = 0.36$); the unweighted year-varying estimate is $-0.018$ ($-3.1$ percent of a much larger unweighted baseline; joint $p = 0.27$; pre-trend $p = 0.37$); the weighted fixed-2010-denominator estimate is $-0.047$ ($-18.9$ percent; joint $p = 0.03$) but its pre-trends test rejects ($p = 0.04$); and the unweighted fixed-denominator estimate is $-0.026$ ($-4.6$ percent; joint $p = 0.18$; pre-trend $p = 0.26$). The unweighted point estimates are not attenuated in absolute value; they sit on larger baselines and wider standard errors. A state-level collapse (51 units) yields a \emph{positive} weighted estimate ($+6.7$ percent, $p = 0.10$, with failing state-level pre-trends) and a positive unweighted estimate ($+4.6$ percent, $p = 0.38$, pre-trend $p = 0.17$---the only entry-inclusive cell of the grid that passes its pre-trends test). No cell of the grid supports a precisely estimated intake contraction, and the only specifications with positive point estimates are the ones that include entry. As \cref{subsec:extensive} shows, part of that entry reflects single-accreditation migration rather than induced entry.
+
+\subsection{Pre-ACA Placebo}\label{subsec:placebo}
+
+The check that does the most to rule out slow-moving regional confounds is a placebo that assigns each state an expansion ten years before its real one and re-estimates on 2000--2013 data alone, so no real treatment enters the sample (Appendix~\cref{afig:placebo}). The placebo comes back null at both the institution level ($p = 0.54$, flat placebo pre-trends) and the state level ($p = 0.32$): whatever separates expansion from non-expansion states after 2014 was not already separating them in the decade before the ACA.
+
+\subsection{Corroboration from the Linked Cost-Report Sample}\label{subsec:linked}
+
+The linked cost-report sample corroborates the intake-margin reading with an independent measure of the training stock. Matching NRMP institutions to Medicare provider numbers ($683$ linked institutions on the full panel) and estimating match intake and annualized cost-report resident FTEs on the same rows, weights, and year convention, the two series move together: both decline modestly (asinh intake $-2.5$ percent, asinh FTEs $-1.2$ percent), and neither arm of the formula split shows FTE growth on the linked sample (volume-responsive FTEs $-2.5$ percent, non-responsive $-0.4$ percent). The linked-subsample event studies fail their ten-period pre-trends tests, with $p$-values at or near zero in every cell, so we do not interpret these estimates causally. The reconciliation rests on the two series moving together on identical rows, not on either series being identified. Stock and flow tell one story once they are measured on the same institutions.
 
 \subsection{Inference with Few Clusters and Sensitivity to Parallel Trends}\label{subsec:inference}
 
-Because Medicaid expansion is assigned at the state level and the
-population-weighted design concentrates identifying variation in a small
-number of large expansion states, the effective number of clusters is well
-below the fifty-one states used to compute the clustered standard errors.
-Following the logic of \textcite{carter2017asymptotic} and approximating the
-effective number of clusters by $G^{*} = G/(1 + \mathrm{CV}^2)$, the weighted
-design has $G^{*} \approx 8$ (the five largest states carry $66$ percent of
-the weight), against $G^{*} \approx 22$ without weights. We therefore report
-several inference standards and are explicit about what each supports.
+Because Medicaid expansion is assigned at the state level and the population-weighted design concentrates identifying variation in a small number of large expansion states, the effective number of clusters is well below the fifty-one states used to compute the clustered standard errors. Following the logic of \textcite{carter2017asymptotic} and approximating the effective number of clusters by $G^{*} = G/(1 + \mathrm{CV}^2)$, the weighted design has $G^{*} \approx 8$ (the five largest states carry $66$ percent of the weight), against $G^{*} \approx 22$ without weights. We therefore report several inference standards and are explicit about what each supports.
 
-First, wild cluster bootstrap-$t$ inference (Webb weights, state clusters,
-$9{,}999$ replications) on the static two-way fixed-effects analogs of our
-estimates gives $p = 0.74$ for the headline intake margin and $p = 0.56$
-for the timing-only design---fully consistent with the paper's reading that
-the intake margin is indistinguishable from zero. For the cross-formula
-mechanism difference the bootstrap gives $p = 0.04$ under the 2012
-classification but $p = 0.53$ under the corrected 2015 classification,
-mirroring the fragility documented in \cref{subsec:mechanisms}.
+First, wild cluster bootstrap-$t$ inference (Webb weights, state clusters, $9{,}999$ replications) on the static two-way fixed-effects analogs of our estimates gives $p = 0.74$ for the headline intake margin and $p = 0.56$ for the timing-only design (Appendix~\cref{afig:notyet})---fully consistent with the paper's reading that the intake margin is indistinguishable from zero. For the cross-formula mechanism difference the bootstrap gives $p = 0.53$.
 
-Second, a Benjamini--Hochberg false-discovery-rate correction across the
-primary family of nine hypotheses---now including the two mechanism arms and
-the cross-arm difference, which a referee correctly noted were previously
-excluded---leaves no member of the family below $q = 0.05$ under clustered
-inference except the mechanism objects whose failing pre-trends and
-California-dependence disqualify them on other grounds
-(Appendix~\cref{atab:qvalues,afig:fdrforest}).
+Second, a Benjamini--Hochberg false-discovery-rate correction across the primary family of nine hypotheses---now including the two mechanism arms and the cross-arm difference---leaves no member of the family below $q = 0.05$ under clustered inference except the mechanism objects whose failing pre-trends and California-dependence disqualify them on other grounds (Appendix~\cref{atab:qvalues,afig:fdrforest}).
 
-Third, randomization inference: permuting the vector of state expansion-timing
-cohorts across states under the sharp null ($1{,}000$ draws for the headline,
-$500$ for the other family members), in both the conventional form and the
-studentized form that permutes the $t$-statistic rather than the
-coefficient---the standard recommended when cluster weights are highly
-variable. The results are emphatic nulls: the headline has RI $p = 0.91$
-(studentized $0.94$), the timing-only design $0.65$ ($0.55$), and every other
-family member sits at $0.57$ or above under either form, with one exception.
-The cross-formula mechanism difference is the only estimate in the paper that
-approaches conventional thresholds under randomization inference
-($p = 0.08$)---and it is the estimate that reclassification and
-leave-one-out already disqualified (\cref{subsec:mechanisms}). For a paper
-whose central claim is a null on the intake margin, this conservative
-standard reinforces rather than threatens the conclusions.
+Third, randomization inference: permuting the vector of state expansion-timing cohorts across states under the sharp null ($1{,}000$ draws for the headline, $500$ for the other family members), in both the conventional form and the studentized form that permutes the $t$-statistic rather than the coefficient---the standard recommended when cluster weights are highly variable. The results are emphatic nulls: the headline has RI $p = 0.91$ (studentized $0.94$), the timing-only design $0.65$ ($0.55$), the cross-formula mechanism difference $0.48$, and every other family member sits at $0.57$ or above under either form. Nothing in the paper approaches conventional significance thresholds under randomization inference. For a paper whose central claim is a null on the intake margin, this conservative standard reinforces rather than threatens the conclusions.
 
-Fourth, timing and influence diagnostics. Restricting treatment to the 2014
-cohort alone holds cohort composition fixed and reproduces the headline
-($-0.014$ per 100{,}000, $-5.7$ percent; joint $p = 0.02$) after ten flat
-pre-expansion coefficients ($p = 0.37$; Appendix~\cref{afig:cohort2014}).
-Leave-one-state-out estimation over both treated and control states
-(Appendix~\cref{afig:loo}) shows the headline is not robust to the largest
-states in either direction: dropping California flips its sign (from $-0.014$
-to $+0.018$), while dropping Texas---a never-expansion state that ran large
-state GME appropriations over the same window---moves it to $-0.048$.
-Dropping the 100 classified single-accreditation migrants leaves the headline
-essentially unchanged ($-5.7$ percent, pre-trend $p = 0.38$;
-\cref{tab:entryclass}). The genuine-entrant and migrant capacity estimates of
-\cref{subsec:extensive} are reported under clustered inference only. They
-were constructed in response to review and are not members of the
-pre-specified nine-hypothesis family to which the randomization-inference and
-false-discovery-rate standards below apply.
-Excluding the four control states with the largest competing GME programs
-(Texas, Florida, Georgia, Tennessee) yields $-0.083$ ($-32$ percent, joint
-$p = 0.03$), but that specification fails its pre-trends test on the long
-window ($p < 0.001$), so we do not lean on it. The honest summary is that the
-intake-margin magnitude is not stable across influential states; its
-indistinguishability from zero is.
+Fourth, timing and influence diagnostics. Restricting treatment to the 2014 cohort alone holds cohort composition fixed and reproduces the headline ($-0.014$ per 100{,}000, $-5.7$ percent; joint $p = 0.02$) after ten flat pre-expansion coefficients ($p = 0.37$; Appendix~\cref{afig:cohort2014}). Leave-one-state-out estimation over both treated and control states (Appendix~\cref{afig:loo}) shows the headline is not robust to the largest states in either direction: dropping California flips its sign (from $-0.014$ to $+0.018$), while dropping Texas---a never-expansion state that ran large state GME appropriations over the same window---moves it to $-0.048$. Dropping the 100 classified single-accreditation migrants leaves the headline essentially unchanged ($-5.7$ percent, pre-trend $p = 0.38$; \cref{tab:entryclass}). The genuine-entrant and migrant capacity estimates of \cref{subsec:extensive} are reported under clustered inference only. They were constructed in response to review and are not members of the pre-specified nine-hypothesis family to which the randomization-inference and false-discovery-rate standards below apply. Excluding the four control states with the largest competing GME programs (Texas, Florida, Georgia, Tennessee) yields $-0.083$ ($-32$ percent, joint $p = 0.03$), but that specification fails its pre-trends test on the long window ($p < 0.001$), so we do not lean on it. The honest summary is that the intake-margin magnitude is not stable across influential states; its indistinguishability from zero is.
 
-Fifth, the denominator (event studies for this block are collected in
-Appendix~\cref{afig:deflators}). Using log contemporary state population
-itself as the outcome shows the denominator trends differentially around
-expansion (pre-trend $p < 0.001$), in the direction that biases \emph{against}
-finding a decline; a specification with log population as an estimated
-time-varying control absorbs most of the levels effect; and re-deflating by two alternative
-demographic denominators---the population aged 18--64 and the population below
-150 percent of the federal poverty line (both available 2010--2019)---yields
-$-3.7$ and $-5.6$ percent respectively, each within a standard error of the
-headline. However, both alternative demographic deflators fail their
-ten-period pre-trends tests ($p < 0.001$). They corroborate the direction of
-the headline estimate but do not provide independent identification. Because
-every population-based denominator is potentially post-treatment, we also
-deflate by a non-demographic scale: current-dollar state GDP from the Bureau
-of Economic Analysis. This is the only alternative deflator that passes its
-ten-period pre-trends test ($p = 0.14$). The event-study path is flat on both
-sides of expansion, and the average post-expansion effect is $+3.9$ percent
-of baseline, with a confidence interval that comfortably includes zero.
-Across the four deflators we test, the two with flat pre-trends (contemporary
-population and state GDP) give estimates on opposite sides of zero, and the
-two that fail pre-trends give more negative estimates. This pattern is
-consistent with the intake-margin null: the dispersion across deflators
-reflects denominator trends rather than changes in training capacity. The
-raw levels outcome fails parallel trends outright
-(Appendix~\cref{afig1}), as does the \textcite{rambachan2023more}-robust
-version of any levels claim, so levels serve only as directional
-corroboration. The \textcite{rambachan2023more} sensitivity analysis for the
-headline (Appendix~\cref{afig:honest}) shows the robust confidence interval
-includes zero even at $\bar{M} = 0$---which, for a paper whose central claim
-is a null on this margin, is the expected result rather than a limitation.
+Fifth, the denominator (event studies for this block are collected in Appendix~\cref{afig:deflators}). Using log contemporary state population itself as the outcome shows the denominator trends differentially around expansion (pre-trend $p < 0.001$), in the direction that biases \emph{against} finding a decline; a specification with log population as an estimated time-varying control absorbs most of the levels effect; and re-deflating by two alternative demographic denominators---the population aged 18--64 and the population below 150 percent of the federal poverty line (both available 2010--2019)---yields $-3.7$ and $-5.6$ percent respectively, each within a standard error of the headline. However, both alternative demographic deflators fail their ten-period pre-trends tests ($p < 0.001$). They corroborate the direction of the headline estimate but do not provide independent identification. Because every population-based denominator is potentially post-treatment, we also deflate by a non-demographic scale: current-dollar state GDP from the Bureau of Economic Analysis. This is the only alternative deflator that passes its ten-period pre-trends test ($p = 0.14$). The event-study path is flat on both sides of expansion, and the average post-expansion effect is $+3.9$ percent of baseline, with a confidence interval that comfortably includes zero. Across the four deflators we test, the two with flat pre-trends (contemporary population and state GDP) give estimates on opposite sides of zero, and the two that fail pre-trends give more negative estimates. This pattern is consistent with the intake-margin null: the dispersion across deflators reflects denominator trends rather than changes in training capacity. The raw levels outcome fails parallel trends outright (Appendix~\cref{afig1}), as does the \textcite{rambachan2023more}-robust version of any levels claim, so levels serve only as directional corroboration. The \textcite{rambachan2023more} sensitivity analysis for the headline (Appendix~\cref{afig:honest}) shows the robust confidence interval includes zero even at $\bar{M} = 0$---which, for a paper whose central claim is a null on this margin, is the expected result rather than a limitation.
 
-Sixth, Medicare-cap exposure. Institutions training above their Medicare
-resident cap must fund marginal positions without federal DGME and IME
-support, so a financing channel operating through subsidized slots predicts a
-differential response by cap status. We find no such difference: the
-above-cap/below-cap difference in average post-expansion effects is $0.006$
-per 100{,}000 ($p = 0.88$). The test is underpowered, however. Only $42$
-institutions in $14$ states train above their cap on the linked sample, and
-the above-cap arm fails its ten-period pre-trends test. We therefore read the
-comparison as descriptive: it fails to detect a difference rather than
-establishing its absence.
+Sixth, Medicare-cap exposure. Institutions training above their Medicare resident cap must fund marginal positions without federal DGME and IME support, so a financing channel operating through subsidized slots predicts a differential response by cap status. We find no such difference: the above-cap/below-cap difference in average post-expansion effects is $0.006$ per 100{,}000 ($p = 0.88$). The test is underpowered, however. Only $42$ institutions in $14$ states train above their cap on the linked sample, and the above-cap arm fails its ten-period pre-trends test. We therefore read the comparison as descriptive: it fails to detect a difference rather than establishing its absence.
 
 \section{Policy Implications}\label{sec:policy}
 
-What is at stake, in positions and dollars, is bounded by the estimates rather
-than asserted. At the intake margin, the effect of $-5.7$ percent carries a
-$95$ percent confidence interval of $[-0.066, +0.037]$ positions per
-100{,}000---comfortably including zero in both directions; at the state level,
-where entry belongs in the total, the point estimates are positive ($+6.7$
-percent weighted, $+4.6$ percent unweighted, neither statistically
-distinguishable from zero). Converting the most adverse plausible reading to
-dollars for perspective: public GME support runs roughly $\$150{,}000$ to
-$\$180{,}000$ per resident-year (Medicare DGME and IME totaled about $\$16.2$
-billion; \autocite{crs2022, eden2014}), so even a persistent loss of one
-thousand annual positions---well outside our state-level estimates---would
-represent roughly $\$0.5$--$0.6$ billion per year of forgone public training
-investment, against Medicaid GME spending of $\$7.39$ billion in 2022
-\autocite{henderson2023}. Because $50$ to $60$ percent of residents practice
-in their training state \autocite{murphy2020, orr2023}, compositional shifts
-across institutions \emph{within} states matter less for state physician
-supply than contraction would have; the incidence question our data can
-address is institutional (which sponsors train) rather than geographic.
+What is at stake, in positions and dollars, is bounded by the estimates rather than asserted. At the intake margin, the effect of $-5.7$ percent carries a $95$ percent confidence interval of $[-0.066, +0.037]$ positions per 100{,}000---comfortably including zero in both directions; at the state level, where entry belongs in the total, the point estimates are positive ($+6.7$ percent weighted, $+4.6$ percent unweighted, neither statistically distinguishable from zero). Converting the most adverse plausible reading to dollars for perspective: public GME support runs roughly $\$150{,}000$ to $\$180{,}000$ per resident-year (Medicare DGME and IME totaled about $\$16.2$ billion; \autocite{crs2022, eden2014}), so even a persistent loss of one thousand annual positions---well outside our state-level estimates---would represent roughly $\$0.5$--$0.6$ billion per year of forgone public training investment, against Medicaid GME spending of $\$7.39$ billion in 2022 \autocite{henderson2023}. Because $50$ to $60$ percent of residents practice in their training state \autocite{murphy2020, orr2023}, compositional shifts across institutions \emph{within} states matter less for state physician supply than contraction would have; the incidence question our data can address is institutional (which sponsors train) rather than geographic.
 
-Three implications follow. First, and most important to state plainly: nothing
-in this paper supports declining to expand Medicaid to protect the training
-pipeline. The corrected estimates show no aggregate contraction, the coverage
-literature documents large health and financial benefits of expansion
-\autocite{sommers2017, miller2021}, and seven of the ten remaining
-non-expansion states have volume-responsive GME formulas---the configuration
-in which even the fragile cross-formula reading would predict no training
-loss. Second, expansion also did not \emph{grow} the pipeline, and this
-result matters for workforce policy. Covering millions of additional people
-raises the demand for physicians, and the physician-shortage projections that
-motivate GME policy assume that training will expand to meet that demand. We
-find that the largest demand expansion in half a century produced no
-measurable supply response from existing institutions and no measurable entry
-by genuinely new sponsors. Coverage policy on its own does not finance training
-growth through hospital revenues. If the goal is to train more physicians for
-a larger insured population, the policies that moved training capacity over
-this period were direct interventions: Section 5503 redistribution
-\autocite{mcnamara2025b}, Teaching Health Center GME, the CAA 2021 Section
-126 slots, and the state programs described in \cref{sec:aca}. Third, for
-states weighing volume-responsive Medicaid GME
-formulas, the federal match makes conversion a comparatively cheap lever, but
-our evidence no longer supplies a demonstrated training return; the honest
-statement is that the formula margin is untested once California is set
-aside.
+Three implications follow. First, and most important to state plainly: nothing in this paper supports declining to expand Medicaid to protect the training pipeline. The corrected estimates show no aggregate contraction, the coverage literature documents large health and financial benefits of expansion \autocite{sommers2017, miller2021}, and seven of the ten remaining non-expansion states have volume-responsive GME formulas---the configuration in which even the fragile cross-formula reading would predict no training loss. Second, expansion also did not \emph{grow} the pipeline, and this result matters for workforce policy. Covering millions of additional people raises the demand for physicians, and the physician-shortage projections that motivate GME policy assume that training will expand to meet that demand. We find that the largest demand expansion in half a century produced no measurable supply response from existing institutions and no measurable entry by genuinely new sponsors. Coverage policy on its own does not finance training
+growth through hospital revenues. If the goal is to train more physicians for a larger insured population, the policies that moved training capacity over this period were direct interventions: Section 5503 redistribution \autocite{mcnamara2025b}, Teaching Health Center GME, the CAA 2021 Section 126 slots, and the state programs. Third, for states weighing volume-responsive Medicaid GME formulas, the federal match makes conversion a comparatively cheap lever, but our evidence no longer supplies a demonstrated training return; the honest statement is that the formula margin is untested once California is set aside.
 
 \section{Conclusion}\label{sec:conc}
 
-How many physicians the United States trains---and in which specialties and
-places---is settled years upstream, in the residency positions that teaching
-hospitals choose to create and fund. Those decisions are, at bottom, financial, which
-leaves the training pipeline exposed to any policy that moves hospital revenue.
-This paper asks whether the ACA's Medicaid expansion, by reshaping the finances of
-teaching hospitals, altered the number of residency positions those hospitals offer
-and fill. Using the staggered rollout of expansion across states and the imputation
-estimator of \textcite{borusyak2024revisiting}, we find that training supply
-did not respond. Intake at existing institutions shows an imprecise decline
-that is indistinguishable from zero once entry and exit are coded as missing
-rather than zero, and offered positions barely move. We classify each
-post-2010 entrant against ACGME accreditation records and find that most of
-the apparent growth through newly entering institutions reflects the
-osteopathic single-accreditation transition, which moved pre-existing
-capacity into match data. Genuinely new sponsors show no differential entry
-response, and the migrating institutions, which are concentrated in expansion
-states because osteopathic training was historically concentrated there,
-account for most of the treated-control entry gap. State-level totals do not
-fall, with or without the migrating capacity. The offered-position margin
-behaves like the matched margin throughout, and the linked cost-report sample
-shows resident stocks tracking intake on comparable institutions. This
-decomposition reconciles the hospital-level and state-level evidence,
-including the companion estimates in \textcite{ang_beniwal2026}: the two
-series include different amounts of migrating capacity.
+How many physicians the United States trains---and in which specialties and places---is settled years upstream, in the residency positions that teaching hospitals choose to create and fund. Those decisions are, at bottom, financial, which leaves the training pipeline exposed to any policy that moves hospital revenue. This paper asks whether the ACA's Medicaid expansion, by reshaping the finances of teaching hospitals, altered the number of residency positions those hospitals offer and fill. Using the staggered rollout of expansion across states and the imputation estimator of \textcite{borusyak2024revisiting}, we find that training supply did not respond. Intake at existing institutions shows an imprecise decline that is indistinguishable from zero once entry and exit are coded as missing rather than zero, and offered positions barely move. We classify each post-2010 entrant against ACGME accreditation records and find that most of the apparent growth through newly entering institutions reflects the osteopathic single-accreditation transition, which moved pre-existing capacity into match data. Genuinely new sponsors show no differential entry response, and the migrating institutions, which are concentrated in expansion states because osteopathic training was historically concentrated there, account for most of the treated-control entry gap. State-level totals do not fall, with or without the migrating capacity. The offered-position margin behaves like the matched margin throughout, and the linked cost-report sample shows resident stocks tracking intake on comparable institutions. This decomposition reconciles the hospital-level and state-level evidence, including the companion estimates in \textcite{ang_beniwal2026}: the two series include different amounts of migrating capacity, not different underlying training responses. A policymaker asking whether expansion shrank a state's training pipeline should use the state-level object; the answer is no. One asking whether expansion grew the pipeline should use the classified entry margin; the answer is also no. A placebo that assigns each state an expansion ten years before its real one, estimated on pre-ACA data alone, comes back null at both levels.
 
-We also report, as a negative result, the fate of the financing mechanism earlier
-drafts advanced. Under the 2012 formula classification the decline appears
-concentrated in states whose Medicaid GME formulas do not reward patient
-volume; but the volume-responsive arm fails its ten-period pre-trends test,
-the reduced-form contrast reverses sign when California leaves the sample
-under the post-period 2015 classification, and Poisson estimation finds no
-payment response at all. The cross-formula comparison in published
-classifications is, in these data, a California phenomenon.
+We also report, as a negative result, a test of the Medicaid GME financing channel. Classifying states by whether the formulas in force during the treatment window scale payments with patient volume, the decline is concentrated in states whose formulas do not; but the volume-responsive arm fails its ten-period pre-trends test, the reduced-form contrast reverses sign when California leaves the sample, and payments estimated in logs on the positive subsample show no response at all. The cross-formula comparison in published classifications is, in these data, a California phenomenon.
 
-Two features of the setting temper how precisely any of these magnitudes can be
-pinned down. First, treatment varies at the state level and the
-population-weighted design draws its identifying variation from a small number
-of large expansion states, so the effective number of clusters is limited; under
-randomization inference and wild cluster bootstrap, no individual estimate in
-the paper---intake margin, state total, or cross-formula difference---is
-statistically distinguishable from zero, and we say so wherever the estimate
-appears. Second, every panel construction carries its own pre-trend
-liability: the balanced panel is flat but zero-filled, the corrected panels are
-honest but fail pre-trends, and the contemporary-population denominator that
-delivers flat pre-trends is itself trending differentially (we show this
-directly by using log population as the outcome). Our confidence in the
-no-response reading rests on its \emph{consistency across constructions with
-offsetting weaknesses}, not on any single clean design. Finally, our data
-capture positions offered and filled, not the downstream practice locations or
-health outcomes of the physicians those positions would have trained; linking
-training-capacity changes to eventual physician supply and population health is
-an important direction we leave to future work.
+Two features of the setting temper how precisely any of these magnitudes can be pinned down. First, treatment varies at the state level and the population-weighted design draws its identifying variation from a small number of large expansion states, so the effective number of clusters is limited; under randomization inference and wild cluster bootstrap, no individual estimate in the paper---intake margin, state total, or cross-formula difference---is statistically distinguishable from zero, and we say so wherever the estimate appears. Second, every panel construction carries its own pre-trend liability: the balanced panel is flat but zero-filled, the corrected panels are honest but fail pre-trends, and the contemporary-population denominator that delivers flat pre-trends is itself trending differentially (we show this directly by using log population as the outcome). Our confidence in the no-response reading rests on its \emph{consistency across constructions with offsetting weaknesses}, not on any single clean design. Finally, our data capture positions offered and filled, not the downstream practice locations or health outcomes of the physicians those positions would have trained; linking training-capacity changes to eventual physician supply and population health is an important direction we leave to future work.
 
-Taken together, the results show that the physician-training pipeline
-absorbed the largest coverage expansion in a generation without contracting
-and without growing. A demand expansion that insured millions of people, in
-an environment of projected physician shortages, produced no measurable
-supply response from the institutions that train physicians, on either the
-intake or the entry margin. Much of what looks like entry in post-2015
-match data is an accreditation transition, and any study that uses NRMP or
-ACGME counts as an outcome needs to measure it deliberately. If training
-capacity is to keep pace with the insured population, the evidence from this
-period points to direct policy instruments rather than the hospital-finance
-channel. How coverage policy and training policy are coordinated, and who
-enters training provision under which accreditation and financing rules, is a
-natural direction for future research.
+Taken together, the results show that the physician-training pipeline absorbed the largest coverage expansion in a generation without contracting and without growing. A demand expansion that insured millions of people, in an environment of projected physician shortages, produced no measurable supply response from the institutions that train physicians, on either the intake or the entry margin. Much of what looks like entry in post-2015 match data is an accreditation transition, and any study that uses NRMP or ACGME counts as an outcome needs to measure it deliberately. If training capacity is to keep pace with the insured population, the evidence from this period points to direct policy instruments rather than the hospital-finance channel. How coverage policy and training policy are coordinated, and who enters training provision under which accreditation and financing rules, is a natural direction for future research.
 

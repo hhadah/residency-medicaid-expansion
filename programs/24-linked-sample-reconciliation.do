@@ -15,7 +15,7 @@
 *     program+year FE, same clustering, same year convention (funding merged
 *     at year == fiscal_year).
 *   - FTEs annualized by months_covered (also addresses methods Minor 8).
-* Estimates run pooled and split by GME formula arm (2012 classification,
+* Estimates run pooled and split by GME formula arm (2015 classification,
 * as in the submitted paper; classification sensitivity is script 25).
 *
 * Additional outputs:
@@ -95,17 +95,17 @@ restore
 gen double dgme_ftes_ann = dgme_ftes * 12 / months_covered ///
     if !missing(dgme_ftes) & months_covered > 0 & !missing(months_covered)
 
-* GME formula arms (2012 classification, as in the submitted paper)
+* GME formula arms (2015 classification, as in the submitted paper)
 preserve
     import delimited "${rawdir}/gme_formula_classification.csv", clear varnames(1) stringcols(_all)
-    keep state gme_formula
+    keep state gme_formula_2015
     replace state = strtrim(upper(state))
     tempfile gme
     save `gme'
 restore
 merge m:1 state using `gme', keep(master match) nogen
-gen byte gme_vol    = (gme_formula == "volume")
-gen byte gme_notvol = inlist(gme_formula, "fixed", "none")
+gen byte gme_vol    = (gme_formula_2015 == "volume")
+gen byte gme_notvol = inlist(gme_formula_2015, "fixed", "none")
 
 * ---------------------------------------------------------------------------
 * The linked estimation sample: BOTH outcomes observed on the same rows

@@ -4,7 +4,17 @@ Scripts are numbered in **execution order**: if script 01 must run before
 script 03, it is named 01. Run the R data build first (`95-make-all.R`,
 scripts 01–12), then the Stata analysis (`99-run-all-analysis.do`, scripts
 13–29 + 35–36; the RI block 30–34 is run separately — see the commented
-block in 99), then `python3 37-multiple-testing-qvalues.py`.
+block in 99), then the two post-steps:
+`python3 37-multiple-testing-qvalues.py` (needs numpy + matplotlib, e.g.
+the repo `.venv`) and `Rscript 40-make-payment-decomposition-table.R`
+(builds `my_paper/tables/reg_logpositive_summary.tex` from script 19's
+`logpositive-payments-summary.csv`).
+
+**As of 2026-07-30 the Medicaid GME formula classification is the 2015
+vintage (`gme_formula_2015`, Henderson 2016) throughout**: scripts 11, 19,
+20, 24, 25, 30, 32, 33, 34 all merge `gme_formula_2015` from
+`data/raw/gme_formula_classification.csv`. The 2012 column remains in the
+CSV for provenance but no estimation or manuscript object uses it.
 
 **As of 2026-07-25 all analysis runs on the FULL 2000–2019 panel**
 (`panel_2000_2019_estimation.dta`, built by scripts 05–06: 1,234 NRMP
@@ -52,6 +62,9 @@ default in every event study).
 | 35 | wild-bootstrap.do | wild cluster bootstrap-t (Webb), static TWFE analogs |
 | 36 | effective-clusters.do | Carter–Schnepel–Steigerwald G* |
 | 37 | multiple-testing-qvalues.py | dual-standard FDR q-values incl. mechanism arms + forest plot |
+| 38 | parse-sas-transition.py | parse ACGME Single Accreditation System applicant list |
+| 39 | sas-entrant-crosswalk.R | classify post-2010 NRMP entrants as migrants vs genuine (with manual overrides) |
+| 40 | make-payment-decomposition-table.R | appendix table atab:logpositive from script 19's log-positive CSV |
 | 95 | make-all.R | R runner (01–12) |
 | 99 | run-all-analysis.do | Stata runner (13–29, 35–36; RI block commented) |
 
