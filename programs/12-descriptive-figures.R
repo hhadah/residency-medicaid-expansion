@@ -76,7 +76,7 @@ timing_plot <- ggplot(adoption_grid, aes(x = year, y = state, fill = status)) +
                                "Never expanded" = "grey85")) +
   labs(x = "Year", y = NULL, fill = NULL) +
   theme_customs() +
-  theme(axis.text.y     = element_text(size = 17),
+  theme(axis.text.y     = element_text(size = 23),
         axis.text.x     = element_text(size = 23, angle = 45, hjust = 1),
         axis.title.x    = element_text(size = 28),
         legend.text     = element_text(size = 27),
@@ -86,7 +86,7 @@ timing_plot <- ggplot(adoption_grid, aes(x = year, y = state, fill = status)) +
 
 for (dir_out in c(figures_wd, thesis_plots)) {
   ggsave(file.path(dir_out, "desc-timing.png"), plot = timing_plot,
-         width = 10, height = 12, units = "in", dpi = 300)
+         width = 10, height = 12, units = "in", dpi = 320)
   ggsave(file.path(dir_out, "desc-timing.pdf"), plot = timing_plot,
          width = 10, height = 12, units = "in")
 }

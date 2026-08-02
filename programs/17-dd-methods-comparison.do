@@ -198,7 +198,6 @@ foreach Y of global outcomes {
         graph_opt( ///
             xtitle("Years relative to Medicaid expansion") ///
             ytitle("Average effect") xlabel(-`maxlead'(1)`maxlag') ///
-            text(0 -4 "Pre-trend p = `pt_text'", size(medsmall) placement(e)) ///
             legend(order(1 "Two-way fixed effects" 3 "Borusyak, Jaravel and Spiess (2024)" ///
                          5 "de Chaisemartin and D'Haultfoeuille (2020)" 7 "Sun and Abraham (2021)" ///
                          9 "Cengiz, Dube, Lindner and Zipperer (2019)" 11 "Gardner (2022)") ///

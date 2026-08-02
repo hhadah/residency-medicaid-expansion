@@ -1,0 +1,24 @@
+\begin{tabular}{lccc}
+\toprule
+ & Estimate & (s.e.) & $p$-value \\
+\midrule
+\multicolumn{4}{l}{\textit{Panel A: Event-study estimate and classification sensitivity}} \\
+\midrule
+\quad Baseline (2015 classification) & $0.049$ & (0.014) & $<0.001$ \\
+\quad Flipping Maryland & $0.058$ & (0.014) & $<0.001$ \\
+\quad Flipping Minnesota & $0.050$ & (0.014) & $<0.001$ \\
+\quad Flipping Montana & $0.049$ & (0.014) & $<0.001$ \\
+\quad Flipping Iowa & $0.051$ & (0.014) & $<0.001$ \\
+\quad Flipping New Mexico & $0.051$ & (0.014) & $<0.001$ \\
+\\[0.5em]
+\multicolumn{4}{l}{\textit{Panel B: Alternative design}} \\
+\midrule
+\quad Timing-only design (not-yet-treated controls) & $0.045$ & (0.013) & $<0.001$ \\
+\\[0.5em]
+\multicolumn{4}{l}{\textit{Panel C: Inference on the baseline difference}} \\
+\midrule
+\quad Static TWFE analog, clustered & $0.050$ & (0.029) & 0.08 \\
+\quad Static TWFE analog, wild cluster bootstrap-$t$ & $0.050$ & & 0.53 \\
+\quad Randomization inference (500 draws) & $0.047$ & & 0.48 \\
+\bottomrule
+\end{tabular}

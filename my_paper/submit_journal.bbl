@@ -3363,6 +3363,66 @@
       \verb https://reportcenter.highered.texas.gov/reports/legislative/the-graduate-medical-education-report-an-assessment-of-opportunities-for-graduates-of-texas-medical-schools-to-enter-residency-programs-in-texas-2024/
       \endverb
     \endentry
+    \entry{census_2000}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=fb461c0c6976b357452502c0cb338c70}{%
+           family={{U.S. Census Bureau}},
+           familyi={U\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Washington, DC}%
+      }
+      \list{publisher}{1}{%
+        {U.S. Department of Commerce}%
+      }
+      \strng{namehash}{fb461c0c6976b357452502c0cb338c70}
+      \strng{fullhash}{fb461c0c6976b357452502c0cb338c70}
+      \strng{fullhashraw}{fb461c0c6976b357452502c0cb338c70}
+      \strng{bibnamehash}{fb461c0c6976b357452502c0cb338c70}
+      \strng{authorbibnamehash}{fb461c0c6976b357452502c0cb338c70}
+      \strng{authornamehash}{fb461c0c6976b357452502c0cb338c70}
+      \strng{authorfullhash}{fb461c0c6976b357452502c0cb338c70}
+      \strng{authorfullhashraw}{fb461c0c6976b357452502c0cb338c70}
+      \field{extraname}{1}
+      \field{sortinit}{U}
+      \field{sortinithash}{6901a00e45705986ee5e7ca9fd39adca}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Decennial Census: Total Population}
+      \field{year}{2000}
+    \endentry
+    \entry{acs_1yr_2019}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=fb461c0c6976b357452502c0cb338c70}{%
+           family={{U.S. Census Bureau}},
+           familyi={U\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Washington, DC}%
+      }
+      \list{publisher}{1}{%
+        {U.S. Department of Commerce}%
+      }
+      \strng{namehash}{fb461c0c6976b357452502c0cb338c70}
+      \strng{fullhash}{fb461c0c6976b357452502c0cb338c70}
+      \strng{fullhashraw}{fb461c0c6976b357452502c0cb338c70}
+      \strng{bibnamehash}{fb461c0c6976b357452502c0cb338c70}
+      \strng{authorbibnamehash}{fb461c0c6976b357452502c0cb338c70}
+      \strng{authornamehash}{fb461c0c6976b357452502c0cb338c70}
+      \strng{authorfullhash}{fb461c0c6976b357452502c0cb338c70}
+      \strng{authorfullhashraw}{fb461c0c6976b357452502c0cb338c70}
+      \field{extraname}{2}
+      \field{sortinit}{U}
+      \field{sortinithash}{6901a00e45705986ee5e7ca9fd39adca}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{American Community Survey 1-Year Estimates: Total Population}
+      \field{year}{2019}
+    \endentry
     \entry{vistnes2019}{report}{}{}
       \name{author}{2}{}{%
         {{hash=2f439b88c65216f0140a537d4fe78801}{%

@@ -102,6 +102,7 @@ foreach s in ///
 * Smoke test with reduced reps: do "${progdir}/33-ri-extended.do" 20
 * Afterwards rerun: python3 programs/37-multiple-testing-qvalues.py
 *                   Rscript programs/40-make-payment-decomposition-table.R
+*                   Rscript programs/41-make-mechdiff-table.R
 * =========================================================================
 
 * =========================================================================

@@ -4,11 +4,14 @@ Scripts are numbered in **execution order**: if script 01 must run before
 script 03, it is named 01. Run the R data build first (`95-make-all.R`,
 scripts 01–12), then the Stata analysis (`99-run-all-analysis.do`, scripts
 13–29 + 35–36; the RI block 30–34 is run separately — see the commented
-block in 99), then the two post-steps:
+block in 99), then the three post-steps:
 `python3 37-multiple-testing-qvalues.py` (needs numpy + matplotlib, e.g.
-the repo `.venv`) and `Rscript 40-make-payment-decomposition-table.R`
+the repo `.venv`), `Rscript 40-make-payment-decomposition-table.R`
 (builds `my_paper/tables/reg_logpositive_summary.tex` from script 19's
-`logpositive-payments-summary.csv`).
+`logpositive-payments-summary.csv`), and `Rscript 41-make-mechdiff-table.R`
+(builds `my_paper/tables/reg_mechdiff_sensitivity.tex` from the
+reclassification, leave-one-out, not-yet-treated, wild-bootstrap, and RI
+summary CSVs).
 
 **As of 2026-07-30 the Medicaid GME formula classification is the 2015
 vintage (`gme_formula_2015`, Henderson 2016) throughout**: scripts 11, 19,
@@ -65,6 +68,7 @@ default in every event study).
 | 38 | parse-sas-transition.py | parse ACGME Single Accreditation System applicant list |
 | 39 | sas-entrant-crosswalk.R | classify post-2010 NRMP entrants as migrants vs genuine (with manual overrides) |
 | 40 | make-payment-decomposition-table.R | appendix table atab:logpositive from script 19's log-positive CSV |
+| 41 | make-mechdiff-table.R | appendix table atab:mechdiff (cross-arm difference sensitivity) |
 | 95 | make-all.R | R runner (01–12) |
 | 99 | run-all-analysis.do | Stata runner (13–29, 35–36; RI block commented) |
 
