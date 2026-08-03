@@ -27,6 +27,7 @@ set varabbrev off
 * -------------------------------------------------------------------------
 * Replication-friendly path handling: run from the repository root, or set
 * global topdir before running.
+global topdir "/Users/hhadah/Projects/GiT/residency-medicaid-expansion"
 if "${topdir}" == "" global topdir "`c(pwd)'"
 capture confirm file "${topdir}/programs/00-README-pipeline.md"
 if _rc {
