@@ -34,6 +34,12 @@
 \usepackage{geometry}
 \usepackage{appendix}
 \usepackage{subcaption} % For subfigures
+% Single-space the interior of floats: with \doublespacing active, the
+% interline glue between stacked subfigures and around images otherwise
+% inflates figure blocks past \textheight (blank pages / overfull output).
+\usepackage{etoolbox}
+\AtBeginEnvironment{figure}{\singlespacing}
+\AtBeginEnvironment{table}{\singlespacing}
 
 \usepackage{makecell}
 \usepackage{siunitx}

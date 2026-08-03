@@ -104,6 +104,7 @@ foreach s in ///
 * Afterwards rerun: python3 programs/37-multiple-testing-qvalues.py
 *                   Rscript programs/40-make-payment-decomposition-table.R
 *                   Rscript programs/41-make-mechdiff-table.R
+*                   Rscript programs/42-make-specgrid-table.R
 * =========================================================================
 
 * =========================================================================

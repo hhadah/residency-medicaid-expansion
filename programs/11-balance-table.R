@@ -167,7 +167,7 @@ write_csv(sum_rows |> select(-fmt) |>
           here("output", "tables", "sumstats-main.csv"))
 
 lines <- c(
-  "\\begin{tabular}{>{\\raggedright\\arraybackslash}p{2.35in}ccccc}",
+  "\\begin{tabular}{>{\\raggedright\\arraybackslash\\hangindent=1em\\hangafter=1}p{2.35in}ccccc}",
   "\\toprule",
   " & All & Expansion & Never- & Difference & \\\\",
   "Baseline characteristic (2010) & states & states & expansion & (2)$-$(3) & $p$-value \\\\",
@@ -245,7 +245,7 @@ write_csv(bal_rows |> select(-fmt) |>
           here("output", "tables", "balance-gme-formula.csv"))
 
 lines <- c(
-  "\\begin{tabular}{>{\\raggedright\\arraybackslash}p{3in}ccccc}",
+  "\\begin{tabular}{>{\\raggedright\\arraybackslash\\hangindent=1em\\hangafter=1}p{3in}ccccc}",
   "\\toprule",
   " & Volume- & Fixed/ & Never- & Difference & \\\\",
   paste0("Baseline characteristic (2010) & responsive & none & expansion",

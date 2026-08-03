@@ -42,5 +42,6 @@ source(file.path(programs,"12-descriptive-figures.R"))     # desc-timing, cohort
 #   python3 programs/37-multiple-testing-qvalues.py  # dual-standard FDR q-values + forest plot
 #   Rscript programs/40-make-payment-decomposition-table.R  # appendix payment-decomposition table
 #   Rscript programs/41-make-mechdiff-table.R              # appendix cross-arm sensitivity table
+#   Rscript programs/42-make-specgrid-table.R              # appendix specification-grid table
 
 print("All scripts executed successfully.")
